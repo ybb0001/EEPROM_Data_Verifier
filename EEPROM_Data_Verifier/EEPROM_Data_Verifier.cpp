@@ -334,6 +334,12 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 	else {
 		ui.QSC4->setChecked(true);
 	}
+	if ((selection & 8192) >0) {
+		ui.info_fuse_2->setChecked(true);
+	}
+	else {
+		ui.info_fuse_2->setChecked(false);
+	}
 
 	//////////////////////////////////first_Pixel
 	if (first_Pixel == 0) {
@@ -955,6 +961,10 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 	ui.fuse_start->setText(Fuse_Data.item[0].c_str());
 	ui.fuse_end->setText(Fuse_Data.item[1].c_str());
 	ui.fuse_spec->setText(Fuse_Data.item[2].c_str());
+
+	ui.fuse_start_2->setText(Fuse_Data2.item[0].c_str());
+	ui.fuse_end_2->setText(Fuse_Data2.item[1].c_str());
+	ui.fuse_spec_2->setText(Fuse_Data2.item[2].c_str());
 
 	ui.lsc11->setText(QC_LSC_Data[0].item[0].c_str());
 	ui.lsc12->setText(QC_LSC_Data[0].item[1].c_str());
@@ -1728,6 +1738,13 @@ void EEPROM_Data_Verifier::load_EEPROM_Address() {
 	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("Fuse_spec"), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
 	Fuse_Data.item[2] = CT2A(lpTexts);
 
+	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("Fuse_start2"), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
+	Fuse_Data2.item[0] = CT2A(lpTexts);
+	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("Fuse_end2"), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
+	Fuse_Data2.item[1] = CT2A(lpTexts);
+	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("Fuse_spec2"), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
+	Fuse_Data2.item[2] = CT2A(lpTexts);
+
 	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("MTK_LSC_Data11"), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
 	MTK_LSC_Data[0].item[0] = CT2A(lpTexts);
 	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("MTK_LSC_Data12"), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
@@ -1880,6 +1897,12 @@ void EEPROM_Data_Verifier::load_Panel() {
 	}
 	else {
 		selection &= 0xFFFFFFFF - 4096;;
+	}
+	if (ui.info_fuse_2->isChecked()) {
+		selection |= 8192;
+	}
+	else {
+		selection &= 0xFFFFFFFF - 8192;
 	}
 
 	///////////////////////////////////DataFormat
@@ -2506,6 +2529,10 @@ void EEPROM_Data_Verifier::load_Panel() {
 	Fuse_Data.item[0] = string((const char *)ui.fuse_start->document()->toPlainText().toLocal8Bit());
 	Fuse_Data.item[1] = string((const char *)ui.fuse_end->document()->toPlainText().toLocal8Bit());
 	Fuse_Data.item[2] = string((const char *)ui.fuse_spec->document()->toPlainText().toLocal8Bit());
+
+	Fuse_Data2.item[0] = string((const char *)ui.fuse_start_2->document()->toPlainText().toLocal8Bit());
+	Fuse_Data2.item[1] = string((const char *)ui.fuse_end_2->document()->toPlainText().toLocal8Bit());
+	Fuse_Data2.item[2] = string((const char *)ui.fuse_spec_2->document()->toPlainText().toLocal8Bit()); 
 
 	QC_LSC_Data[0].item[0] = string((const char *)ui.lsc11->document()->toPlainText().toLocal8Bit());
 	QC_LSC_Data[0].item[1] = string((const char *)ui.lsc12->document()->toPlainText().toLocal8Bit());
@@ -3184,6 +3211,10 @@ void EEPROM_Data_Verifier::save_EEPROM_Address() {
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("Fuse_start"), CA2CT(Fuse_Data.item[0].c_str()), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("Fuse_end"), CA2CT(Fuse_Data.item[1].c_str()), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("Fuse_spec"), CA2CT(Fuse_Data.item[2].c_str()), CA2CT(EEPROM_Map.c_str()));
+
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("Fuse_start2"), CA2CT(Fuse_Data2.item[0].c_str()), CA2CT(EEPROM_Map.c_str()));
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("Fuse_end2"), CA2CT(Fuse_Data2.item[1].c_str()), CA2CT(EEPROM_Map.c_str()));
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("Fuse_spec2"), CA2CT(Fuse_Data2.item[2].c_str()), CA2CT(EEPROM_Map.c_str()));
 
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("MTK_LSC_Data11"), CA2CT(MTK_LSC_Data[0].item[0].c_str()), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("MTK_LSC_Data12"), CA2CT(MTK_LSC_Data[0].item[1].c_str()), CA2CT(EEPROM_Map.c_str()));
@@ -5781,6 +5812,33 @@ int EEPROM_Data_Verifier::info_Data_Parse() {
 
 		fout << endl;
 	}
+
+
+	if (ui.info_fuse_2->isChecked()) {
+		fout << "ID/Ver2:	";
+		int start = unstringHex2int(Fuse_Data2.item[0]);
+		int end = unstringHex2int(Fuse_Data2.item[1]);
+		int k = 0;
+		for (int i = start; i <= end; i++) {
+	//		map_Push(i, "ID/Ver2." + to_string(i - start + 1), "", info1);
+			fout << D[i][0] << D[i][1];
+			if (k < Fuse_Data2.item[2].length()) {
+				if (D[i][0] != Fuse_Data2.item[2][k] || D[i][1] != Fuse_Data2.item[2][k + 1]) {
+					ui.log->insertPlainText("ID/Ver2 Data Fixed Value NG!\n");
+					ret |= 1;
+				}
+				k += 2;
+			}
+			useData[i] = 1;
+		}
+		if (DecData[start] == 255 && DecData[start + 1] == 255 && DecData[start + 2] == 255) {
+			ui.log->insertPlainText("ID Data2 is ivalid!\n");
+			ret |= 1;
+		}
+
+		fout << endl;
+	}
+
 	fout  << endl;
 
 	////////////////////////////////////////////////////////////
