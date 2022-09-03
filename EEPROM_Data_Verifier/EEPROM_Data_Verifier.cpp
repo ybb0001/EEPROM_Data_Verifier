@@ -4687,77 +4687,29 @@ int EEPROM_Data_Verifier::af_Parse() {
 	if (ret > 0)
 		ui.log->insertPlainText("AF Code Spec Check NG!\n");
 
-	///////////////////// AF INFO check
-	for (int i = 0; i < 10; i++) {
-		if (AF_info_Item[i][1].length()>1) {
+	///////////////////// Long INFO check
+	//for (int i = 0; i < 10; i++) {
+	//	if (AF_info_Item[i][1].length()>1) { //各种字节长度一并检查
+	//		string txtout = "Long Info item" + to_string(i + 1);
+	//		txtout += ": ";
+	//		fout << txtout.c_str();
+	//		unsigned int start = unstringHex2int(AF_info_Item[i][1]);
+	//		unsigned int size = unstringHex2int(AF_info_Item[i][2]);
+	//		string value;
+	//		for (int i = start; i < (start + size); i++) {
+	//			value += D[i][0];
+	//			value += D[i][1];
+	//		}
+	//		fout << value.c_str() << endl;
+	//		if (strcmp(value.c_str(), AF_info_Item[i][3].c_str()) != 0) {
+	//			string log_out = "Long Info item" + to_string(i + 1);
+	//			log_out += " Value NG!\n";
+	//			ui.log->insertPlainText(log_out.c_str());
+	//			ret |= 2;
+	//		}
+	//	}
+	//}
 
-			int d = unstringHex2int(AF_info_Item[i][2]), e = 0;
-			unsigned long long a, c, ref;
-			if (d == 1) {
-				e = marking_Hex2int(AF_info_Item[i][1], AF_info_Item[i][0], AF_info_Item[i][3], info1);
-				a = c = DecData[e];
-				fout << AF_info_Item[i][0] << ":	" << c << endl;
-				if (c == 0xFF)
-					ret |= 2;
-			}
-			else if(d==2) {
-				e = unstringHex2int(AF_info_Item[i][1]);
-				a = DecData[e] * 256 + DecData[e + 1];
-				if (HL == 0) {
-					c = DecData[e + 1] * 256 + DecData[e];
-					string str = " ";
-					if (AF_info_Item[i][3].length() ==4)
-						str= AF_info_Item[i][3].substr(2,2),
-					map_Push(e, AF_info_Item[i][0] + "_L", str,info1);
-					str = " ";
-					if (AF_info_Item[i][3].length()>1)
-						str = AF_info_Item[i][3].substr(0, 2),
-					map_Push(e + 1, AF_info_Item[i][0] + "_H", str, info1);
-				}
-				else {
-					c = a;
-					string str = " ";
-					if (AF_info_Item[i][3].length() >1)
-						str = AF_info_Item[i][3].substr(0, 2),
-					map_Push(e, AF_info_Item[i][0] + "_H", str, info1);
-					str = " ";
-					if (AF_info_Item[i][3].length() == 4)
-						str = AF_info_Item[i][3].substr(2, 2),
-					map_Push(e + 1, AF_info_Item[i][0] + "_L", str, info1);
-				}
-				fout << AF_info_Item[i][0] << ":	" << D[e][0] << D[e][1] << D[e + 1][0] << D[e + 1][1] << endl;
-
-				if (c == 0xFFFF)
-					ret |= 2;
-			}
-			else if (d >2) {
-				c = 0;
-				fout << AF_info_Item[i][0] << ":	0x";
-		
-				for (int a = 0; a < d; a++) {
-					c = c * 256 + DecData[e+a];
-					fout << D[e+a][0] << D[e+a][1];
-				}
-				fout << endl;
-				if (c == pow(256, d)-1)
-					ret |= 2;
-				}		
-
-			if (AF_info_Item[i][3].length() > 0) {
-				ref = unstringHex2int(AF_info_Item[i][3]);
-				if (ref != c) {
-					string tmp = AF_info_Item[i][0] + "data NG!\n";
-					ui.log->insertPlainText(tmp.c_str());
-					ret |= 1;
-				}
-			}
-
-			if ((ret & 2)>0) {
-				string s = AF_info_Item[i][0] + " Data in 0x" + AF_info_Item[i][1] + " value invalid!" + '\n';
-				ui.log->insertPlainText(s.c_str());
-			}
-		}
-	}
 	fout << endl;
 
 	///////////////////// ZOOM Type data check
@@ -5761,7 +5713,7 @@ int EEPROM_Data_Verifier::info_Data_Parse() {
 	}
 
 	if ((ret & 1) > 0) {
-		ui.log->insertPlainText("QR Data is ivalid!\n");
+		ui.log->insertPlainText("Date format is error!\n");
 	}
 
 	if (ui.info_QR->isChecked()) {
@@ -5812,7 +5764,6 @@ int EEPROM_Data_Verifier::info_Data_Parse() {
 
 		fout << endl;
 	}
-
 
 	if (ui.info_fuse_2->isChecked()) {
 		fout << "ID/Ver2:	";
@@ -5918,14 +5869,36 @@ int EEPROM_Data_Verifier::info_Data_Parse() {
 		}
 	fout << endl;
 
-	return ret;
+	///////////////////// Long INFO check
+	for (int i = 0; i < 10; i++) {
+		if (AF_info_Item[i][1].length()>1) { //各种字节长度一并检查
+			string txtout = "Long Info item" + to_string(i + 1);
+			txtout += ": ";
+			fout << txtout.c_str();
+			unsigned int start = unstringHex2int(AF_info_Item[i][1]);
+			unsigned int size = unstringHex2int(AF_info_Item[i][2]);
+			string value;
+			for (int i = start; i < (start + size); i++) {
+				value += D[i][0];
+				value += D[i][1];
+			}
+			fout << value.c_str() << endl;
+			if (strcmp(value.c_str(), AF_info_Item[i][3].c_str()) != 0) {
+				string log_out = "Long Info item" + to_string(i + 1);
+				log_out += " Value NG!\n";
+				ui.log->insertPlainText(log_out.c_str());
+				ret |= 16;
+			}
+		}
+	}
 
+	return ret;
 }
 
 
 int EEPROM_Data_Verifier::value_Data_Parse() {
 
-	int ret = 0;
+	int tret = 0;
 	fout << "-------Value Data Spec Check------" << endl;
 	/////////////////////////Value Data check
 	for (int i = 0; i < 18; i++)
@@ -5986,18 +5959,18 @@ int EEPROM_Data_Verifier::value_Data_Parse() {
 			default:
 				break;
 			}
-
+			int ret = 0;
 			//////////////////////value check		
 			if (d_type < 6) {
 				if (sData_Item[i][3].length() > 0) {
 					int spec1 = atoi(sData_Item[i][3].c_str());
 					if (d < spec1)
-						ret |= 8;
+						ret |= 1;
 				}
 				if (sData_Item[i][4].length() > 0) {
 					int spec2 = atoi(sData_Item[i][4].c_str());
 					if (d > spec2)
-						ret |= 8;
+						ret |= 1;
 				}
 				fout << sData_Item[i][0] << ":	" << d << endl;
 			}
@@ -6005,25 +5978,26 @@ int EEPROM_Data_Verifier::value_Data_Parse() {
 				if (sData_Item[i][3].length() > 0) {
 					float spec1 = atof(sData_Item[i][3].c_str());
 					if (dd < spec1)
-						ret |= 8;
+						ret |= 2;
 				}
 				if (sData_Item[i][4].length() > 0) {
 					float spec2 = atof(sData_Item[i][4].c_str());
 					if (dd > spec2)
-						ret |= 8;
+						ret |= 2;
 				}
 				fout << sData_Item[i][0] << ":	" << dd << endl;
 			}
 
-			if ((ret&8)>0) {
+			if (ret>0) {
 				string s = sData_Item[i][0] + " Data in 0x" + sData_Item[i][1] + " NG!\n";
 				ui.log->insertPlainText(s.c_str());
+				tret = tret * 10 + ret;
 			}
 	
 		}
 	fout << endl;
 
-	return ret;
+	return tret;
 
 }
 
@@ -7034,6 +7008,271 @@ void EEPROM_Data_Verifier::on_pushButton_dump_clicked()
 	ui.log->insertPlainText("Dump Data Read finished\n");
 
 }
+
+
+void EEPROM_Data_Verifier::on_pushButton_dump_value_clicked()
+{
+	selectModel();
+	load_EEPROM_Address();
+
+	QString filename = QFileDialog::getOpenFileName(this, tr("Open TXT"), "", tr("EEPROM File(*.txt)"));
+	QTextCodec *code = QTextCodec::codecForName("gb18030");
+	std::string name = code->fromUnicode(filename).data();
+
+	ifstream in(name);
+
+	if (!in.is_open())
+	{
+		QString strDisplay = "File open Failed";
+		strDisplay += '\n';
+		ui.log->insertPlainText(strDisplay);
+		return;
+	}
+
+	fout.open(".\\MemoryParseData.txt");
+
+	fout << "Time	Fuse	";
+
+	for (int i = 0; i < 18; i++)
+		if (sData_Item[i][1].length()>1 && sData_Item[i][2].length() > 2) {
+			unsigned int addr = unstringHex2int(sData_Item[i][1]);
+			fout << sData_Item[i][0]<<"	";
+		}
+
+	fout << endl;
+
+	while (getline(in, src))
+	{
+		int now = 0, e = 0;
+		memset(DecData, 0, sizeof(DecData));
+		memset(useData, 0, sizeof(useData));
+
+		int len = src.length() + 1;
+
+		if (len > 96000)
+			EEP_Size = 32768;
+		else if (len > 48000)
+			EEP_Size = 16384;
+		else if (len > 36000)
+			EEP_Size = 12288;
+		else if (len > 24000)
+			EEP_Size = 8192;
+
+		if (len < 8192)
+			continue;
+
+		while (now < len) {
+
+			if (e < EEP_Size) {
+				if ((now == 0 || src[now - 1] == ' ' || src[now - 1] == '	' || src[now - 1] == '\n') &&
+					((src[now + 2] == ' '&&src[now + 5] == ' '&&src[now + 8] == ' ')
+						|| (src[now + 2] == '	'&&src[now + 5] == '	'&&src[now + 8] == '	')
+						|| (src[now + 2] == '\n'&&src[now + 5] == '\n'&&src[now + 8] == '\n'))) {
+
+					for (int i = 0; i < 16; i++) {
+						D[e][0] = src[now++];
+						D[e][1] = src[now++];
+						DecData[e] = hex2Dec(e);
+						e++;
+						now++;
+					}
+				}
+				else now++;
+			}
+			else {
+				string time_fuse = "";
+				int x = 0, cnt = 0, ret = 0;
+				while (cnt < 2 && x < len) {
+					time_fuse += src[x];
+					if (src[x] == '	') {
+						cnt++;
+					}
+					x++;
+				}
+
+				fout << time_fuse ;
+
+				for (int i = 0; i < 18; i++)
+					if (sData_Item[i][1].length()>1 && sData_Item[i][2].length()>2) {
+						unsigned int addr = unstringHex2int(sData_Item[i][1]);
+
+						int d_type = get_Data_Type(i);
+						long long d = 0;
+						double dd = 0;
+
+						if (d_type == 0 || addr == 0)
+							continue;
+
+						switch (d_type) {
+						case 1:
+							d = DecData[addr];
+							if (d > 0x7F)
+								d = d - 0x100;
+							break;
+						case 2:
+							d = DecData[addr];
+							break;
+						case 3:
+							d = short_Out(addr, HL);
+							break;
+						case 4:
+							d = short_Out(addr, HL);
+							if (d < 0)
+								d += 65536;
+							break;
+						case 5:
+							d = int_Out(addr, HL);
+							break;
+						case 6:
+							d = int_Out(addr, HL);
+							if (d < 0)
+								d += 0x100000000;
+							break;
+						case 7:
+							dd = short_Out(addr, HL);
+							if (dd < 0)
+								dd += 0x10000;
+							dd /= 0x8000;
+							break;
+						case 8:
+							dd = int_Out(addr, HL);
+							if (dd < 0)
+								dd += 0x100000000;
+							dd /= 0x80000000;
+							break;
+						case 9:
+							dd = flt_Out(addr, HL);
+							break;
+						case 10:
+							dd = dbl_Out(addr, HL);
+							break;
+
+						default:
+							break;
+						}
+
+						if (d_type < 6) {
+							fout << d << "	";
+						}
+						else {
+							fout << dd << "	";
+						}
+
+					}
+				fout << endl;
+				break;
+			}
+		}
+	}
+
+	fout.close();
+	ui.log->insertPlainText("Dump Data Read finished\n");
+
+}
+
+
+void EEPROM_Data_Verifier::on_pushButton_dump_SFR_clicked()
+{
+	selectModel();
+	load_EEPROM_Address();
+
+	QString filename = QFileDialog::getOpenFileName(this, tr("Open TXT"), "", tr("EEPROM File(*.txt)"));
+	QTextCodec *code = QTextCodec::codecForName("gb18030");
+	std::string name = code->fromUnicode(filename).data();
+
+	ifstream in(name);
+
+	if (!in.is_open())
+	{
+		QString strDisplay = "File open Failed";
+		strDisplay += '\n';
+		ui.log->insertPlainText(strDisplay);
+		return;
+	}
+
+	fout.open(".\\MemoryParseData.txt");
+
+	while (getline(in, src))
+	{
+		int now = 0, e = 0;
+		memset(DecData, 0, sizeof(DecData));
+		memset(useData, 0, sizeof(useData));
+
+		int len = src.length() + 1;
+
+		if (len > 96000)
+			EEP_Size = 32768;
+		else if (len > 48000)
+			EEP_Size = 16384;
+		else if (len > 36000)
+			EEP_Size = 12288;
+		else if (len > 24000)
+			EEP_Size = 8192;
+
+		if (len < 8192)
+			continue;
+
+		while (now < len) {
+
+			if (e < EEP_Size) {
+				if ((now == 0 || src[now - 1] == ' ' || src[now - 1] == '	' || src[now - 1] == '\n') &&
+					((src[now + 2] == ' '&&src[now + 5] == ' '&&src[now + 8] == ' ')
+						|| (src[now + 2] == '	'&&src[now + 5] == '	'&&src[now + 8] == '	')
+						|| (src[now + 2] == '\n'&&src[now + 5] == '\n'&&src[now + 8] == '\n'))) {
+
+					for (int i = 0; i < 16; i++) {
+						D[e][0] = src[now++];
+						D[e][1] = src[now++];
+						DecData[e] = hex2Dec(e);
+						e++;
+						now++;
+					}
+				}
+				else now++;
+			}
+			else {
+				string time_fuse = "";
+				int x = 0, cnt = 0, ret = 0;
+				while (cnt < 2 && x < len) {
+					time_fuse += src[x];
+					if (src[x] == '	') {
+						cnt++;
+					}
+					x++;
+				}
+
+				fout << time_fuse;
+
+				for (int i = 0; i < 4; i++) {
+					if (SFR_Item[i][2].length()>1) {
+						int d = unstringHex2int(SFR_Item[i][2]);
+						int cnt = atoi(SFR_Item[i][3].c_str());
+						int f = unstringHex2int(SFR_Item[i][1]);
+
+						for (int k = 0; k < cnt; k++) {
+							if (ui.SFR_HEX->isChecked()) {
+								SFR_Data[k] = (int)(D[d + k][0] - '0') * 10 + (D[d + k][1] - '0');
+								fout << D[d + k][0] << D[d + k][1] << "	";
+							}
+							else {
+								SFR_Data[k] = DecData[d + k];
+								fout << (float)SFR_Data[k] / 100 << "	";
+							}
+						}				
+					}
+				}
+
+				fout << endl;
+				break;
+			}
+		}
+	}
+
+	fout.close();
+	ui.log->insertPlainText("Dump Data Read finished\n");
+
+}
+
 
 
 vector<string> getFiles(string cate_dir)

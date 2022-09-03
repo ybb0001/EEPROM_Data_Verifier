@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>EEPROM_Verifier_20220721</string>
+   <string>EEPROM_Verifier_20220825</string>
   </property>
   <widget class="QTextEdit" name="input">
    <property name="geometry">
@@ -6794,6 +6794,22 @@ p, li { white-space: pre-wrap; }
        <string notr="true">buttonGroup_17</string>
       </attribute>
      </widget>
+     <widget class="QPushButton" name="pushButton_dump_SFR">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>120</y>
+        <width>61</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Dump_TXT</string>
+      </property>
+      <property name="checkable">
+       <bool>false</bool>
+      </property>
+     </widget>
     </widget>
     <widget class="QGroupBox" name="groupBox_17">
      <property name="geometry">
@@ -6805,12 +6821,12 @@ p, li { white-space: pre-wrap; }
       </rect>
      </property>
      <property name="title">
-      <string>AF Related Info</string>
+      <string>long Size Hex Info</string>
      </property>
      <widget class="QTextEdit" name="AF_info12">
       <property name="geometry">
        <rect>
-        <x>260</x>
+        <x>245</x>
         <y>30</y>
         <width>50</width>
         <height>30</height>
@@ -6820,9 +6836,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info11">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>5</x>
         <y>30</y>
-        <width>241</width>
+        <width>238</width>
         <height>30</height>
        </rect>
       </property>
@@ -6850,9 +6866,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info14">
       <property name="geometry">
        <rect>
-        <x>359</x>
+        <x>330</x>
         <y>30</y>
-        <width>81</width>
+        <width>105</width>
         <height>30</height>
        </rect>
       </property>
@@ -6860,9 +6876,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info13">
       <property name="geometry">
        <rect>
-        <x>320</x>
+        <x>297</x>
         <y>30</y>
-        <width>31</width>
+        <width>30</width>
         <height>30</height>
        </rect>
       </property>
@@ -6870,7 +6886,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QLabel" name="label_118">
       <property name="geometry">
        <rect>
-        <x>270</x>
+        <x>260</x>
         <y>10</y>
         <width>41</width>
         <height>16</height>
@@ -6883,9 +6899,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QLabel" name="label_119">
       <property name="geometry">
        <rect>
-        <x>320</x>
+        <x>305</x>
         <y>10</y>
-        <width>41</width>
+        <width>31</width>
         <height>16</height>
        </rect>
       </property>
@@ -6896,7 +6912,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QLabel" name="label_120">
       <property name="geometry">
        <rect>
-        <x>370</x>
+        <x>360</x>
         <y>10</y>
         <width>61</width>
         <height>16</height>
@@ -6909,9 +6925,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info21">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>5</x>
         <y>60</y>
-        <width>241</width>
+        <width>238</width>
         <height>30</height>
        </rect>
       </property>
@@ -6926,9 +6942,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info23">
       <property name="geometry">
        <rect>
-        <x>320</x>
+        <x>297</x>
         <y>60</y>
-        <width>31</width>
+        <width>30</width>
         <height>30</height>
        </rect>
       </property>
@@ -6936,9 +6952,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info24">
       <property name="geometry">
        <rect>
-        <x>359</x>
+        <x>330</x>
         <y>60</y>
-        <width>81</width>
+        <width>105</width>
         <height>30</height>
        </rect>
       </property>
@@ -6946,7 +6962,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info22">
       <property name="geometry">
        <rect>
-        <x>260</x>
+        <x>245</x>
         <y>60</y>
         <width>50</width>
         <height>30</height>
@@ -6956,9 +6972,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info31">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>5</x>
         <y>90</y>
-        <width>241</width>
+        <width>238</width>
         <height>30</height>
        </rect>
       </property>
@@ -6973,9 +6989,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info33">
       <property name="geometry">
        <rect>
-        <x>320</x>
+        <x>297</x>
         <y>90</y>
-        <width>31</width>
+        <width>30</width>
         <height>30</height>
        </rect>
       </property>
@@ -6983,9 +6999,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info34">
       <property name="geometry">
        <rect>
-        <x>359</x>
+        <x>330</x>
         <y>90</y>
-        <width>81</width>
+        <width>105</width>
         <height>30</height>
        </rect>
       </property>
@@ -6993,7 +7009,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info32">
       <property name="geometry">
        <rect>
-        <x>260</x>
+        <x>245</x>
         <y>90</y>
         <width>50</width>
         <height>30</height>
@@ -7003,9 +7019,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info41">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>5</x>
         <y>120</y>
-        <width>241</width>
+        <width>238</width>
         <height>30</height>
        </rect>
       </property>
@@ -7020,9 +7036,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info43">
       <property name="geometry">
        <rect>
-        <x>320</x>
+        <x>297</x>
         <y>120</y>
-        <width>31</width>
+        <width>30</width>
         <height>30</height>
        </rect>
       </property>
@@ -7030,9 +7046,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info44">
       <property name="geometry">
        <rect>
-        <x>359</x>
+        <x>330</x>
         <y>120</y>
-        <width>81</width>
+        <width>105</width>
         <height>30</height>
        </rect>
       </property>
@@ -7040,7 +7056,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info42">
       <property name="geometry">
        <rect>
-        <x>260</x>
+        <x>245</x>
         <y>120</y>
         <width>50</width>
         <height>30</height>
@@ -7050,9 +7066,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info51">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>5</x>
         <y>150</y>
-        <width>241</width>
+        <width>238</width>
         <height>30</height>
        </rect>
       </property>
@@ -7067,9 +7083,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info53">
       <property name="geometry">
        <rect>
-        <x>320</x>
+        <x>297</x>
         <y>150</y>
-        <width>31</width>
+        <width>30</width>
         <height>30</height>
        </rect>
       </property>
@@ -7077,9 +7093,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info54">
       <property name="geometry">
        <rect>
-        <x>359</x>
+        <x>330</x>
         <y>150</y>
-        <width>81</width>
+        <width>105</width>
         <height>30</height>
        </rect>
       </property>
@@ -7087,7 +7103,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info52">
       <property name="geometry">
        <rect>
-        <x>260</x>
+        <x>245</x>
         <y>150</y>
         <width>50</width>
         <height>30</height>
@@ -7097,9 +7113,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info61">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>5</x>
         <y>180</y>
-        <width>241</width>
+        <width>238</width>
         <height>30</height>
        </rect>
       </property>
@@ -7114,9 +7130,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info63">
       <property name="geometry">
        <rect>
-        <x>320</x>
+        <x>297</x>
         <y>180</y>
-        <width>31</width>
+        <width>30</width>
         <height>30</height>
        </rect>
       </property>
@@ -7124,9 +7140,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info64">
       <property name="geometry">
        <rect>
-        <x>359</x>
+        <x>330</x>
         <y>180</y>
-        <width>81</width>
+        <width>105</width>
         <height>30</height>
        </rect>
       </property>
@@ -7134,7 +7150,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info62">
       <property name="geometry">
        <rect>
-        <x>260</x>
+        <x>245</x>
         <y>180</y>
         <width>50</width>
         <height>30</height>
@@ -7144,9 +7160,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info71">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>5</x>
         <y>210</y>
-        <width>241</width>
+        <width>238</width>
         <height>30</height>
        </rect>
       </property>
@@ -7161,9 +7177,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info73">
       <property name="geometry">
        <rect>
-        <x>320</x>
+        <x>297</x>
         <y>210</y>
-        <width>31</width>
+        <width>30</width>
         <height>30</height>
        </rect>
       </property>
@@ -7171,9 +7187,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info74">
       <property name="geometry">
        <rect>
-        <x>359</x>
+        <x>330</x>
         <y>210</y>
-        <width>81</width>
+        <width>105</width>
         <height>30</height>
        </rect>
       </property>
@@ -7181,7 +7197,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info72">
       <property name="geometry">
        <rect>
-        <x>260</x>
+        <x>245</x>
         <y>210</y>
         <width>50</width>
         <height>30</height>
@@ -7191,9 +7207,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info81">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>5</x>
         <y>240</y>
-        <width>241</width>
+        <width>238</width>
         <height>30</height>
        </rect>
       </property>
@@ -7208,9 +7224,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info83">
       <property name="geometry">
        <rect>
-        <x>320</x>
+        <x>297</x>
         <y>240</y>
-        <width>31</width>
+        <width>30</width>
         <height>30</height>
        </rect>
       </property>
@@ -7218,9 +7234,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info84">
       <property name="geometry">
        <rect>
-        <x>359</x>
+        <x>330</x>
         <y>240</y>
-        <width>81</width>
+        <width>105</width>
         <height>30</height>
        </rect>
       </property>
@@ -7228,7 +7244,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info82">
       <property name="geometry">
        <rect>
-        <x>260</x>
+        <x>245</x>
         <y>240</y>
         <width>50</width>
         <height>30</height>
@@ -7238,9 +7254,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info91">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>5</x>
         <y>270</y>
-        <width>241</width>
+        <width>238</width>
         <height>30</height>
        </rect>
       </property>
@@ -7255,9 +7271,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info93">
       <property name="geometry">
        <rect>
-        <x>320</x>
+        <x>297</x>
         <y>270</y>
-        <width>31</width>
+        <width>30</width>
         <height>30</height>
        </rect>
       </property>
@@ -7265,9 +7281,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info94">
       <property name="geometry">
        <rect>
-        <x>359</x>
+        <x>330</x>
         <y>270</y>
-        <width>81</width>
+        <width>105</width>
         <height>30</height>
        </rect>
       </property>
@@ -7275,7 +7291,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info92">
       <property name="geometry">
        <rect>
-        <x>260</x>
+        <x>245</x>
         <y>270</y>
         <width>50</width>
         <height>30</height>
@@ -7285,9 +7301,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info101">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>5</x>
         <y>300</y>
-        <width>241</width>
+        <width>238</width>
         <height>30</height>
        </rect>
       </property>
@@ -7302,9 +7318,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info103">
       <property name="geometry">
        <rect>
-        <x>320</x>
+        <x>297</x>
         <y>300</y>
-        <width>31</width>
+        <width>30</width>
         <height>30</height>
        </rect>
       </property>
@@ -7312,9 +7328,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info104">
       <property name="geometry">
        <rect>
-        <x>359</x>
+        <x>330</x>
         <y>300</y>
-        <width>81</width>
+        <width>105</width>
         <height>30</height>
        </rect>
       </property>
@@ -7322,7 +7338,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="AF_info102">
       <property name="geometry">
        <rect>
-        <x>260</x>
+        <x>245</x>
         <y>300</y>
         <width>50</width>
         <height>30</height>
@@ -7350,7 +7366,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info21">
       <property name="geometry">
        <rect>
-        <x>225</x>
+        <x>220</x>
         <y>30</y>
         <width>140</width>
         <height>30</height>
@@ -7380,7 +7396,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info23">
       <property name="geometry">
        <rect>
-        <x>415</x>
+        <x>410</x>
         <y>30</y>
         <width>30</width>
         <height>30</height>
@@ -7390,7 +7406,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info22">
       <property name="geometry">
        <rect>
-        <x>365</x>
+        <x>360</x>
         <y>30</y>
         <width>50</width>
         <height>30</height>
@@ -7449,7 +7465,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QLabel" name="label_73">
       <property name="geometry">
        <rect>
-        <x>375</x>
+        <x>373</x>
         <y>10</y>
         <width>31</width>
         <height>16</height>
@@ -7462,7 +7478,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info41">
       <property name="geometry">
        <rect>
-        <x>225</x>
+        <x>220</x>
         <y>60</y>
         <width>140</width>
         <height>30</height>
@@ -7492,7 +7508,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info42">
       <property name="geometry">
        <rect>
-        <x>365</x>
+        <x>360</x>
         <y>60</y>
         <width>50</width>
         <height>30</height>
@@ -7502,7 +7518,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info43">
       <property name="geometry">
        <rect>
-        <x>415</x>
+        <x>410</x>
         <y>60</y>
         <width>30</width>
         <height>30</height>
@@ -7522,7 +7538,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info61">
       <property name="geometry">
        <rect>
-        <x>225</x>
+        <x>220</x>
         <y>90</y>
         <width>140</width>
         <height>30</height>
@@ -7552,7 +7568,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info62">
       <property name="geometry">
        <rect>
-        <x>365</x>
+        <x>360</x>
         <y>90</y>
         <width>50</width>
         <height>30</height>
@@ -7562,7 +7578,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info63">
       <property name="geometry">
        <rect>
-        <x>415</x>
+        <x>410</x>
         <y>90</y>
         <width>30</width>
         <height>30</height>
@@ -7582,7 +7598,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info81">
       <property name="geometry">
        <rect>
-        <x>225</x>
+        <x>220</x>
         <y>120</y>
         <width>140</width>
         <height>30</height>
@@ -7612,7 +7628,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info82">
       <property name="geometry">
        <rect>
-        <x>365</x>
+        <x>360</x>
         <y>120</y>
         <width>50</width>
         <height>30</height>
@@ -7622,7 +7638,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info83">
       <property name="geometry">
        <rect>
-        <x>415</x>
+        <x>410</x>
         <y>120</y>
         <width>30</width>
         <height>30</height>
@@ -7672,7 +7688,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info103">
       <property name="geometry">
        <rect>
-        <x>415</x>
+        <x>410</x>
         <y>150</y>
         <width>30</width>
         <height>30</height>
@@ -7682,7 +7698,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info102">
       <property name="geometry">
        <rect>
-        <x>365</x>
+        <x>360</x>
         <y>150</y>
         <width>50</width>
         <height>30</height>
@@ -7692,7 +7708,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info101">
       <property name="geometry">
        <rect>
-        <x>225</x>
+        <x>220</x>
         <y>150</y>
         <width>140</width>
         <height>30</height>
@@ -7732,7 +7748,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info123">
       <property name="geometry">
        <rect>
-        <x>415</x>
+        <x>410</x>
         <y>180</y>
         <width>30</width>
         <height>30</height>
@@ -7742,7 +7758,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info122">
       <property name="geometry">
        <rect>
-        <x>365</x>
+        <x>360</x>
         <y>180</y>
         <width>50</width>
         <height>30</height>
@@ -7752,7 +7768,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info121">
       <property name="geometry">
        <rect>
-        <x>225</x>
+        <x>220</x>
         <y>180</y>
         <width>140</width>
         <height>30</height>
@@ -7792,7 +7808,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info143">
       <property name="geometry">
        <rect>
-        <x>415</x>
+        <x>410</x>
         <y>210</y>
         <width>30</width>
         <height>30</height>
@@ -7802,7 +7818,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info142">
       <property name="geometry">
        <rect>
-        <x>365</x>
+        <x>360</x>
         <y>210</y>
         <width>50</width>
         <height>30</height>
@@ -7812,7 +7828,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info141">
       <property name="geometry">
        <rect>
-        <x>225</x>
+        <x>220</x>
         <y>210</y>
         <width>140</width>
         <height>30</height>
@@ -7852,7 +7868,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info163">
       <property name="geometry">
        <rect>
-        <x>415</x>
+        <x>410</x>
         <y>240</y>
         <width>30</width>
         <height>30</height>
@@ -7862,7 +7878,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info162">
       <property name="geometry">
        <rect>
-        <x>365</x>
+        <x>360</x>
         <y>240</y>
         <width>50</width>
         <height>30</height>
@@ -7872,7 +7888,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info161">
       <property name="geometry">
        <rect>
-        <x>225</x>
+        <x>220</x>
         <y>240</y>
         <width>140</width>
         <height>30</height>
@@ -7912,7 +7928,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info183">
       <property name="geometry">
        <rect>
-        <x>415</x>
+        <x>410</x>
         <y>270</y>
         <width>30</width>
         <height>30</height>
@@ -7922,7 +7938,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info182">
       <property name="geometry">
        <rect>
-        <x>365</x>
+        <x>360</x>
         <y>270</y>
         <width>50</width>
         <height>30</height>
@@ -7932,7 +7948,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info181">
       <property name="geometry">
        <rect>
-        <x>225</x>
+        <x>220</x>
         <y>270</y>
         <width>140</width>
         <height>30</height>
@@ -7955,7 +7971,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QLabel" name="label_74">
       <property name="geometry">
        <rect>
-        <x>415</x>
+        <x>412</x>
         <y>10</y>
         <width>31</width>
         <height>16</height>
@@ -7968,7 +7984,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info202">
       <property name="geometry">
        <rect>
-        <x>365</x>
+        <x>360</x>
         <y>300</y>
         <width>50</width>
         <height>30</height>
@@ -7978,7 +7994,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info201">
       <property name="geometry">
        <rect>
-        <x>225</x>
+        <x>220</x>
         <y>300</y>
         <width>140</width>
         <height>30</height>
@@ -7998,7 +8014,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info203">
       <property name="geometry">
        <rect>
-        <x>415</x>
+        <x>410</x>
         <y>300</y>
         <width>30</width>
         <height>30</height>
@@ -8028,7 +8044,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info222">
       <property name="geometry">
        <rect>
-        <x>365</x>
+        <x>360</x>
         <y>330</y>
         <width>50</width>
         <height>30</height>
@@ -8038,7 +8054,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info221">
       <property name="geometry">
        <rect>
-        <x>225</x>
+        <x>220</x>
         <y>330</y>
         <width>140</width>
         <height>30</height>
@@ -8058,7 +8074,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info223">
       <property name="geometry">
        <rect>
-        <x>415</x>
+        <x>410</x>
         <y>330</y>
         <width>30</width>
         <height>30</height>
@@ -8108,7 +8124,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info243">
       <property name="geometry">
        <rect>
-        <x>415</x>
+        <x>410</x>
         <y>360</y>
         <width>30</width>
         <height>30</height>
@@ -8118,7 +8134,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info242">
       <property name="geometry">
        <rect>
-        <x>365</x>
+        <x>360</x>
         <y>360</y>
         <width>50</width>
         <height>30</height>
@@ -8138,7 +8154,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QTextEdit" name="OIS_info241">
       <property name="geometry">
        <rect>
-        <x>225</x>
+        <x>220</x>
         <y>360</y>
         <width>140</width>
         <height>30</height>
@@ -11630,7 +11646,7 @@ p, li { white-space: pre-wrap; }
       </rect>
      </property>
      <property name="title">
-      <string>Value check ([u]char/[u]short/[u]int/2dcm/4dcm/float/double)</string>
+      <string>           Value Check ([u]char/[u]short/[u]int/2dcm/4dcm/float/double)</string>
      </property>
      <widget class="QTextEdit" name="sData_item12">
       <property name="geometry">
@@ -11662,7 +11678,7 @@ p, li { white-space: pre-wrap; }
      <widget class="QLabel" name="label_146">
       <property name="geometry">
        <rect>
-        <x>70</x>
+        <x>100</x>
         <y>15</y>
         <width>54</width>
         <height>12</height>
@@ -12723,6 +12739,22 @@ p, li { white-space: pre-wrap; }
        </rect>
       </property>
      </widget>
+     <widget class="QPushButton" name="pushButton_dump_value">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>0</y>
+        <width>61</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Dump_TXT</string>
+      </property>
+      <property name="checkable">
+       <bool>false</bool>
+      </property>
+     </widget>
     </widget>
     <zorder>groupBox_23</zorder>
     <zorder>same43</zorder>
@@ -13011,14 +13043,14 @@ p, li { white-space: pre-wrap; }
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup_17"/>
-  <buttongroup name="buttonGroup_3"/>
-  <buttongroup name="buttonGroup_16"/>
   <buttongroup name="buttonGroup_13"/>
-  <buttongroup name="buttonGroup_2"/>
-  <buttongroup name="buttonGroup"/>
-  <buttongroup name="buttonGroup_12"/>
   <buttongroup name="buttonGroup_18"/>
+  <buttongroup name="buttonGroup_3"/>
+  <buttongroup name="buttonGroup"/>
+  <buttongroup name="buttonGroup_16"/>
+  <buttongroup name="buttonGroup_12"/>
+  <buttongroup name="buttonGroup_17"/>
+  <buttongroup name="buttonGroup_2"/>
   <buttongroup name="buttonGroup_15"/>
  </buttongroups>
 </ui>
