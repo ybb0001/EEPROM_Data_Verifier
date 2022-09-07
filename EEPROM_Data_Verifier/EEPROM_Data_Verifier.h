@@ -98,6 +98,8 @@ private:
 	int XiaoMi_Seg_Check();
 	int bin_Area_Check();
 	int duplicate_Check();
+	int value_duplicate_Check();
+
 	int value_Data_Parse();
 
 	int Reserved_Check();

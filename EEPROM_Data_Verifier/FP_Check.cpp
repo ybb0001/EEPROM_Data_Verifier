@@ -40,6 +40,7 @@ typedef struct {
 AF_Code_Spec_Type af_Code_Spec;
 
 void load_Spec(int x) {
+
 	FP_log.open(".\\FP_Check_Log.txt");
 	string color[3] = { "5100","4000","3100" };
 	log_type = x;
@@ -218,16 +219,16 @@ int QC_LSC_FP_Check(int LSC[13][17][4]) {
 
 	///////////////  R & B Swap check 
 	int xx = 0;
-	if (LSC[0][0][0] * LSC[0][0][2] > LSC[0][0][3] * LSC[0][0][1])
+	if (LSC[0][0][0] * LSC[0][0][2]*0.95 > LSC[0][0][3] * LSC[0][0][1])
 		xx++;
-	if (LSC[0][16][0] * LSC[0][16][2] > LSC[0][16][3] * LSC[0][16][1])
+	if (LSC[0][16][0] * LSC[0][16][2] * 0.95 > LSC[0][16][3] * LSC[0][16][1])
 		xx++;
-	if (LSC[12][0][0] * LSC[12][0][2] > LSC[12][0][3] * LSC[12][0][1])
+	if (LSC[12][0][0] * LSC[12][0][2] * 0.95 > LSC[12][0][3] * LSC[12][0][1])
 		xx++;
-	if (LSC[12][16][0] * LSC[12][16][2] > LSC[12][16][3] * LSC[12][16][1])
+	if (LSC[12][16][0] * LSC[12][16][2] * 0.95 > LSC[12][16][3] * LSC[12][16][1])
 		xx++;
 
-	if (xx > 3&& awb_golden_check==1) {
+	if (xx > 2&& awb_golden_check==1) {
 		ret |= 4;
 		FP_log << " QC LSC R Gr Gb B Sequence NG!" << endl;
 	}
@@ -919,7 +920,7 @@ int drift_FP_Check(int shift_Data[2][21], int cnt, int step) {
 	int ret = 0, peak_cnt = 0;
 	for (int k = 0; k < 2; k++) {
 		peak_cnt = 0;
-		for (int i = 1; i < cnt - 1; i++) {
+		for (int i = 2; i < cnt - 2; i++) {
 			if (shift_Data[k][i + 1] > shift_Data[k][i] && shift_Data[k][i - 1]>shift_Data[k][i])
 				peak_cnt++;
 			if (shift_Data[k][i + 1] < shift_Data[k][i] && shift_Data[k][i - 1] < shift_Data[k][i])

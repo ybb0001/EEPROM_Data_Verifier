@@ -24,10 +24,10 @@ int DCC[6][8], checkSum_addr[30][4], selection = 0,SR_Spec[2][2];
 int AF_Data[6][3],SFR_Data[50],LCC_CrossTalk[3];
 char chk[2], Fuse_ID[30];  int fuse_ID_Length = 16;
 string global_STR, shift_Item[4], cross_Item[3], akm_cross_Item[3], AF_Item[6][5],AF_info_Item[10][4],SFR_Item[4][4],ZOOM_Item[3][3],Magnification[9];
-string PDAF_info_Item[18][3],Gmap_Item[12][3],PD_Item[14][3], OIS_info_Item[30][3],OIS_data_Item[8][3], AA_Item[18],sData_Item[20][5];
+string PDAF_info_Item[18][3],Gmap_Item[12][3],PD_Item[14][3], OIS_info_Item[30][4],OIS_data_Item[8][3], AA_Item[18],sData_Item[20][5];
 int HL = 0, checkDivisor = 0, customer_Data_END = 0, customer_end = 0, first_Pixel = 0, mode = 0, OK=0, NG=0;
 float QSC_Data[4][4][12][16] = { 0 };
-int reserved_check = 1;
+int reserved_check = 1,duplicate_value_NG_ratio=50;
 
 extern void EEPMap_Out();
 extern void set_Map_inf(string info, string ref, int addr, data_Type t);
@@ -39,8 +39,13 @@ typedef struct {
 	string hex = "0";
 	int dec = 0;
 }Panel_Data;
-
 Panel_Data Flag[2], noData;
+
+typedef struct {
+	string item_name = "";
+	int hash[1010] = {0};
+}Value_Hs;
+Value_Hs value_Hash[80];
 
 typedef struct {
 	string info = "", ref=" ";
@@ -707,79 +712,99 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 	ui.OIS_info11->setText(OIS_info_Item[0][0].c_str());
 	ui.OIS_info12->setText(OIS_info_Item[0][1].c_str());
 	ui.OIS_info13->setText(OIS_info_Item[0][2].c_str());
+	ui.OIS_info14->setText(OIS_info_Item[0][3].c_str());
 	ui.OIS_info21->setText(OIS_info_Item[1][0].c_str());
 	ui.OIS_info22->setText(OIS_info_Item[1][1].c_str());
 	ui.OIS_info23->setText(OIS_info_Item[1][2].c_str());
+	ui.OIS_info24->setText(OIS_info_Item[1][3].c_str());
 	ui.OIS_info31->setText(OIS_info_Item[2][0].c_str());
 	ui.OIS_info32->setText(OIS_info_Item[2][1].c_str());
 	ui.OIS_info33->setText(OIS_info_Item[2][2].c_str());
+	ui.OIS_info34->setText(OIS_info_Item[2][3].c_str());
 	ui.OIS_info41->setText(OIS_info_Item[3][0].c_str());
 	ui.OIS_info42->setText(OIS_info_Item[3][1].c_str());
 	ui.OIS_info43->setText(OIS_info_Item[3][2].c_str());
+	ui.OIS_info44->setText(OIS_info_Item[3][3].c_str());
 	ui.OIS_info51->setText(OIS_info_Item[4][0].c_str());
 	ui.OIS_info52->setText(OIS_info_Item[4][1].c_str());
 	ui.OIS_info53->setText(OIS_info_Item[4][2].c_str());
+	ui.OIS_info54->setText(OIS_info_Item[4][3].c_str());
 	ui.OIS_info61->setText(OIS_info_Item[5][0].c_str());
 	ui.OIS_info62->setText(OIS_info_Item[5][1].c_str());
 	ui.OIS_info63->setText(OIS_info_Item[5][2].c_str());
+	ui.OIS_info64->setText(OIS_info_Item[5][3].c_str());
 	ui.OIS_info71->setText(OIS_info_Item[6][0].c_str());
 	ui.OIS_info72->setText(OIS_info_Item[6][1].c_str());
 	ui.OIS_info73->setText(OIS_info_Item[6][2].c_str());
+	ui.OIS_info74->setText(OIS_info_Item[6][3].c_str());
 	ui.OIS_info81->setText(OIS_info_Item[7][0].c_str());
 	ui.OIS_info82->setText(OIS_info_Item[7][1].c_str());
 	ui.OIS_info83->setText(OIS_info_Item[7][2].c_str());
+	ui.OIS_info84->setText(OIS_info_Item[7][3].c_str());
 	ui.OIS_info91->setText(OIS_info_Item[8][0].c_str());
 	ui.OIS_info92->setText(OIS_info_Item[8][1].c_str());
 	ui.OIS_info93->setText(OIS_info_Item[8][2].c_str());
+	ui.OIS_info94->setText(OIS_info_Item[8][3].c_str());
 	ui.OIS_info101->setText(OIS_info_Item[9][0].c_str());
 	ui.OIS_info102->setText(OIS_info_Item[9][1].c_str());
 	ui.OIS_info103->setText(OIS_info_Item[9][2].c_str());
+	ui.OIS_info104->setText(OIS_info_Item[9][3].c_str());
 	ui.OIS_info111->setText(OIS_info_Item[10][0].c_str());
 	ui.OIS_info112->setText(OIS_info_Item[10][1].c_str());
 	ui.OIS_info113->setText(OIS_info_Item[10][2].c_str());
+	ui.OIS_info114->setText(OIS_info_Item[10][3].c_str());
 	ui.OIS_info121->setText(OIS_info_Item[11][0].c_str());
 	ui.OIS_info122->setText(OIS_info_Item[11][1].c_str());
 	ui.OIS_info123->setText(OIS_info_Item[11][2].c_str());
+	ui.OIS_info124->setText(OIS_info_Item[11][3].c_str());
 	ui.OIS_info131->setText(OIS_info_Item[12][0].c_str());
 	ui.OIS_info132->setText(OIS_info_Item[12][1].c_str());
 	ui.OIS_info133->setText(OIS_info_Item[12][2].c_str());
+	ui.OIS_info134->setText(OIS_info_Item[12][3].c_str());
 	ui.OIS_info141->setText(OIS_info_Item[13][0].c_str());
 	ui.OIS_info142->setText(OIS_info_Item[13][1].c_str());
 	ui.OIS_info143->setText(OIS_info_Item[13][2].c_str());
+	ui.OIS_info144->setText(OIS_info_Item[13][3].c_str());
 	ui.OIS_info151->setText(OIS_info_Item[14][0].c_str());
 	ui.OIS_info152->setText(OIS_info_Item[14][1].c_str());
 	ui.OIS_info153->setText(OIS_info_Item[14][2].c_str());
+	ui.OIS_info154->setText(OIS_info_Item[14][3].c_str());
 	ui.OIS_info161->setText(OIS_info_Item[15][0].c_str());
 	ui.OIS_info162->setText(OIS_info_Item[15][1].c_str());
 	ui.OIS_info163->setText(OIS_info_Item[15][2].c_str());
+	ui.OIS_info164->setText(OIS_info_Item[15][3].c_str());
 	ui.OIS_info171->setText(OIS_info_Item[16][0].c_str());
 	ui.OIS_info172->setText(OIS_info_Item[16][1].c_str());
 	ui.OIS_info173->setText(OIS_info_Item[16][2].c_str());
+	ui.OIS_info174->setText(OIS_info_Item[16][3].c_str());
 	ui.OIS_info181->setText(OIS_info_Item[17][0].c_str());
 	ui.OIS_info182->setText(OIS_info_Item[17][1].c_str());
 	ui.OIS_info183->setText(OIS_info_Item[17][2].c_str());
+	ui.OIS_info184->setText(OIS_info_Item[17][3].c_str());
 	ui.OIS_info191->setText(OIS_info_Item[18][0].c_str());
 	ui.OIS_info192->setText(OIS_info_Item[18][1].c_str());
 	ui.OIS_info193->setText(OIS_info_Item[18][2].c_str());
+	ui.OIS_info194->setText(OIS_info_Item[18][3].c_str());
 	ui.OIS_info201->setText(OIS_info_Item[19][0].c_str());
 	ui.OIS_info202->setText(OIS_info_Item[19][1].c_str());
 	ui.OIS_info203->setText(OIS_info_Item[19][2].c_str());
+	ui.OIS_info204->setText(OIS_info_Item[19][3].c_str());
 	ui.OIS_info211->setText(OIS_info_Item[20][0].c_str());
 	ui.OIS_info212->setText(OIS_info_Item[20][1].c_str());
 	ui.OIS_info213->setText(OIS_info_Item[20][2].c_str());
-	ui.OIS_info211->setText(OIS_info_Item[20][0].c_str());
-	ui.OIS_info212->setText(OIS_info_Item[20][1].c_str());
-	ui.OIS_info213->setText(OIS_info_Item[20][2].c_str());
+	ui.OIS_info214->setText(OIS_info_Item[20][3].c_str());
 	ui.OIS_info221->setText(OIS_info_Item[21][0].c_str());
 	ui.OIS_info222->setText(OIS_info_Item[21][1].c_str());
 	ui.OIS_info223->setText(OIS_info_Item[21][2].c_str());
+	ui.OIS_info224->setText(OIS_info_Item[21][3].c_str());
 	ui.OIS_info231->setText(OIS_info_Item[22][0].c_str());
 	ui.OIS_info232->setText(OIS_info_Item[22][1].c_str());
 	ui.OIS_info233->setText(OIS_info_Item[22][2].c_str());
+	ui.OIS_info234->setText(OIS_info_Item[22][3].c_str());
 	ui.OIS_info241->setText(OIS_info_Item[23][0].c_str());
 	ui.OIS_info242->setText(OIS_info_Item[23][1].c_str());
 	ui.OIS_info243->setText(OIS_info_Item[23][2].c_str());
-
+	ui.OIS_info244->setText(OIS_info_Item[23][3].c_str());
 
 	//////////////PD data info
 	ui.DCC11->setText(PD_Item[0][0].c_str());
@@ -1527,6 +1552,10 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 
 void EEPROM_Data_Verifier::load_EEPROM_Address() {
 
+	for (int i = 0; i < 80; i++) {
+		memset(value_Hash[i].hash, 0, sizeof(value_Hash[i].hash));
+		value_Hash[i].item_name = "";
+	}
 	set_ini_Path(EEPROM_Map);
 
 	TCHAR lpTexts[64]; int temp = 0; string str;
@@ -1632,7 +1661,7 @@ void EEPROM_Data_Verifier::load_EEPROM_Address() {
 		}
 
 	for (int i = 0; i < 24; i++)
-		for (int k = 0; k < 3; k++) {
+		for (int k = 0; k < 4; k++) {
 			string item = "OIS_info" + to_string(i + 1) + to_string(k + 1);
 			GetPrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
 			OIS_info_Item[i][k] = CT2A(lpTexts);
@@ -1794,6 +1823,7 @@ void EEPROM_Data_Verifier::load_EEPROM_Address() {
 	DataFormat  = GetPrivateProfileInt(_T("EEPROM_Set"), TEXT("DataFormat"), DataFormat, CA2CT(EEPROM_Map.c_str()));
 	selection = GetPrivateProfileInt(_T("EEPROM_Set"), TEXT("selection"), selection, CA2CT(EEPROM_Map.c_str()));
 	first_Pixel = GetPrivateProfileInt(_T("EEPROM_Set"), TEXT("first_Pixel"), 0, CA2CT(EEPROM_Map.c_str()));
+	duplicate_value_NG_ratio=GetPrivateProfileInt(_T("Spec_Set"), TEXT("duplicate_value_NG_ratio"), 50, CA2CT(EEPROM_Map.c_str()));
 
 	LCC_CrossTalk[0] = GetPrivateProfileInt(_T("Spec_Set"), TEXT("LCC_CrossTalk_noMove"), 4, CA2CT(EEPROM_Map.c_str()));
 	LCC_CrossTalk[1] = GetPrivateProfileInt(_T("Spec_Set"), TEXT("LCC_CrossTalk_MoveMin"), 12, CA2CT(EEPROM_Map.c_str()));
@@ -2293,75 +2323,122 @@ void EEPROM_Data_Verifier::load_Panel() {
 	OIS_info_Item[0][0] = string((const char *)ui.OIS_info11->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[0][1] = string((const char *)ui.OIS_info12->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[0][2] = string((const char *)ui.OIS_info13->document()->toPlainText().toLocal8Bit());
+	OIS_info_Item[0][3] = string((const char *)ui.OIS_info14->document()->toPlainText().toLocal8Bit());
+
 	OIS_info_Item[1][0] = string((const char *)ui.OIS_info21->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[1][1] = string((const char *)ui.OIS_info22->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[1][2] = string((const char *)ui.OIS_info23->document()->toPlainText().toLocal8Bit());
+	OIS_info_Item[1][3] = string((const char *)ui.OIS_info24->document()->toPlainText().toLocal8Bit());
+
 	OIS_info_Item[2][0] = string((const char *)ui.OIS_info31->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[2][1] = string((const char *)ui.OIS_info32->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[2][2] = string((const char *)ui.OIS_info33->document()->toPlainText().toLocal8Bit());
+	OIS_info_Item[2][3] = string((const char *)ui.OIS_info34->document()->toPlainText().toLocal8Bit());
+
 	OIS_info_Item[3][0] = string((const char *)ui.OIS_info41->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[3][1] = string((const char *)ui.OIS_info42->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[3][2] = string((const char *)ui.OIS_info43->document()->toPlainText().toLocal8Bit());
+	OIS_info_Item[3][3] = string((const char *)ui.OIS_info44->document()->toPlainText().toLocal8Bit());
+
 	OIS_info_Item[4][0] = string((const char *)ui.OIS_info51->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[4][1] = string((const char *)ui.OIS_info52->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[4][2] = string((const char *)ui.OIS_info53->document()->toPlainText().toLocal8Bit());
+	OIS_info_Item[4][3] = string((const char *)ui.OIS_info54->document()->toPlainText().toLocal8Bit());
+
 	OIS_info_Item[5][0] = string((const char *)ui.OIS_info61->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[5][1] = string((const char *)ui.OIS_info62->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[5][2] = string((const char *)ui.OIS_info63->document()->toPlainText().toLocal8Bit());
+	OIS_info_Item[5][3] = string((const char *)ui.OIS_info64->document()->toPlainText().toLocal8Bit());
+
 	OIS_info_Item[6][0] = string((const char *)ui.OIS_info71->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[6][1] = string((const char *)ui.OIS_info72->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[6][2] = string((const char *)ui.OIS_info73->document()->toPlainText().toLocal8Bit());
+	OIS_info_Item[6][3] = string((const char *)ui.OIS_info74->document()->toPlainText().toLocal8Bit());
+
 	OIS_info_Item[7][0] = string((const char *)ui.OIS_info81->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[7][1] = string((const char *)ui.OIS_info82->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[7][2] = string((const char *)ui.OIS_info83->document()->toPlainText().toLocal8Bit());
+	OIS_info_Item[7][3] = string((const char *)ui.OIS_info84->document()->toPlainText().toLocal8Bit());
+
 	OIS_info_Item[8][0] = string((const char *)ui.OIS_info91->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[8][1] = string((const char *)ui.OIS_info92->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[8][2] = string((const char *)ui.OIS_info93->document()->toPlainText().toLocal8Bit());
+	OIS_info_Item[8][3] = string((const char *)ui.OIS_info94->document()->toPlainText().toLocal8Bit());
+
 	OIS_info_Item[9][0] = string((const char *)ui.OIS_info101->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[9][1] = string((const char *)ui.OIS_info102->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[9][2] = string((const char *)ui.OIS_info103->document()->toPlainText().toLocal8Bit());
+	OIS_info_Item[9][3] = string((const char *)ui.OIS_info104->document()->toPlainText().toLocal8Bit());
+
 	OIS_info_Item[10][0] = string((const char *)ui.OIS_info111->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[10][1] = string((const char *)ui.OIS_info112->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[10][2] = string((const char *)ui.OIS_info113->document()->toPlainText().toLocal8Bit());
+	OIS_info_Item[10][3] = string((const char *)ui.OIS_info114->document()->toPlainText().toLocal8Bit());
+
 	OIS_info_Item[11][0] = string((const char *)ui.OIS_info121->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[11][1] = string((const char *)ui.OIS_info122->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[11][2] = string((const char *)ui.OIS_info123->document()->toPlainText().toLocal8Bit());
+	OIS_info_Item[11][3] = string((const char *)ui.OIS_info124->document()->toPlainText().toLocal8Bit());
+
 	OIS_info_Item[12][0] = string((const char *)ui.OIS_info131->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[12][1] = string((const char *)ui.OIS_info132->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[12][2] = string((const char *)ui.OIS_info133->document()->toPlainText().toLocal8Bit());
+	OIS_info_Item[12][3] = string((const char *)ui.OIS_info134->document()->toPlainText().toLocal8Bit());
+
 	OIS_info_Item[13][0] = string((const char *)ui.OIS_info141->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[13][1] = string((const char *)ui.OIS_info142->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[13][2] = string((const char *)ui.OIS_info143->document()->toPlainText().toLocal8Bit());
+	OIS_info_Item[13][3] = string((const char *)ui.OIS_info144->document()->toPlainText().toLocal8Bit());
+
 	OIS_info_Item[14][0] = string((const char *)ui.OIS_info151->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[14][1] = string((const char *)ui.OIS_info152->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[14][2] = string((const char *)ui.OIS_info153->document()->toPlainText().toLocal8Bit());
+	OIS_info_Item[14][3] = string((const char *)ui.OIS_info154->document()->toPlainText().toLocal8Bit());
+
 	OIS_info_Item[15][0] = string((const char *)ui.OIS_info161->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[15][1] = string((const char *)ui.OIS_info162->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[15][2] = string((const char *)ui.OIS_info163->document()->toPlainText().toLocal8Bit());
+	OIS_info_Item[15][3] = string((const char *)ui.OIS_info164->document()->toPlainText().toLocal8Bit());
+
 	OIS_info_Item[16][0] = string((const char *)ui.OIS_info171->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[16][1] = string((const char *)ui.OIS_info172->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[16][2] = string((const char *)ui.OIS_info173->document()->toPlainText().toLocal8Bit());
+	OIS_info_Item[16][3] = string((const char *)ui.OIS_info174->document()->toPlainText().toLocal8Bit());
+
 	OIS_info_Item[17][0] = string((const char *)ui.OIS_info181->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[17][1] = string((const char *)ui.OIS_info182->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[17][2] = string((const char *)ui.OIS_info183->document()->toPlainText().toLocal8Bit());
+	OIS_info_Item[17][3] = string((const char *)ui.OIS_info184->document()->toPlainText().toLocal8Bit());
+
 	OIS_info_Item[18][0] = string((const char *)ui.OIS_info191->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[18][1] = string((const char *)ui.OIS_info192->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[18][2] = string((const char *)ui.OIS_info193->document()->toPlainText().toLocal8Bit());
+	OIS_info_Item[18][3] = string((const char *)ui.OIS_info194->document()->toPlainText().toLocal8Bit());
+
 	OIS_info_Item[19][0] = string((const char *)ui.OIS_info201->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[19][1] = string((const char *)ui.OIS_info202->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[19][2] = string((const char *)ui.OIS_info203->document()->toPlainText().toLocal8Bit());
+	OIS_info_Item[19][3] = string((const char *)ui.OIS_info204->document()->toPlainText().toLocal8Bit());
+
 	OIS_info_Item[20][0] = string((const char *)ui.OIS_info211->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[20][1] = string((const char *)ui.OIS_info212->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[20][2] = string((const char *)ui.OIS_info213->document()->toPlainText().toLocal8Bit());
+	OIS_info_Item[20][3] = string((const char *)ui.OIS_info214->document()->toPlainText().toLocal8Bit());
+
 	OIS_info_Item[21][0] = string((const char *)ui.OIS_info221->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[21][1] = string((const char *)ui.OIS_info222->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[21][2] = string((const char *)ui.OIS_info223->document()->toPlainText().toLocal8Bit());
+	OIS_info_Item[21][3] = string((const char *)ui.OIS_info224->document()->toPlainText().toLocal8Bit());
+
 	OIS_info_Item[22][0] = string((const char *)ui.OIS_info231->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[22][1] = string((const char *)ui.OIS_info232->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[22][2] = string((const char *)ui.OIS_info233->document()->toPlainText().toLocal8Bit());
+	OIS_info_Item[22][3] = string((const char *)ui.OIS_info234->document()->toPlainText().toLocal8Bit());
+
 	OIS_info_Item[23][0] = string((const char *)ui.OIS_info241->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[23][1] = string((const char *)ui.OIS_info242->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[23][2] = string((const char *)ui.OIS_info243->document()->toPlainText().toLocal8Bit());
+	OIS_info_Item[23][3] = string((const char *)ui.OIS_info244->document()->toPlainText().toLocal8Bit());
 
 	///////////////////DCC_Data
 	PD_Item[0][0] = string((const char *)ui.DCC11->document()->toPlainText().toLocal8Bit());
@@ -3132,7 +3209,7 @@ void EEPROM_Data_Verifier::save_EEPROM_Address() {
 		}
 
 	for (int i = 0; i < 24; i++)
-		for (int k = 0; k < 3; k++) {
+		for (int k = 0; k < 4; k++) {
 			string item = "OIS_info" + to_string(i + 1) + to_string(k + 1);
 			WritePrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), CA2CT(OIS_info_Item[i][k].c_str()), CA2CT(EEPROM_Map.c_str()));
 		}
@@ -4009,6 +4086,9 @@ int EEPROM_Data_Verifier::drift_Parse() {
 			}
 		}
 		ret = drift_FP_Check(shift_Data, point, step);
+		if (ret > 0) {
+			ui.log->insertPlainText("drift cal data FP NG!\n");
+		}
 		fout << endl;
 	}
 	return ret;
@@ -4672,6 +4752,8 @@ int EEPROM_Data_Verifier::af_Parse() {
 	int ret = 0;	
 	for (int i = 0; i < 6; i++) {
 		if (AF_Item[i][1].length()>1) {
+			
+			value_Hash[i].item_name = AF_Item[i][0];
 
 			int e = EEPMap_Data_add(2,AF_Item[i][1], AF_Item[i][0]," ", AF_Code);
 			if (HL == 0) {
@@ -4680,35 +4762,13 @@ int EEPROM_Data_Verifier::af_Parse() {
 			else {
 				AF_Data[i][0] = DecData[e] * 256 + DecData[e + 1];
 			}
+			value_Hash[i].hash[AF_Data[i][0]%1009]++;
 			fout << AF_Item[i][0] << ":	" << AF_Data[i][0] << endl;
 		}
 	}
 	ret = AF_FP_Check(AF_Data);
 	if (ret > 0)
 		ui.log->insertPlainText("AF Code Spec Check NG!\n");
-
-	///////////////////// Long INFO check
-	//for (int i = 0; i < 10; i++) {
-	//	if (AF_info_Item[i][1].length()>1) { //各种字节长度一并检查
-	//		string txtout = "Long Info item" + to_string(i + 1);
-	//		txtout += ": ";
-	//		fout << txtout.c_str();
-	//		unsigned int start = unstringHex2int(AF_info_Item[i][1]);
-	//		unsigned int size = unstringHex2int(AF_info_Item[i][2]);
-	//		string value;
-	//		for (int i = start; i < (start + size); i++) {
-	//			value += D[i][0];
-	//			value += D[i][1];
-	//		}
-	//		fout << value.c_str() << endl;
-	//		if (strcmp(value.c_str(), AF_info_Item[i][3].c_str()) != 0) {
-	//			string log_out = "Long Info item" + to_string(i + 1);
-	//			log_out += " Value NG!\n";
-	//			ui.log->insertPlainText(log_out.c_str());
-	//			ret |= 2;
-	//		}
-	//	}
-	//}
 
 	fout << endl;
 
@@ -5206,6 +5266,9 @@ void EEPROM_Data_Verifier::MTK_AWB_Parse(int group) {
 	MTK_AWB[group].AWB[0] = DecData[H] * 256 + DecData[H + 1];
 	fout << item << " :	" << MTK_AWB[group].AWB[0] << endl;
 
+	value_Hash[8].item_name = item;
+	value_Hash[8].hash[MTK_AWB[group].AWB[0] % 1009]++;
+
 	item = color + "_Gr";
 	GetPrivateProfileString(TEXT("MTK"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
 	s = CT2A(lpTexts);
@@ -5213,6 +5276,9 @@ void EEPROM_Data_Verifier::MTK_AWB_Parse(int group) {
 	map_Push(H + 1, item + " L", "", MTK_AWB_Type);
 	MTK_AWB[group].AWB[1] = DecData[H] * 256 + DecData[H + 1];
 	fout << item << " :	" << MTK_AWB[group].AWB[1] << endl;
+
+	value_Hash[9].item_name = item;
+	value_Hash[9].hash[MTK_AWB[group].AWB[1] % 1009]++;
 
 	item = color + "_Gb";
 	GetPrivateProfileString(TEXT("MTK"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
@@ -5222,6 +5288,9 @@ void EEPROM_Data_Verifier::MTK_AWB_Parse(int group) {
 	MTK_AWB[group].AWB[2] = DecData[H] * 256 + DecData[H + 1];
 	fout << item << " :	" << MTK_AWB[group].AWB[2] << endl;
 
+	value_Hash[10].item_name = item;
+	value_Hash[10].hash[MTK_AWB[group].AWB[2] % 1009]++;
+
 	item = color + "_B";
 	GetPrivateProfileString(TEXT("MTK"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
 	s = CT2A(lpTexts);
@@ -5229,6 +5298,9 @@ void EEPROM_Data_Verifier::MTK_AWB_Parse(int group) {
 	map_Push(H + 1, item + " L", "", MTK_AWB_Type);
 	MTK_AWB[group].AWB[3] = DecData[H] * 256 + DecData[H + 1];
 	fout << item << " :	" << MTK_AWB[group].AWB[3] << endl;
+
+	value_Hash[11].item_name = item;
+	value_Hash[11].hash[MTK_AWB[group].AWB[3] % 1009]++;
 
 	/////////////////////////////////// Golden
 	item = color + "_Golden_R";
@@ -5289,6 +5361,7 @@ void EEPROM_Data_Verifier::LSI_AWB_Parse(int group) {
 	H = marking_Hex2int(s, item , "", LSI_AWB_Type);
 	LSI_AWB[group].AWB[0] = DecData[H] + DecData[H + 1]*256;
 	fout << item << " :	" << LSI_AWB[group].AWB[0] << endl;
+
 
 	item = color + "_Gr";
 	GetPrivateProfileString(TEXT("LSI"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
@@ -5362,6 +5435,9 @@ void EEPROM_Data_Verifier::XiaoMi_AWB_Parse(int group) {
 	XIAOMI_AWB_Data.AWB[0] = DecData[H] * 256 + DecData[H + 1];
 	fout << item << " :	" << XIAOMI_AWB_Data.AWB[0] << endl;
 
+	value_Hash[6].item_name = item;
+	value_Hash[6].hash[XIAOMI_AWB_Data.AWB[0]%1009]++;
+
 	item = color + "B/Gr Ratio";
 	GetPrivateProfileString(TEXT("XIAOMI"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
 	s = CT2A(lpTexts);
@@ -5369,6 +5445,9 @@ void EEPROM_Data_Verifier::XiaoMi_AWB_Parse(int group) {
 	map_Push(H + 1, item + " L", "", VIVO_AWB);
 	XIAOMI_AWB_Data.AWB[1] = DecData[H] * 256 + DecData[H + 1];
 	fout << item << " :	" << XIAOMI_AWB_Data.AWB[1] << endl;
+
+	value_Hash[7].item_name = item;
+	value_Hash[7].hash[XIAOMI_AWB_Data.AWB[1] % 1009]++;
 
 	item = color + "Gb/Gr Ratio";
 	GetPrivateProfileString(TEXT("XIAOMI"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
@@ -5480,6 +5559,7 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 						string s = OIS_info_Item[i][0] + " Data in 0x" + OIS_info_Item[i][1] + " value NG!" + '\n';
 						ui.log->insertPlainText(s.c_str());			
 					}
+
 				}
 				if (d == 2) {
 					c = short_Out(e, HL);
@@ -5519,6 +5599,26 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 				}
 
 				fout << OIS_info_Item[i][0] << ":	" << c << endl;
+				//////////////////
+				if (OIS_info_Item[i][3].length() > 1) {
+					unsigned int start = unstringHex2int(OIS_info_Item[i][1]);
+					unsigned int size = unstringHex2int(OIS_info_Item[i][2]);
+					string value;
+					for (int i = start; i < (start + size); i++) {
+						value += D[i][0];
+						value += D[i][1];
+					}
+					if (strcmp(value.c_str(), OIS_info_Item[i][3].c_str()) != 0) {
+						string log_out = "OIS Info item" + to_string(i + 1);
+						log_out += " Value NG!\n";
+						ui.log->insertPlainText(log_out.c_str());
+						ret |= 16;
+					}
+				}
+				else {			
+					value_Hash[i + 40].item_name = OIS_info_Item[i][0];
+					value_Hash[i + 40].hash[abs(c) % 1009]++;
+				}
 			}
 		}
 	}
@@ -5560,6 +5660,9 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 				}
 				fout << OIS_data_Item[i][0] << ":	" << c << endl;
 
+				value_Hash[i + 66].item_name = OIS_info_Item[i][0];
+				value_Hash[i + 66].hash[(0x7FFFFFFF+c) % 1009]++;
+
 				if (c < -3000 || c>3000) {
 					string s = OIS_data_Item[i][0] + " Data in 0x" + OIS_data_Item[i][1] + " value NG!" + '\n';
 					ui.log->insertPlainText(s.c_str());
@@ -5569,12 +5672,11 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 
 			}
 			else if (i > 1 && i < 4) {
+				int d = unstringHex2int(OIS_data_Item[i][2]);
 				if ((selection & 256)>0){
 					Gyro_Gain[i - 2] = short_Out(e, HL);
 				}
-				else if ((selection & 8) > 0) {
-
-					int d = unstringHex2int(OIS_data_Item[i][2]);
+				else if ((selection & 8) > 0) {			
 					if (d == 4) {
 						Gyro_Gain[i - 2] = gyro_Out(e, HL);
 					}
@@ -5604,6 +5706,15 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 				}
 				fout << OIS_data_Item[i][0] << ":	" << Gyro_Gain[i - 2] << endl;
 
+				if (d == 4) {
+					value_Hash[i + 66].item_name = OIS_info_Item[i][0];
+					value_Hash[i + 66].hash[(int_Out(e, HL)+ 0x7FFFFFFF) % 1009]++;
+				}
+				else if (d == 2) {
+					value_Hash[i + 66].item_name = OIS_info_Item[i][0];
+					value_Hash[i + 66].hash[(short_Out(e, HL)+ 0x7FFF) % 1009]++;
+				}
+
 			}
 			else {
 				if (ui.sr_hl->isChecked())
@@ -5617,7 +5728,6 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 				if (HL == 0) {
 					map_Push(e, OIS_data_Item[i][0] + "_L", "", OIS_Gyro);
 					map_Push(e + 1, OIS_data_Item[i][0] + "_H", "", OIS_Gyro);
-
 				}
 				else {
 					map_Push(e, OIS_data_Item[i][0] + "_H", "", OIS_Gyro);
@@ -5630,7 +5740,8 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 					ui.log->insertPlainText(s.c_str());
 					ret |= 4;
 				}
-
+				value_Hash[i + 66].item_name = OIS_info_Item[i][0];
+				value_Hash[i + 66].hash[(short_Out(e, HL) + 0x7FFF) % 1009]++;
 			}	
 		}
 	}
@@ -5872,8 +5983,7 @@ int EEPROM_Data_Verifier::info_Data_Parse() {
 	///////////////////// Long INFO check
 	for (int i = 0; i < 10; i++) {
 		if (AF_info_Item[i][1].length()>1) { //各种字节长度一并检查
-			string txtout = "Long Info item" + to_string(i + 1);
-			txtout += ": ";
+			string txtout = AF_info_Item[i][0]+": ";
 			fout << txtout.c_str();
 			unsigned int start = unstringHex2int(AF_info_Item[i][1]);
 			unsigned int size = unstringHex2int(AF_info_Item[i][2]);
@@ -5883,12 +5993,22 @@ int EEPROM_Data_Verifier::info_Data_Parse() {
 				value += D[i][1];
 			}
 			fout << value.c_str() << endl;
+			if(AF_info_Item[i][3].length()>1)
 			if (strcmp(value.c_str(), AF_info_Item[i][3].c_str()) != 0) {
 				string log_out = "Long Info item" + to_string(i + 1);
 				log_out += " Value NG!\n";
 				ui.log->insertPlainText(log_out.c_str());
 				ret |= 16;
 			}
+			bool value_empty = true;
+			for (int k= 0; k < value.length(); k++) {
+				if (value[k] != 'F') {
+					value_empty = false;
+					break;
+				}
+			}
+			if(value_empty)
+				ret |= 32;
 		}
 	}
 
@@ -5905,7 +6025,9 @@ int EEPROM_Data_Verifier::value_Data_Parse() {
 		if (sData_Item[i][1].length()>1&& sData_Item[i][2].length()>2) {
 			unsigned int addr = unstringHex2int(sData_Item[i][1]);
 
-			int d_type = get_Data_Type(i);
+			value_Hash[i + 20].item_name = sData_Item[i][0];
+
+			int d_type = get_Data_Type(i),s=0;
 			long long d = 0;
 			double dd = 0;
 
@@ -5933,7 +6055,7 @@ int EEPROM_Data_Verifier::value_Data_Parse() {
 				d = int_Out(addr,HL);
 				break;
 			case 6:
-				d = int_Out(addr, HL);
+				d = int_Out(addr, HL);		
 				if (d < 0)
 					d += 0x100000000;
 				break;
@@ -5941,6 +6063,7 @@ int EEPROM_Data_Verifier::value_Data_Parse() {
 				dd = short_Out(addr, HL);
 				if (dd < 0)
 					dd += 0x10000;
+				value_Hash[i + 20].hash[((int)dd)% 1009] ++;
 				dd /= 0x8000;
 				break;
 			case 8:
@@ -5959,6 +6082,24 @@ int EEPROM_Data_Verifier::value_Data_Parse() {
 			default:
 				break;
 			}
+
+			int data_len = 1;
+			if (d_type == 3 || d_type == 4|| d_type == 7) {
+				data_len = 2;
+			}
+			else if (d_type == 10) {
+				data_len = 8;
+			}
+			else if (d_type >2) {
+				data_len = 4;
+			}
+
+			s = 0;
+			for (int a = addr; a < addr + data_len; a++) {
+				s = (s * 256 + DecData[a]) % 1009;
+			}
+			value_Hash[i + 20].hash[s] ++;
+
 			int ret = 0;
 			//////////////////////value check		
 			if (d_type < 6) {
@@ -5973,6 +6114,8 @@ int EEPROM_Data_Verifier::value_Data_Parse() {
 						ret |= 1;
 				}
 				fout << sData_Item[i][0] << ":	" << d << endl;
+
+
 			}
 			else {
 				if (sData_Item[i][3].length() > 0) {
@@ -6463,7 +6606,7 @@ int EEPROM_Data_Verifier::bin_Area_Check() {
 				}
 			}
 			current_Hash.Same[i] = sumXsum;
-			if ((ret|(2 << i)) > 0) {
+			if ((ret&(2 << i)) > 0) {
 				current_Hash.Same[i] = 0;
 			}
 		}
@@ -6876,15 +7019,13 @@ void EEPROM_Data_Verifier::dump_Check() {
 		ret |= 16384;
 	}
 
-	if (dump_Hash.size() > 0) {
-		x = duplicate_Check();
-		if (x == 0) {
-			dump_result << "duplicate_Check PASS" << "	";
-		}
-		else if (x > 0) {
-			dump_result << "duplicate_Check NG_" << x << "	";
-			ret |= 32768;
-		}
+	x = duplicate_Check();
+	if (x == 0) {
+		dump_result << "duplicate_Check PASS" << "	";
+	}
+	else if (x > 0) {
+		dump_result << "duplicate_Check NG_" << x << "	";
+		ret |= 32768;
 	}
 
 	dump_Hash.push_back(current_Hash);
@@ -6902,6 +7043,38 @@ void EEPROM_Data_Verifier::dump_Check() {
 	ui.log->clear();
 
 }
+
+
+int EEPROM_Data_Verifier::value_duplicate_Check()
+{
+	int ret = 0;
+
+	float duplicate_ratio = (OK + NG)*duplicate_value_NG_ratio / 100.0;
+
+	for (int i = 0; i < 80; i++) {
+		bool duplicate_result = true;
+		if (value_Hash[i].item_name.length()>1) {
+			for (int k = 0; k < 1009; k++) {
+				if (value_Hash[i].hash[k] > duplicate_ratio) {
+					duplicate_result = false;
+					ret = 1;
+				}
+			}
+		} 
+		if (!duplicate_result) {
+			dump_result << value_Hash[i].item_name << " value duplicate check NG!\n";
+		}
+	}
+	dump_result << endl;
+
+	if (ret > 0) {
+		ui.NG_cnt->setText(to_string(NG+1).c_str());
+		ui.log->insertPlainText("duplicate_value_check over_ratio NG!\n");
+	}  
+
+	return ret;
+}
+
 
 
 void EEPROM_Data_Verifier::on_pushButton_dump_clicked()
@@ -6999,7 +7172,7 @@ void EEPROM_Data_Verifier::on_pushButton_dump_clicked()
 		}
 		fuse_ID_output("\n");
 	}
-
+	value_duplicate_Check();
 	dump_Hash.clear();
 	FP_logFile_Close();
 	fout.close();
@@ -7274,7 +7447,6 @@ void EEPROM_Data_Verifier::on_pushButton_dump_SFR_clicked()
 }
 
 
-
 vector<string> getFiles(string cate_dir)
 {
 	vector<string> files;//存放文件名
@@ -7326,7 +7498,6 @@ void EEPROM_Data_Verifier::on_pushButton_folder_clicked() {
 		fout << (*iVector) << endl;
 		fuse_ID_output(*iVector);
 
-
 		string fuse = "", time_fuse = (*iVector);
 		int x = 0;
 
@@ -7345,10 +7516,8 @@ void EEPROM_Data_Verifier::on_pushButton_folder_clicked() {
 			}
 		}
 		current_Hash.fuse_ID = fuse;
-
 		memset(DecData, 0, sizeof(DecData));
 		memset(useData, 0, sizeof(useData));
-
 		name = ".\\bin_data\\"+ *iVector;
 
 		ifstream fin(name, std::ios::binary);
@@ -7369,17 +7538,18 @@ void EEPROM_Data_Verifier::on_pushButton_folder_clicked() {
 		}
 
 		dump_Check();
-
 		fin.close();
 		++iVector;
 		fuse_ID_output("\n");
 	}
 	
+	value_duplicate_Check();
 	dump_Hash.clear();
 	FP_logFile_Close();
 	fout.close();
 	dump_result.close();
 	ui.log->insertPlainText("Dump Data Read finished\n");
+
 }
 
 
