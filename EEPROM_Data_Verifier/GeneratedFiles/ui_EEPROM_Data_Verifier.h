@@ -14,6 +14,7 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QCheckBox>
+#include <QtWidgets/QComboBox>
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
@@ -425,10 +426,12 @@ public:
     QCheckBox *info_fuse_2;
     QTextEdit *fuse_spec_2;
     QTextEdit *fuse_start_2;
+    QTextEdit *line;
+    QLabel *label_194;
+    QTextEdit *factory;
+    QLabel *label_195;
     QWidget *tab_4;
     QGroupBox *groupBox_3;
-    QRadioButton *QC_LSC_552;
-    QRadioButton *QC_LSC_8;
     QTextEdit *lsc22;
     QLabel *label_35;
     QTextEdit *lsc21;
@@ -449,6 +452,26 @@ public:
     QTextEdit *lsc82;
     QTextEdit *lsc71;
     QTextEdit *lsc72;
+    QLabel *label_182;
+    QLabel *label_183;
+    QComboBox *lsc14;
+    QComboBox *lsc34;
+    QComboBox *lsc54;
+    QComboBox *lsc74;
+    QComboBox *lsc64;
+    QComboBox *lsc44;
+    QComboBox *lsc24;
+    QComboBox *lsc84;
+    QTextEdit *lsc43;
+    QTextEdit *lsc53;
+    QTextEdit *lsc23;
+    QTextEdit *lsc83;
+    QTextEdit *lsc73;
+    QTextEdit *lsc33;
+    QTextEdit *lsc63;
+    QTextEdit *lsc13;
+    QLabel *label_190;
+    QLabel *label_191;
     QGroupBox *groupBox_4;
     QTextEdit *shift_start;
     QLabel *label_46;
@@ -605,9 +628,8 @@ public:
     QTextEdit *SFR_cnt2;
     QLabel *label_110;
     QLabel *label_127;
-    QRadioButton *SFR_HEX;
-    QRadioButton *SFR_DEC;
     QPushButton *pushButton_dump_SFR;
+    QComboBox *SFR_Format;
     QGroupBox *groupBox_17;
     QTextEdit *AF_info12;
     QTextEdit *AF_info11;
@@ -759,6 +781,8 @@ public:
     QTextEdit *OIS_info144;
     QLabel *label_180;
     QLabel *label_181;
+    QRadioButton *OIS_HL;
+    QRadioButton *OIS_LH;
     QGroupBox *groupBox_13;
     QTextEdit *OIS_data31;
     QTextEdit *OIS_data21;
@@ -909,22 +933,34 @@ public:
     QTextEdit *Gmap71;
     QTextEdit *Gmap82;
     QTextEdit *Gmap81;
-    QTextEdit *Gmap53;
-    QTextEdit *Gmap33;
-    QTextEdit *Gmap13;
-    QTextEdit *Gmap73;
     QLabel *label_144;
-    QTextEdit *Gmap63;
-    QTextEdit *Gmap83;
-    QTextEdit *Gmap23;
-    QTextEdit *Gmap43;
     QLabel *label_145;
     QTextEdit *Gmap91;
-    QTextEdit *Gmap93;
     QTextEdit *Gmap102;
     QTextEdit *Gmap101;
     QTextEdit *Gmap92;
+    QComboBox *Gmap14;
+    QComboBox *Gmap34;
+    QComboBox *Gmap54;
+    QComboBox *Gmap74;
+    QComboBox *Gmap94;
+    QComboBox *Gmap44;
+    QComboBox *Gmap84;
+    QComboBox *Gmap104;
+    QComboBox *Gmap64;
+    QComboBox *Gmap24;
+    QTextEdit *Gmap33;
     QTextEdit *Gmap103;
+    QTextEdit *Gmap83;
+    QTextEdit *Gmap23;
+    QTextEdit *Gmap73;
+    QTextEdit *Gmap53;
+    QTextEdit *Gmap63;
+    QTextEdit *Gmap93;
+    QTextEdit *Gmap43;
+    QTextEdit *Gmap13;
+    QLabel *label_192;
+    QLabel *label_193;
     QGroupBox *groupBox_11;
     QTextEdit *DCC12;
     QTextEdit *DCC11;
@@ -950,19 +986,19 @@ public:
     QTextEdit *DCC121;
     QTextEdit *DCC122;
     QTextEdit *DCC111;
-    QTextEdit *DCC73;
-    QTextEdit *DCC13;
-    QTextEdit *DCC53;
-    QTextEdit *DCC93;
-    QTextEdit *DCC113;
-    QTextEdit *DCC33;
-    QTextEdit *DCC23;
-    QTextEdit *DCC103;
-    QTextEdit *DCC83;
-    QTextEdit *DCC63;
-    QTextEdit *DCC123;
-    QTextEdit *DCC43;
     QLabel *label_45;
+    QComboBox *DCC13;
+    QComboBox *DCC33;
+    QComboBox *DCC53;
+    QComboBox *DCC73;
+    QComboBox *DCC93;
+    QComboBox *DCC113;
+    QComboBox *DCC43;
+    QComboBox *DCC23;
+    QComboBox *DCC63;
+    QComboBox *DCC123;
+    QComboBox *DCC103;
+    QComboBox *DCC83;
     QWidget *tab_8;
     QWidget *tab_9;
     QGroupBox *groupBox_16;
@@ -1055,10 +1091,43 @@ public:
     QTextEdit *history121;
     QTextEdit *history122;
     QTextEdit *history111;
-    QTextEdit *history132;
-    QTextEdit *history141;
-    QTextEdit *history142;
-    QTextEdit *history131;
+    QGroupBox *groupBox_27;
+    QTextEdit *fix63;
+    QTextEdit *fix22;
+    QTextEdit *fix43;
+    QTextEdit *fix52;
+    QTextEdit *fix11;
+    QTextEdit *fix13;
+    QTextEdit *fix53;
+    QTextEdit *fix62;
+    QTextEdit *fix12;
+    QTextEdit *fix32;
+    QTextEdit *fix61;
+    QTextEdit *fix41;
+    QTextEdit *fix33;
+    QTextEdit *fix31;
+    QTextEdit *fix42;
+    QTextEdit *fix21;
+    QTextEdit *fix51;
+    QTextEdit *fix23;
+    QTextEdit *fix82;
+    QTextEdit *fix73;
+    QTextEdit *fix81;
+    QTextEdit *fix72;
+    QTextEdit *fix83;
+    QTextEdit *fix71;
+    QTextEdit *fix101;
+    QTextEdit *fix103;
+    QTextEdit *fix91;
+    QTextEdit *fix93;
+    QTextEdit *fix92;
+    QTextEdit *fix102;
+    QLabel *label_184;
+    QLabel *label_185;
+    QLabel *label_186;
+    QLabel *label_187;
+    QLabel *label_188;
+    QLabel *label_189;
     QWidget *tab_10;
     QTextEdit *same43;
     QTextEdit *same23;
@@ -1197,21 +1266,21 @@ public:
     QCheckBox *full_log;
     QLabel *label_8;
     QPushButton *pushButton_folder;
-    QButtonGroup *buttonGroup_17;
-    QButtonGroup *buttonGroup_13;
-    QButtonGroup *buttonGroup_15;
-    QButtonGroup *buttonGroup_16;
     QButtonGroup *buttonGroup_18;
+    QButtonGroup *buttonGroup_12;
     QButtonGroup *buttonGroup_3;
     QButtonGroup *buttonGroup;
+    QButtonGroup *buttonGroup_16;
     QButtonGroup *buttonGroup_2;
-    QButtonGroup *buttonGroup_12;
+    QButtonGroup *buttonGroup_4;
+    QButtonGroup *buttonGroup_13;
+    QButtonGroup *buttonGroup_15;
 
     void setupUi(QWidget *EEPROM_Data_VerifierClass)
     {
         if (EEPROM_Data_VerifierClass->objectName().isEmpty())
             EEPROM_Data_VerifierClass->setObjectName(QStringLiteral("EEPROM_Data_VerifierClass"));
-        EEPROM_Data_VerifierClass->resize(870, 730);
+        EEPROM_Data_VerifierClass->resize(865, 730);
         input = new QTextEdit(EEPROM_Data_VerifierClass);
         input->setObjectName(QStringLiteral("input"));
         input->setGeometry(QRect(10, 20, 401, 511));
@@ -2263,34 +2332,34 @@ public:
         label_29->setGeometry(QRect(9, 9, 41, 16));
         year_H = new QTextEdit(tab_3);
         year_H->setObjectName(QStringLiteral("year_H"));
-        year_H->setGeometry(QRect(50, 20, 45, 30));
+        year_H->setGeometry(QRect(50, 20, 40, 30));
         day = new QTextEdit(tab_3);
         day->setObjectName(QStringLiteral("day"));
-        day->setGeometry(QRect(200, 20, 45, 30));
+        day->setGeometry(QRect(170, 20, 40, 30));
         label_56 = new QLabel(tab_3);
         label_56->setObjectName(QStringLiteral("label_56"));
-        label_56->setGeometry(QRect(55, 0, 41, 16));
+        label_56->setGeometry(QRect(50, 0, 41, 16));
         year_L = new QTextEdit(tab_3);
         year_L->setObjectName(QStringLiteral("year_L"));
-        year_L->setGeometry(QRect(100, 20, 45, 30));
+        year_L->setGeometry(QRect(90, 20, 40, 30));
         label_57 = new QLabel(tab_3);
         label_57->setObjectName(QStringLiteral("label_57"));
-        label_57->setGeometry(QRect(155, 0, 31, 16));
+        label_57->setGeometry(QRect(135, 0, 31, 16));
         label_58 = new QLabel(tab_3);
         label_58->setObjectName(QStringLiteral("label_58"));
-        label_58->setGeometry(QRect(210, 0, 31, 16));
+        label_58->setGeometry(QRect(180, 0, 31, 16));
         month = new QTextEdit(tab_3);
         month->setObjectName(QStringLiteral("month"));
-        month->setGeometry(QRect(150, 20, 45, 30));
+        month->setGeometry(QRect(130, 20, 40, 30));
         label_59 = new QLabel(tab_3);
         label_59->setObjectName(QStringLiteral("label_59"));
-        label_59->setGeometry(QRect(105, 0, 41, 16));
+        label_59->setGeometry(QRect(92, 0, 41, 16));
         hour = new QTextEdit(tab_3);
         hour->setObjectName(QStringLiteral("hour"));
-        hour->setGeometry(QRect(250, 20, 45, 30));
+        hour->setGeometry(QRect(210, 20, 40, 30));
         label_60 = new QLabel(tab_3);
         label_60->setObjectName(QStringLiteral("label_60"));
-        label_60->setGeometry(QRect(260, 0, 31, 16));
+        label_60->setGeometry(QRect(215, 0, 31, 16));
         groupBox_6 = new QGroupBox(tab_3);
         groupBox_6->setObjectName(QStringLiteral("groupBox_6"));
         groupBox_6->setGeometry(QRect(0, 180, 441, 361));
@@ -2643,16 +2712,16 @@ public:
         label_75->setGeometry(QRect(155, 195, 31, 16));
         minute = new QTextEdit(tab_3);
         minute->setObjectName(QStringLiteral("minute"));
-        minute->setGeometry(QRect(300, 20, 45, 30));
+        minute->setGeometry(QRect(250, 20, 40, 30));
         second = new QTextEdit(tab_3);
         second->setObjectName(QStringLiteral("second"));
-        second->setGeometry(QRect(350, 20, 45, 30));
+        second->setGeometry(QRect(290, 20, 40, 30));
         label_76 = new QLabel(tab_3);
         label_76->setObjectName(QStringLiteral("label_76"));
-        label_76->setGeometry(QRect(305, 0, 41, 20));
+        label_76->setGeometry(QRect(250, 0, 41, 20));
         label_77 = new QLabel(tab_3);
         label_77->setObjectName(QStringLiteral("label_77"));
-        label_77->setGeometry(QRect(354, 0, 41, 20));
+        label_77->setGeometry(QRect(290, 0, 41, 20));
         fuse_end_2 = new QTextEdit(tab_3);
         fuse_end_2->setObjectName(QStringLiteral("fuse_end_2"));
         fuse_end_2->setGeometry(QRect(100, 145, 45, 30));
@@ -2666,6 +2735,18 @@ public:
         fuse_start_2 = new QTextEdit(tab_3);
         fuse_start_2->setObjectName(QStringLiteral("fuse_start_2"));
         fuse_start_2->setGeometry(QRect(50, 145, 45, 30));
+        line = new QTextEdit(tab_3);
+        line->setObjectName(QStringLiteral("line"));
+        line->setGeometry(QRect(400, 20, 40, 30));
+        label_194 = new QLabel(tab_3);
+        label_194->setObjectName(QStringLiteral("label_194"));
+        label_194->setGeometry(QRect(405, 0, 41, 20));
+        factory = new QTextEdit(tab_3);
+        factory->setObjectName(QStringLiteral("factory"));
+        factory->setGeometry(QRect(360, 20, 40, 30));
+        label_195 = new QLabel(tab_3);
+        label_195->setObjectName(QStringLiteral("label_195"));
+        label_195->setGeometry(QRect(357, 0, 41, 20));
         tabWidget->addTab(tab_3, QString());
         groupBox_5->raise();
         groupBox_6->raise();
@@ -2807,78 +2888,175 @@ public:
         info_fuse_2->raise();
         fuse_spec_2->raise();
         fuse_start_2->raise();
+        line->raise();
+        label_194->raise();
+        factory->raise();
+        label_195->raise();
         tab_4 = new QWidget();
         tab_4->setObjectName(QStringLiteral("tab_4"));
         groupBox_3 = new QGroupBox(tab_4);
         groupBox_3->setObjectName(QStringLiteral("groupBox_3"));
         groupBox_3->setGeometry(QRect(0, 0, 441, 151));
-        QC_LSC_552 = new QRadioButton(groupBox_3);
-        QC_LSC_552->setObjectName(QStringLiteral("QC_LSC_552"));
-        QC_LSC_552->setGeometry(QRect(10, 25, 71, 16));
-        QC_LSC_552->setChecked(true);
-        QC_LSC_8 = new QRadioButton(groupBox_3);
-        QC_LSC_8->setObjectName(QStringLiteral("QC_LSC_8"));
-        QC_LSC_8->setGeometry(QRect(10, 45, 71, 16));
         lsc22 = new QTextEdit(groupBox_3);
         lsc22->setObjectName(QStringLiteral("lsc22"));
-        lsc22->setGeometry(QRect(385, 30, 50, 30));
+        lsc22->setGeometry(QRect(325, 30, 40, 30));
         label_35 = new QLabel(groupBox_3);
         label_35->setObjectName(QStringLiteral("label_35"));
-        label_35->setGeometry(QRect(390, 10, 41, 16));
+        label_35->setGeometry(QRect(330, 10, 31, 16));
         lsc21 = new QTextEdit(groupBox_3);
         lsc21->setObjectName(QStringLiteral("lsc21"));
-        lsc21->setGeometry(QRect(250, 30, 135, 30));
+        lsc21->setGeometry(QRect(225, 30, 100, 30));
         lsc11 = new QTextEdit(groupBox_3);
         lsc11->setObjectName(QStringLiteral("lsc11"));
-        lsc11->setGeometry(QRect(60, 30, 135, 30));
+        lsc11->setGeometry(QRect(5, 30, 100, 30));
         label_37 = new QLabel(groupBox_3);
         label_37->setObjectName(QStringLiteral("label_37"));
-        label_37->setGeometry(QRect(90, 10, 71, 16));
+        label_37->setGeometry(QRect(40, 10, 71, 16));
         label_38 = new QLabel(groupBox_3);
         label_38->setObjectName(QStringLiteral("label_38"));
-        label_38->setGeometry(QRect(280, 10, 81, 16));
+        label_38->setGeometry(QRect(260, 10, 71, 16));
         lsc12 = new QTextEdit(groupBox_3);
         lsc12->setObjectName(QStringLiteral("lsc12"));
-        lsc12->setGeometry(QRect(195, 30, 50, 30));
+        lsc12->setGeometry(QRect(105, 30, 40, 30));
         label_34 = new QLabel(groupBox_3);
         label_34->setObjectName(QStringLiteral("label_34"));
-        label_34->setGeometry(QRect(200, 10, 41, 16));
+        label_34->setGeometry(QRect(110, 10, 31, 16));
         lsc31 = new QTextEdit(groupBox_3);
         lsc31->setObjectName(QStringLiteral("lsc31"));
-        lsc31->setGeometry(QRect(60, 60, 135, 30));
+        lsc31->setGeometry(QRect(5, 60, 100, 30));
         lsc32 = new QTextEdit(groupBox_3);
         lsc32->setObjectName(QStringLiteral("lsc32"));
-        lsc32->setGeometry(QRect(195, 60, 50, 30));
+        lsc32->setGeometry(QRect(105, 60, 40, 30));
         lsc42 = new QTextEdit(groupBox_3);
         lsc42->setObjectName(QStringLiteral("lsc42"));
-        lsc42->setGeometry(QRect(385, 60, 50, 30));
+        lsc42->setGeometry(QRect(325, 60, 40, 30));
         lsc41 = new QTextEdit(groupBox_3);
         lsc41->setObjectName(QStringLiteral("lsc41"));
-        lsc41->setGeometry(QRect(250, 60, 135, 30));
+        lsc41->setGeometry(QRect(225, 60, 100, 30));
         lsc61 = new QTextEdit(groupBox_3);
         lsc61->setObjectName(QStringLiteral("lsc61"));
-        lsc61->setGeometry(QRect(250, 90, 135, 30));
+        lsc61->setGeometry(QRect(225, 90, 100, 30));
         lsc52 = new QTextEdit(groupBox_3);
         lsc52->setObjectName(QStringLiteral("lsc52"));
-        lsc52->setGeometry(QRect(195, 90, 50, 30));
+        lsc52->setGeometry(QRect(105, 90, 40, 30));
         lsc51 = new QTextEdit(groupBox_3);
         lsc51->setObjectName(QStringLiteral("lsc51"));
-        lsc51->setGeometry(QRect(60, 90, 135, 30));
+        lsc51->setGeometry(QRect(5, 90, 100, 30));
         lsc62 = new QTextEdit(groupBox_3);
         lsc62->setObjectName(QStringLiteral("lsc62"));
-        lsc62->setGeometry(QRect(385, 90, 50, 30));
+        lsc62->setGeometry(QRect(325, 90, 40, 30));
         lsc81 = new QTextEdit(groupBox_3);
         lsc81->setObjectName(QStringLiteral("lsc81"));
-        lsc81->setGeometry(QRect(250, 120, 135, 30));
+        lsc81->setGeometry(QRect(225, 120, 100, 30));
         lsc82 = new QTextEdit(groupBox_3);
         lsc82->setObjectName(QStringLiteral("lsc82"));
-        lsc82->setGeometry(QRect(385, 120, 50, 30));
+        lsc82->setGeometry(QRect(325, 120, 40, 30));
         lsc71 = new QTextEdit(groupBox_3);
         lsc71->setObjectName(QStringLiteral("lsc71"));
-        lsc71->setGeometry(QRect(60, 120, 135, 30));
+        lsc71->setGeometry(QRect(5, 120, 100, 30));
         lsc72 = new QTextEdit(groupBox_3);
         lsc72->setObjectName(QStringLiteral("lsc72"));
-        lsc72->setGeometry(QRect(195, 120, 50, 30));
+        lsc72->setGeometry(QRect(105, 120, 40, 30));
+        label_182 = new QLabel(groupBox_3);
+        label_182->setObjectName(QStringLiteral("label_182"));
+        label_182->setGeometry(QRect(410, 10, 41, 16));
+        label_183 = new QLabel(groupBox_3);
+        label_183->setObjectName(QStringLiteral("label_183"));
+        label_183->setGeometry(QRect(190, 10, 31, 16));
+        lsc14 = new QComboBox(groupBox_3);
+        lsc14->setObjectName(QStringLiteral("lsc14"));
+        lsc14->setGeometry(QRect(115, 30, 110, 30));
+        lsc34 = new QComboBox(groupBox_3);
+        lsc34->setObjectName(QStringLiteral("lsc34"));
+        lsc34->setGeometry(QRect(115, 60, 110, 30));
+        lsc54 = new QComboBox(groupBox_3);
+        lsc54->setObjectName(QStringLiteral("lsc54"));
+        lsc54->setGeometry(QRect(115, 90, 110, 30));
+        lsc74 = new QComboBox(groupBox_3);
+        lsc74->setObjectName(QStringLiteral("lsc74"));
+        lsc74->setGeometry(QRect(115, 120, 110, 30));
+        lsc64 = new QComboBox(groupBox_3);
+        lsc64->setObjectName(QStringLiteral("lsc64"));
+        lsc64->setGeometry(QRect(330, 90, 110, 30));
+        lsc44 = new QComboBox(groupBox_3);
+        lsc44->setObjectName(QStringLiteral("lsc44"));
+        lsc44->setGeometry(QRect(330, 60, 110, 30));
+        lsc24 = new QComboBox(groupBox_3);
+        lsc24->setObjectName(QStringLiteral("lsc24"));
+        lsc24->setGeometry(QRect(330, 30, 110, 30));
+        lsc84 = new QComboBox(groupBox_3);
+        lsc84->setObjectName(QStringLiteral("lsc84"));
+        lsc84->setGeometry(QRect(330, 120, 110, 30));
+        lsc43 = new QTextEdit(groupBox_3);
+        lsc43->setObjectName(QStringLiteral("lsc43"));
+        lsc43->setGeometry(QRect(365, 60, 35, 30));
+        lsc53 = new QTextEdit(groupBox_3);
+        lsc53->setObjectName(QStringLiteral("lsc53"));
+        lsc53->setGeometry(QRect(145, 90, 35, 30));
+        lsc23 = new QTextEdit(groupBox_3);
+        lsc23->setObjectName(QStringLiteral("lsc23"));
+        lsc23->setGeometry(QRect(365, 30, 35, 30));
+        lsc83 = new QTextEdit(groupBox_3);
+        lsc83->setObjectName(QStringLiteral("lsc83"));
+        lsc83->setGeometry(QRect(365, 120, 35, 30));
+        lsc73 = new QTextEdit(groupBox_3);
+        lsc73->setObjectName(QStringLiteral("lsc73"));
+        lsc73->setGeometry(QRect(145, 120, 35, 30));
+        lsc33 = new QTextEdit(groupBox_3);
+        lsc33->setObjectName(QStringLiteral("lsc33"));
+        lsc33->setGeometry(QRect(145, 60, 35, 30));
+        lsc63 = new QTextEdit(groupBox_3);
+        lsc63->setObjectName(QStringLiteral("lsc63"));
+        lsc63->setGeometry(QRect(365, 90, 35, 30));
+        lsc13 = new QTextEdit(groupBox_3);
+        lsc13->setObjectName(QStringLiteral("lsc13"));
+        lsc13->setGeometry(QRect(145, 30, 35, 30));
+        label_190 = new QLabel(groupBox_3);
+        label_190->setObjectName(QStringLiteral("label_190"));
+        label_190->setGeometry(QRect(145, 10, 41, 16));
+        label_191 = new QLabel(groupBox_3);
+        label_191->setObjectName(QStringLiteral("label_191"));
+        label_191->setGeometry(QRect(365, 10, 41, 16));
+        lsc44->raise();
+        lsc24->raise();
+        lsc64->raise();
+        lsc84->raise();
+        lsc74->raise();
+        lsc34->raise();
+        lsc54->raise();
+        lsc14->raise();
+        lsc22->raise();
+        label_35->raise();
+        lsc21->raise();
+        lsc11->raise();
+        label_37->raise();
+        label_38->raise();
+        lsc12->raise();
+        label_34->raise();
+        lsc31->raise();
+        lsc32->raise();
+        lsc42->raise();
+        lsc41->raise();
+        lsc61->raise();
+        lsc52->raise();
+        lsc51->raise();
+        lsc62->raise();
+        lsc81->raise();
+        lsc82->raise();
+        lsc71->raise();
+        lsc72->raise();
+        label_182->raise();
+        label_183->raise();
+        lsc43->raise();
+        lsc53->raise();
+        lsc23->raise();
+        lsc83->raise();
+        lsc73->raise();
+        lsc33->raise();
+        lsc63->raise();
+        lsc13->raise();
+        label_190->raise();
+        label_191->raise();
         groupBox_4 = new QGroupBox(tab_4);
         groupBox_4->setObjectName(QStringLiteral("groupBox_4"));
         groupBox_4->setGeometry(QRect(0, 220, 251, 65));
@@ -3380,156 +3558,148 @@ public:
         label_127 = new QLabel(groupBox_8);
         label_127->setObjectName(QStringLiteral("label_127"));
         label_127->setGeometry(QRect(380, 10, 41, 20));
-        SFR_HEX = new QRadioButton(groupBox_8);
-        buttonGroup_17 = new QButtonGroup(EEPROM_Data_VerifierClass);
-        buttonGroup_17->setObjectName(QStringLiteral("buttonGroup_17"));
-        buttonGroup_17->addButton(SFR_HEX);
-        SFR_HEX->setObjectName(QStringLiteral("SFR_HEX"));
-        SFR_HEX->setGeometry(QRect(380, 30, 89, 16));
-        SFR_HEX->setChecked(true);
-        SFR_DEC = new QRadioButton(groupBox_8);
-        buttonGroup_17->addButton(SFR_DEC);
-        SFR_DEC->setObjectName(QStringLiteral("SFR_DEC"));
-        SFR_DEC->setGeometry(QRect(380, 50, 89, 16));
         pushButton_dump_SFR = new QPushButton(groupBox_8);
         pushButton_dump_SFR->setObjectName(QStringLiteral("pushButton_dump_SFR"));
         pushButton_dump_SFR->setGeometry(QRect(370, 120, 61, 30));
         pushButton_dump_SFR->setCheckable(false);
+        SFR_Format = new QComboBox(groupBox_8);
+        SFR_Format->setObjectName(QStringLiteral("SFR_Format"));
+        SFR_Format->setGeometry(QRect(370, 30, 61, 22));
         groupBox_17 = new QGroupBox(tab_5);
         groupBox_17->setObjectName(QStringLiteral("groupBox_17"));
         groupBox_17->setGeometry(QRect(0, 220, 441, 331));
         AF_info12 = new QTextEdit(groupBox_17);
         AF_info12->setObjectName(QStringLiteral("AF_info12"));
-        AF_info12->setGeometry(QRect(245, 30, 50, 30));
+        AF_info12->setGeometry(QRect(145, 30, 40, 30));
         AF_info11 = new QTextEdit(groupBox_17);
         AF_info11->setObjectName(QStringLiteral("AF_info11"));
-        AF_info11->setGeometry(QRect(5, 30, 238, 30));
+        AF_info11->setGeometry(QRect(5, 30, 140, 30));
         label_111 = new QLabel(groupBox_17);
         label_111->setObjectName(QStringLiteral("label_111"));
-        label_111->setGeometry(QRect(70, 15, 54, 12));
+        label_111->setGeometry(QRect(50, 15, 54, 12));
         AF_info14 = new QTextEdit(groupBox_17);
         AF_info14->setObjectName(QStringLiteral("AF_info14"));
-        AF_info14->setGeometry(QRect(330, 30, 105, 30));
+        AF_info14->setGeometry(QRect(215, 30, 225, 30));
         AF_info13 = new QTextEdit(groupBox_17);
         AF_info13->setObjectName(QStringLiteral("AF_info13"));
-        AF_info13->setGeometry(QRect(297, 30, 30, 30));
+        AF_info13->setGeometry(QRect(185, 30, 30, 30));
         label_118 = new QLabel(groupBox_17);
         label_118->setObjectName(QStringLiteral("label_118"));
-        label_118->setGeometry(QRect(260, 10, 41, 16));
+        label_118->setGeometry(QRect(150, 10, 31, 16));
         label_119 = new QLabel(groupBox_17);
         label_119->setObjectName(QStringLiteral("label_119"));
-        label_119->setGeometry(QRect(305, 10, 31, 16));
+        label_119->setGeometry(QRect(190, 10, 31, 16));
         label_120 = new QLabel(groupBox_17);
         label_120->setObjectName(QStringLiteral("label_120"));
-        label_120->setGeometry(QRect(360, 10, 61, 16));
+        label_120->setGeometry(QRect(300, 10, 61, 16));
         AF_info21 = new QTextEdit(groupBox_17);
         AF_info21->setObjectName(QStringLiteral("AF_info21"));
-        AF_info21->setGeometry(QRect(5, 60, 238, 30));
+        AF_info21->setGeometry(QRect(5, 60, 140, 30));
         AF_info23 = new QTextEdit(groupBox_17);
         AF_info23->setObjectName(QStringLiteral("AF_info23"));
-        AF_info23->setGeometry(QRect(297, 60, 30, 30));
+        AF_info23->setGeometry(QRect(185, 60, 30, 30));
         AF_info24 = new QTextEdit(groupBox_17);
         AF_info24->setObjectName(QStringLiteral("AF_info24"));
-        AF_info24->setGeometry(QRect(330, 60, 105, 30));
+        AF_info24->setGeometry(QRect(215, 60, 225, 30));
         AF_info22 = new QTextEdit(groupBox_17);
         AF_info22->setObjectName(QStringLiteral("AF_info22"));
-        AF_info22->setGeometry(QRect(245, 60, 50, 30));
+        AF_info22->setGeometry(QRect(145, 60, 40, 30));
         AF_info31 = new QTextEdit(groupBox_17);
         AF_info31->setObjectName(QStringLiteral("AF_info31"));
-        AF_info31->setGeometry(QRect(5, 90, 238, 30));
+        AF_info31->setGeometry(QRect(5, 90, 140, 30));
         AF_info33 = new QTextEdit(groupBox_17);
         AF_info33->setObjectName(QStringLiteral("AF_info33"));
-        AF_info33->setGeometry(QRect(297, 90, 30, 30));
+        AF_info33->setGeometry(QRect(185, 90, 30, 30));
         AF_info34 = new QTextEdit(groupBox_17);
         AF_info34->setObjectName(QStringLiteral("AF_info34"));
-        AF_info34->setGeometry(QRect(330, 90, 105, 30));
+        AF_info34->setGeometry(QRect(215, 90, 225, 30));
         AF_info32 = new QTextEdit(groupBox_17);
         AF_info32->setObjectName(QStringLiteral("AF_info32"));
-        AF_info32->setGeometry(QRect(245, 90, 50, 30));
+        AF_info32->setGeometry(QRect(145, 90, 40, 30));
         AF_info41 = new QTextEdit(groupBox_17);
         AF_info41->setObjectName(QStringLiteral("AF_info41"));
-        AF_info41->setGeometry(QRect(5, 120, 238, 30));
+        AF_info41->setGeometry(QRect(5, 120, 140, 30));
         AF_info43 = new QTextEdit(groupBox_17);
         AF_info43->setObjectName(QStringLiteral("AF_info43"));
-        AF_info43->setGeometry(QRect(297, 120, 30, 30));
+        AF_info43->setGeometry(QRect(185, 120, 30, 30));
         AF_info44 = new QTextEdit(groupBox_17);
         AF_info44->setObjectName(QStringLiteral("AF_info44"));
-        AF_info44->setGeometry(QRect(330, 120, 105, 30));
+        AF_info44->setGeometry(QRect(215, 120, 225, 30));
         AF_info42 = new QTextEdit(groupBox_17);
         AF_info42->setObjectName(QStringLiteral("AF_info42"));
-        AF_info42->setGeometry(QRect(245, 120, 50, 30));
+        AF_info42->setGeometry(QRect(145, 120, 40, 30));
         AF_info51 = new QTextEdit(groupBox_17);
         AF_info51->setObjectName(QStringLiteral("AF_info51"));
-        AF_info51->setGeometry(QRect(5, 150, 238, 30));
+        AF_info51->setGeometry(QRect(5, 150, 140, 30));
         AF_info53 = new QTextEdit(groupBox_17);
         AF_info53->setObjectName(QStringLiteral("AF_info53"));
-        AF_info53->setGeometry(QRect(297, 150, 30, 30));
+        AF_info53->setGeometry(QRect(185, 150, 30, 30));
         AF_info54 = new QTextEdit(groupBox_17);
         AF_info54->setObjectName(QStringLiteral("AF_info54"));
-        AF_info54->setGeometry(QRect(330, 150, 105, 30));
+        AF_info54->setGeometry(QRect(215, 150, 225, 30));
         AF_info52 = new QTextEdit(groupBox_17);
         AF_info52->setObjectName(QStringLiteral("AF_info52"));
-        AF_info52->setGeometry(QRect(245, 150, 50, 30));
+        AF_info52->setGeometry(QRect(145, 150, 40, 30));
         AF_info61 = new QTextEdit(groupBox_17);
         AF_info61->setObjectName(QStringLiteral("AF_info61"));
-        AF_info61->setGeometry(QRect(5, 180, 238, 30));
+        AF_info61->setGeometry(QRect(5, 180, 140, 30));
         AF_info63 = new QTextEdit(groupBox_17);
         AF_info63->setObjectName(QStringLiteral("AF_info63"));
-        AF_info63->setGeometry(QRect(297, 180, 30, 30));
+        AF_info63->setGeometry(QRect(185, 180, 30, 30));
         AF_info64 = new QTextEdit(groupBox_17);
         AF_info64->setObjectName(QStringLiteral("AF_info64"));
-        AF_info64->setGeometry(QRect(330, 180, 105, 30));
+        AF_info64->setGeometry(QRect(215, 180, 225, 30));
         AF_info62 = new QTextEdit(groupBox_17);
         AF_info62->setObjectName(QStringLiteral("AF_info62"));
-        AF_info62->setGeometry(QRect(245, 180, 50, 30));
+        AF_info62->setGeometry(QRect(145, 180, 40, 30));
         AF_info71 = new QTextEdit(groupBox_17);
         AF_info71->setObjectName(QStringLiteral("AF_info71"));
-        AF_info71->setGeometry(QRect(5, 210, 238, 30));
+        AF_info71->setGeometry(QRect(5, 210, 140, 30));
         AF_info73 = new QTextEdit(groupBox_17);
         AF_info73->setObjectName(QStringLiteral("AF_info73"));
-        AF_info73->setGeometry(QRect(297, 210, 30, 30));
+        AF_info73->setGeometry(QRect(185, 210, 30, 30));
         AF_info74 = new QTextEdit(groupBox_17);
         AF_info74->setObjectName(QStringLiteral("AF_info74"));
-        AF_info74->setGeometry(QRect(330, 210, 105, 30));
+        AF_info74->setGeometry(QRect(215, 210, 225, 30));
         AF_info72 = new QTextEdit(groupBox_17);
         AF_info72->setObjectName(QStringLiteral("AF_info72"));
-        AF_info72->setGeometry(QRect(245, 210, 50, 30));
+        AF_info72->setGeometry(QRect(145, 210, 40, 30));
         AF_info81 = new QTextEdit(groupBox_17);
         AF_info81->setObjectName(QStringLiteral("AF_info81"));
-        AF_info81->setGeometry(QRect(5, 240, 238, 30));
+        AF_info81->setGeometry(QRect(5, 240, 140, 30));
         AF_info83 = new QTextEdit(groupBox_17);
         AF_info83->setObjectName(QStringLiteral("AF_info83"));
-        AF_info83->setGeometry(QRect(297, 240, 30, 30));
+        AF_info83->setGeometry(QRect(185, 240, 30, 30));
         AF_info84 = new QTextEdit(groupBox_17);
         AF_info84->setObjectName(QStringLiteral("AF_info84"));
-        AF_info84->setGeometry(QRect(330, 240, 105, 30));
+        AF_info84->setGeometry(QRect(215, 240, 225, 30));
         AF_info82 = new QTextEdit(groupBox_17);
         AF_info82->setObjectName(QStringLiteral("AF_info82"));
-        AF_info82->setGeometry(QRect(245, 240, 50, 30));
+        AF_info82->setGeometry(QRect(145, 240, 40, 30));
         AF_info91 = new QTextEdit(groupBox_17);
         AF_info91->setObjectName(QStringLiteral("AF_info91"));
-        AF_info91->setGeometry(QRect(5, 270, 238, 30));
+        AF_info91->setGeometry(QRect(5, 270, 140, 30));
         AF_info93 = new QTextEdit(groupBox_17);
         AF_info93->setObjectName(QStringLiteral("AF_info93"));
-        AF_info93->setGeometry(QRect(297, 270, 30, 30));
+        AF_info93->setGeometry(QRect(185, 270, 30, 30));
         AF_info94 = new QTextEdit(groupBox_17);
         AF_info94->setObjectName(QStringLiteral("AF_info94"));
-        AF_info94->setGeometry(QRect(330, 270, 105, 30));
+        AF_info94->setGeometry(QRect(215, 270, 225, 30));
         AF_info92 = new QTextEdit(groupBox_17);
         AF_info92->setObjectName(QStringLiteral("AF_info92"));
-        AF_info92->setGeometry(QRect(245, 270, 50, 30));
+        AF_info92->setGeometry(QRect(145, 270, 40, 30));
         AF_info101 = new QTextEdit(groupBox_17);
         AF_info101->setObjectName(QStringLiteral("AF_info101"));
-        AF_info101->setGeometry(QRect(5, 300, 238, 30));
+        AF_info101->setGeometry(QRect(5, 300, 140, 30));
         AF_info103 = new QTextEdit(groupBox_17);
         AF_info103->setObjectName(QStringLiteral("AF_info103"));
-        AF_info103->setGeometry(QRect(297, 300, 30, 30));
+        AF_info103->setGeometry(QRect(185, 300, 30, 30));
         AF_info104 = new QTextEdit(groupBox_17);
         AF_info104->setObjectName(QStringLiteral("AF_info104"));
-        AF_info104->setGeometry(QRect(330, 300, 105, 30));
+        AF_info104->setGeometry(QRect(215, 300, 225, 30));
         AF_info102 = new QTextEdit(groupBox_17);
         AF_info102->setObjectName(QStringLiteral("AF_info102"));
-        AF_info102->setGeometry(QRect(245, 300, 50, 30));
+        AF_info102->setGeometry(QRect(145, 300, 40, 30));
         tabWidget->addTab(tab_5, QString());
         tab_6 = new QWidget();
         tab_6->setObjectName(QStringLiteral("tab_6"));
@@ -3848,6 +4018,17 @@ public:
         label_181 = new QLabel(groupBox_12);
         label_181->setObjectName(QStringLiteral("label_181"));
         label_181->setGeometry(QRect(405, 10, 30, 16));
+        OIS_HL = new QRadioButton(groupBox_12);
+        buttonGroup_4 = new QButtonGroup(EEPROM_Data_VerifierClass);
+        buttonGroup_4->setObjectName(QStringLiteral("buttonGroup_4"));
+        buttonGroup_4->addButton(OIS_HL);
+        OIS_HL->setObjectName(QStringLiteral("OIS_HL"));
+        OIS_HL->setGeometry(QRect(240, 0, 41, 16));
+        OIS_HL->setChecked(true);
+        OIS_LH = new QRadioButton(groupBox_12);
+        buttonGroup_4->addButton(OIS_LH);
+        OIS_LH->setObjectName(QStringLiteral("OIS_LH"));
+        OIS_LH->setGeometry(QRect(290, 0, 41, 16));
         groupBox_13 = new QGroupBox(tab_6);
         groupBox_13->setObjectName(QStringLiteral("groupBox_13"));
         groupBox_13->setGeometry(QRect(0, 390, 441, 201));
@@ -4092,19 +4273,19 @@ public:
         label_39->setGeometry(QRect(30, 10, 81, 16));
         label_40 = new QLabel(groupBox_9);
         label_40->setObjectName(QStringLiteral("label_40"));
-        label_40->setGeometry(QRect(190, 10, 31, 16));
+        label_40->setGeometry(QRect(180, 10, 31, 16));
         label_64 = new QLabel(groupBox_9);
         label_64->setObjectName(QStringLiteral("label_64"));
-        label_64->setGeometry(QRect(150, 10, 31, 16));
+        label_64->setGeometry(QRect(140, 10, 31, 16));
         label_41 = new QLabel(groupBox_9);
         label_41->setObjectName(QStringLiteral("label_41"));
         label_41->setGeometry(QRect(260, 10, 61, 16));
         label_42 = new QLabel(groupBox_9);
         label_42->setObjectName(QStringLiteral("label_42"));
-        label_42->setGeometry(QRect(410, 10, 31, 16));
+        label_42->setGeometry(QRect(400, 10, 31, 16));
         label_65 = new QLabel(groupBox_9);
         label_65->setObjectName(QStringLiteral("label_65"));
-        label_65->setGeometry(QRect(370, 10, 31, 16));
+        label_65->setGeometry(QRect(360, 10, 31, 16));
         PDAF_info41 = new QTextEdit(groupBox_9);
         PDAF_info41->setObjectName(QStringLiteral("PDAF_info41"));
         PDAF_info41->setGeometry(QRect(220, 60, 130, 30));
@@ -4254,226 +4435,347 @@ public:
         groupBox_10->setGeometry(QRect(0, 300, 441, 185));
         Gmap21 = new QTextEdit(groupBox_10);
         Gmap21->setObjectName(QStringLiteral("Gmap21"));
-        Gmap21->setGeometry(QRect(220, 30, 140, 30));
+        Gmap21->setGeometry(QRect(220, 30, 100, 30));
         Gmap12 = new QTextEdit(groupBox_10);
         Gmap12->setObjectName(QStringLiteral("Gmap12"));
-        Gmap12->setGeometry(QRect(140, 30, 45, 30));
+        Gmap12->setGeometry(QRect(100, 30, 40, 30));
         Gmap11 = new QTextEdit(groupBox_10);
         Gmap11->setObjectName(QStringLiteral("Gmap11"));
-        Gmap11->setGeometry(QRect(0, 30, 140, 30));
+        Gmap11->setGeometry(QRect(0, 30, 100, 30));
         Gmap22 = new QTextEdit(groupBox_10);
         Gmap22->setObjectName(QStringLiteral("Gmap22"));
-        Gmap22->setGeometry(QRect(360, 30, 45, 30));
+        Gmap22->setGeometry(QRect(320, 30, 40, 30));
         label_43 = new QLabel(groupBox_10);
         label_43->setObjectName(QStringLiteral("label_43"));
-        label_43->setGeometry(QRect(40, 10, 61, 16));
+        label_43->setGeometry(QRect(20, 10, 61, 16));
         label_66 = new QLabel(groupBox_10);
         label_66->setObjectName(QStringLiteral("label_66"));
-        label_66->setGeometry(QRect(146, 10, 31, 16));
+        label_66->setGeometry(QRect(105, 10, 31, 16));
         label_67 = new QLabel(groupBox_10);
         label_67->setObjectName(QStringLiteral("label_67"));
-        label_67->setGeometry(QRect(370, 10, 31, 16));
+        label_67->setGeometry(QRect(325, 10, 31, 16));
         label_44 = new QLabel(groupBox_10);
         label_44->setObjectName(QStringLiteral("label_44"));
-        label_44->setGeometry(QRect(280, 10, 61, 16));
+        label_44->setGeometry(QRect(240, 10, 61, 16));
         Gmap32 = new QTextEdit(groupBox_10);
         Gmap32->setObjectName(QStringLiteral("Gmap32"));
-        Gmap32->setGeometry(QRect(140, 60, 45, 30));
+        Gmap32->setGeometry(QRect(100, 60, 40, 30));
         Gmap31 = new QTextEdit(groupBox_10);
         Gmap31->setObjectName(QStringLiteral("Gmap31"));
-        Gmap31->setGeometry(QRect(0, 60, 140, 30));
+        Gmap31->setGeometry(QRect(0, 60, 100, 30));
         Gmap42 = new QTextEdit(groupBox_10);
         Gmap42->setObjectName(QStringLiteral("Gmap42"));
-        Gmap42->setGeometry(QRect(360, 60, 45, 30));
+        Gmap42->setGeometry(QRect(320, 60, 40, 30));
         Gmap41 = new QTextEdit(groupBox_10);
         Gmap41->setObjectName(QStringLiteral("Gmap41"));
-        Gmap41->setGeometry(QRect(220, 60, 140, 30));
+        Gmap41->setGeometry(QRect(220, 60, 100, 30));
         Gmap52 = new QTextEdit(groupBox_10);
         Gmap52->setObjectName(QStringLiteral("Gmap52"));
-        Gmap52->setGeometry(QRect(140, 90, 45, 30));
+        Gmap52->setGeometry(QRect(100, 90, 40, 30));
         Gmap51 = new QTextEdit(groupBox_10);
         Gmap51->setObjectName(QStringLiteral("Gmap51"));
-        Gmap51->setGeometry(QRect(0, 90, 140, 30));
+        Gmap51->setGeometry(QRect(0, 90, 100, 30));
         Gmap62 = new QTextEdit(groupBox_10);
         Gmap62->setObjectName(QStringLiteral("Gmap62"));
-        Gmap62->setGeometry(QRect(360, 90, 45, 30));
+        Gmap62->setGeometry(QRect(320, 90, 40, 30));
         Gmap61 = new QTextEdit(groupBox_10);
         Gmap61->setObjectName(QStringLiteral("Gmap61"));
-        Gmap61->setGeometry(QRect(220, 90, 140, 30));
+        Gmap61->setGeometry(QRect(220, 90, 100, 30));
         Gmap72 = new QTextEdit(groupBox_10);
         Gmap72->setObjectName(QStringLiteral("Gmap72"));
-        Gmap72->setGeometry(QRect(140, 120, 45, 30));
+        Gmap72->setGeometry(QRect(100, 120, 40, 30));
         Gmap71 = new QTextEdit(groupBox_10);
         Gmap71->setObjectName(QStringLiteral("Gmap71"));
-        Gmap71->setGeometry(QRect(0, 120, 140, 30));
+        Gmap71->setGeometry(QRect(0, 120, 100, 30));
         Gmap82 = new QTextEdit(groupBox_10);
         Gmap82->setObjectName(QStringLiteral("Gmap82"));
-        Gmap82->setGeometry(QRect(360, 120, 45, 30));
+        Gmap82->setGeometry(QRect(320, 120, 40, 30));
         Gmap81 = new QTextEdit(groupBox_10);
         Gmap81->setObjectName(QStringLiteral("Gmap81"));
-        Gmap81->setGeometry(QRect(220, 120, 140, 30));
-        Gmap53 = new QTextEdit(groupBox_10);
-        Gmap53->setObjectName(QStringLiteral("Gmap53"));
-        Gmap53->setGeometry(QRect(185, 90, 35, 30));
-        Gmap33 = new QTextEdit(groupBox_10);
-        Gmap33->setObjectName(QStringLiteral("Gmap33"));
-        Gmap33->setGeometry(QRect(185, 60, 35, 30));
-        Gmap13 = new QTextEdit(groupBox_10);
-        Gmap13->setObjectName(QStringLiteral("Gmap13"));
-        Gmap13->setGeometry(QRect(185, 30, 35, 30));
-        Gmap73 = new QTextEdit(groupBox_10);
-        Gmap73->setObjectName(QStringLiteral("Gmap73"));
-        Gmap73->setGeometry(QRect(185, 120, 35, 30));
+        Gmap81->setGeometry(QRect(220, 120, 100, 30));
         label_144 = new QLabel(groupBox_10);
         label_144->setObjectName(QStringLiteral("label_144"));
-        label_144->setGeometry(QRect(185, 10, 41, 16));
-        Gmap63 = new QTextEdit(groupBox_10);
-        Gmap63->setObjectName(QStringLiteral("Gmap63"));
-        Gmap63->setGeometry(QRect(405, 90, 35, 30));
-        Gmap83 = new QTextEdit(groupBox_10);
-        Gmap83->setObjectName(QStringLiteral("Gmap83"));
-        Gmap83->setGeometry(QRect(405, 120, 35, 30));
-        Gmap23 = new QTextEdit(groupBox_10);
-        Gmap23->setObjectName(QStringLiteral("Gmap23"));
-        Gmap23->setGeometry(QRect(405, 30, 35, 30));
-        Gmap43 = new QTextEdit(groupBox_10);
-        Gmap43->setObjectName(QStringLiteral("Gmap43"));
-        Gmap43->setGeometry(QRect(405, 60, 35, 30));
+        label_144->setGeometry(QRect(185, 10, 31, 16));
         label_145 = new QLabel(groupBox_10);
         label_145->setObjectName(QStringLiteral("label_145"));
-        label_145->setGeometry(QRect(400, 10, 41, 16));
+        label_145->setGeometry(QRect(405, 10, 31, 16));
         Gmap91 = new QTextEdit(groupBox_10);
         Gmap91->setObjectName(QStringLiteral("Gmap91"));
-        Gmap91->setGeometry(QRect(0, 150, 140, 30));
-        Gmap93 = new QTextEdit(groupBox_10);
-        Gmap93->setObjectName(QStringLiteral("Gmap93"));
-        Gmap93->setGeometry(QRect(185, 150, 35, 30));
+        Gmap91->setGeometry(QRect(0, 150, 100, 30));
         Gmap102 = new QTextEdit(groupBox_10);
         Gmap102->setObjectName(QStringLiteral("Gmap102"));
-        Gmap102->setGeometry(QRect(360, 150, 45, 30));
+        Gmap102->setGeometry(QRect(320, 150, 40, 30));
         Gmap101 = new QTextEdit(groupBox_10);
         Gmap101->setObjectName(QStringLiteral("Gmap101"));
-        Gmap101->setGeometry(QRect(220, 150, 140, 30));
+        Gmap101->setGeometry(QRect(220, 150, 100, 30));
         Gmap92 = new QTextEdit(groupBox_10);
         Gmap92->setObjectName(QStringLiteral("Gmap92"));
-        Gmap92->setGeometry(QRect(140, 150, 45, 30));
+        Gmap92->setGeometry(QRect(100, 150, 40, 30));
+        Gmap14 = new QComboBox(groupBox_10);
+        Gmap14->setObjectName(QStringLiteral("Gmap14"));
+        Gmap14->setGeometry(QRect(105, 30, 115, 30));
+        Gmap34 = new QComboBox(groupBox_10);
+        Gmap34->setObjectName(QStringLiteral("Gmap34"));
+        Gmap34->setGeometry(QRect(105, 60, 115, 30));
+        Gmap54 = new QComboBox(groupBox_10);
+        Gmap54->setObjectName(QStringLiteral("Gmap54"));
+        Gmap54->setGeometry(QRect(105, 90, 115, 30));
+        Gmap74 = new QComboBox(groupBox_10);
+        Gmap74->setObjectName(QStringLiteral("Gmap74"));
+        Gmap74->setGeometry(QRect(105, 120, 115, 30));
+        Gmap94 = new QComboBox(groupBox_10);
+        Gmap94->setObjectName(QStringLiteral("Gmap94"));
+        Gmap94->setGeometry(QRect(105, 150, 115, 30));
+        Gmap44 = new QComboBox(groupBox_10);
+        Gmap44->setObjectName(QStringLiteral("Gmap44"));
+        Gmap44->setGeometry(QRect(325, 60, 115, 30));
+        Gmap84 = new QComboBox(groupBox_10);
+        Gmap84->setObjectName(QStringLiteral("Gmap84"));
+        Gmap84->setGeometry(QRect(325, 120, 115, 30));
+        Gmap104 = new QComboBox(groupBox_10);
+        Gmap104->setObjectName(QStringLiteral("Gmap104"));
+        Gmap104->setGeometry(QRect(325, 150, 115, 30));
+        Gmap64 = new QComboBox(groupBox_10);
+        Gmap64->setObjectName(QStringLiteral("Gmap64"));
+        Gmap64->setGeometry(QRect(325, 90, 115, 30));
+        Gmap24 = new QComboBox(groupBox_10);
+        Gmap24->setObjectName(QStringLiteral("Gmap24"));
+        Gmap24->setGeometry(QRect(325, 30, 115, 30));
+        Gmap33 = new QTextEdit(groupBox_10);
+        Gmap33->setObjectName(QStringLiteral("Gmap33"));
+        Gmap33->setGeometry(QRect(140, 60, 35, 30));
         Gmap103 = new QTextEdit(groupBox_10);
         Gmap103->setObjectName(QStringLiteral("Gmap103"));
-        Gmap103->setGeometry(QRect(405, 150, 35, 30));
+        Gmap103->setGeometry(QRect(360, 150, 35, 30));
+        Gmap83 = new QTextEdit(groupBox_10);
+        Gmap83->setObjectName(QStringLiteral("Gmap83"));
+        Gmap83->setGeometry(QRect(360, 120, 35, 30));
+        Gmap23 = new QTextEdit(groupBox_10);
+        Gmap23->setObjectName(QStringLiteral("Gmap23"));
+        Gmap23->setGeometry(QRect(360, 30, 35, 30));
+        Gmap73 = new QTextEdit(groupBox_10);
+        Gmap73->setObjectName(QStringLiteral("Gmap73"));
+        Gmap73->setGeometry(QRect(140, 120, 35, 30));
+        Gmap53 = new QTextEdit(groupBox_10);
+        Gmap53->setObjectName(QStringLiteral("Gmap53"));
+        Gmap53->setGeometry(QRect(140, 90, 35, 30));
+        Gmap63 = new QTextEdit(groupBox_10);
+        Gmap63->setObjectName(QStringLiteral("Gmap63"));
+        Gmap63->setGeometry(QRect(360, 90, 35, 30));
+        Gmap93 = new QTextEdit(groupBox_10);
+        Gmap93->setObjectName(QStringLiteral("Gmap93"));
+        Gmap93->setGeometry(QRect(140, 150, 35, 30));
+        Gmap43 = new QTextEdit(groupBox_10);
+        Gmap43->setObjectName(QStringLiteral("Gmap43"));
+        Gmap43->setGeometry(QRect(360, 60, 35, 30));
+        Gmap13 = new QTextEdit(groupBox_10);
+        Gmap13->setObjectName(QStringLiteral("Gmap13"));
+        Gmap13->setGeometry(QRect(140, 30, 35, 30));
+        label_192 = new QLabel(groupBox_10);
+        label_192->setObjectName(QStringLiteral("label_192"));
+        label_192->setGeometry(QRect(140, 10, 35, 16));
+        label_193 = new QLabel(groupBox_10);
+        label_193->setObjectName(QStringLiteral("label_193"));
+        label_193->setGeometry(QRect(360, 10, 35, 16));
+        Gmap24->raise();
+        Gmap104->raise();
+        Gmap84->raise();
+        Gmap44->raise();
+        Gmap64->raise();
+        Gmap94->raise();
+        Gmap54->raise();
+        Gmap74->raise();
+        Gmap34->raise();
+        Gmap14->raise();
+        Gmap21->raise();
+        Gmap12->raise();
+        Gmap11->raise();
+        Gmap22->raise();
+        label_43->raise();
+        label_66->raise();
+        label_67->raise();
+        label_44->raise();
+        Gmap32->raise();
+        Gmap31->raise();
+        Gmap42->raise();
+        Gmap41->raise();
+        Gmap52->raise();
+        Gmap51->raise();
+        Gmap62->raise();
+        Gmap61->raise();
+        Gmap72->raise();
+        Gmap71->raise();
+        Gmap82->raise();
+        Gmap81->raise();
+        label_144->raise();
+        label_145->raise();
+        Gmap91->raise();
+        Gmap102->raise();
+        Gmap101->raise();
+        Gmap92->raise();
+        Gmap33->raise();
+        Gmap103->raise();
+        Gmap83->raise();
+        Gmap23->raise();
+        Gmap73->raise();
+        Gmap53->raise();
+        Gmap63->raise();
+        Gmap93->raise();
+        Gmap43->raise();
+        Gmap13->raise();
+        label_192->raise();
+        label_193->raise();
         groupBox_11 = new QGroupBox(tab_7);
         groupBox_11->setObjectName(QStringLiteral("groupBox_11"));
         groupBox_11->setGeometry(QRect(0, 490, 441, 221));
         DCC12 = new QTextEdit(groupBox_11);
         DCC12->setObjectName(QStringLiteral("DCC12"));
-        DCC12->setGeometry(QRect(140, 20, 45, 30));
+        DCC12->setGeometry(QRect(130, 20, 45, 30));
         DCC11 = new QTextEdit(groupBox_11);
         DCC11->setObjectName(QStringLiteral("DCC11"));
-        DCC11->setGeometry(QRect(0, 20, 140, 30));
+        DCC11->setGeometry(QRect(0, 20, 130, 30));
         DCC22 = new QTextEdit(groupBox_11);
         DCC22->setObjectName(QStringLiteral("DCC22"));
-        DCC22->setGeometry(QRect(360, 20, 45, 30));
+        DCC22->setGeometry(QRect(350, 20, 45, 30));
         DCC21 = new QTextEdit(groupBox_11);
         DCC21->setObjectName(QStringLiteral("DCC21"));
-        DCC21->setGeometry(QRect(220, 20, 140, 30));
+        DCC21->setGeometry(QRect(220, 20, 130, 30));
         DCC32 = new QTextEdit(groupBox_11);
         DCC32->setObjectName(QStringLiteral("DCC32"));
-        DCC32->setGeometry(QRect(140, 50, 45, 30));
+        DCC32->setGeometry(QRect(130, 50, 45, 30));
         DCC41 = new QTextEdit(groupBox_11);
         DCC41->setObjectName(QStringLiteral("DCC41"));
-        DCC41->setGeometry(QRect(220, 50, 140, 30));
+        DCC41->setGeometry(QRect(220, 50, 130, 30));
         DCC42 = new QTextEdit(groupBox_11);
         DCC42->setObjectName(QStringLiteral("DCC42"));
-        DCC42->setGeometry(QRect(360, 50, 45, 30));
+        DCC42->setGeometry(QRect(350, 50, 45, 30));
         DCC31 = new QTextEdit(groupBox_11);
         DCC31->setObjectName(QStringLiteral("DCC31"));
-        DCC31->setGeometry(QRect(0, 50, 140, 30));
+        DCC31->setGeometry(QRect(0, 50, 130, 30));
         DCC52 = new QTextEdit(groupBox_11);
         DCC52->setObjectName(QStringLiteral("DCC52"));
-        DCC52->setGeometry(QRect(140, 80, 45, 30));
+        DCC52->setGeometry(QRect(130, 80, 45, 30));
         DCC61 = new QTextEdit(groupBox_11);
         DCC61->setObjectName(QStringLiteral("DCC61"));
-        DCC61->setGeometry(QRect(220, 80, 140, 30));
+        DCC61->setGeometry(QRect(220, 80, 130, 30));
         DCC62 = new QTextEdit(groupBox_11);
         DCC62->setObjectName(QStringLiteral("DCC62"));
-        DCC62->setGeometry(QRect(360, 80, 45, 30));
+        DCC62->setGeometry(QRect(350, 80, 45, 30));
         DCC51 = new QTextEdit(groupBox_11);
         DCC51->setObjectName(QStringLiteral("DCC51"));
-        DCC51->setGeometry(QRect(0, 80, 140, 30));
+        DCC51->setGeometry(QRect(0, 80, 130, 30));
         DCC72 = new QTextEdit(groupBox_11);
         DCC72->setObjectName(QStringLiteral("DCC72"));
-        DCC72->setGeometry(QRect(140, 110, 45, 30));
+        DCC72->setGeometry(QRect(130, 110, 45, 30));
         DCC81 = new QTextEdit(groupBox_11);
         DCC81->setObjectName(QStringLiteral("DCC81"));
-        DCC81->setGeometry(QRect(220, 110, 140, 30));
+        DCC81->setGeometry(QRect(220, 110, 130, 30));
         DCC82 = new QTextEdit(groupBox_11);
         DCC82->setObjectName(QStringLiteral("DCC82"));
-        DCC82->setGeometry(QRect(360, 110, 45, 30));
+        DCC82->setGeometry(QRect(350, 110, 45, 30));
         DCC71 = new QTextEdit(groupBox_11);
         DCC71->setObjectName(QStringLiteral("DCC71"));
-        DCC71->setGeometry(QRect(0, 110, 140, 30));
+        DCC71->setGeometry(QRect(0, 110, 130, 30));
         DCC92 = new QTextEdit(groupBox_11);
         DCC92->setObjectName(QStringLiteral("DCC92"));
-        DCC92->setGeometry(QRect(140, 140, 45, 30));
+        DCC92->setGeometry(QRect(130, 140, 45, 30));
         DCC101 = new QTextEdit(groupBox_11);
         DCC101->setObjectName(QStringLiteral("DCC101"));
-        DCC101->setGeometry(QRect(220, 140, 140, 30));
+        DCC101->setGeometry(QRect(220, 140, 130, 30));
         DCC102 = new QTextEdit(groupBox_11);
         DCC102->setObjectName(QStringLiteral("DCC102"));
-        DCC102->setGeometry(QRect(360, 140, 45, 30));
+        DCC102->setGeometry(QRect(350, 140, 45, 30));
         DCC91 = new QTextEdit(groupBox_11);
         DCC91->setObjectName(QStringLiteral("DCC91"));
-        DCC91->setGeometry(QRect(0, 140, 140, 30));
+        DCC91->setGeometry(QRect(0, 140, 130, 30));
         DCC112 = new QTextEdit(groupBox_11);
         DCC112->setObjectName(QStringLiteral("DCC112"));
-        DCC112->setGeometry(QRect(140, 190, 45, 30));
+        DCC112->setGeometry(QRect(130, 190, 45, 30));
         DCC121 = new QTextEdit(groupBox_11);
         DCC121->setObjectName(QStringLiteral("DCC121"));
-        DCC121->setGeometry(QRect(220, 190, 140, 30));
+        DCC121->setGeometry(QRect(220, 190, 130, 30));
         DCC122 = new QTextEdit(groupBox_11);
         DCC122->setObjectName(QStringLiteral("DCC122"));
-        DCC122->setGeometry(QRect(360, 190, 45, 30));
+        DCC122->setGeometry(QRect(350, 190, 45, 30));
         DCC111 = new QTextEdit(groupBox_11);
         DCC111->setObjectName(QStringLiteral("DCC111"));
-        DCC111->setGeometry(QRect(0, 190, 140, 30));
-        DCC73 = new QTextEdit(groupBox_11);
-        DCC73->setObjectName(QStringLiteral("DCC73"));
-        DCC73->setGeometry(QRect(185, 110, 30, 30));
-        DCC13 = new QTextEdit(groupBox_11);
-        DCC13->setObjectName(QStringLiteral("DCC13"));
-        DCC13->setGeometry(QRect(185, 20, 30, 30));
-        DCC53 = new QTextEdit(groupBox_11);
-        DCC53->setObjectName(QStringLiteral("DCC53"));
-        DCC53->setGeometry(QRect(185, 80, 30, 30));
-        DCC93 = new QTextEdit(groupBox_11);
-        DCC93->setObjectName(QStringLiteral("DCC93"));
-        DCC93->setGeometry(QRect(185, 140, 30, 30));
-        DCC113 = new QTextEdit(groupBox_11);
-        DCC113->setObjectName(QStringLiteral("DCC113"));
-        DCC113->setGeometry(QRect(185, 190, 30, 30));
-        DCC33 = new QTextEdit(groupBox_11);
-        DCC33->setObjectName(QStringLiteral("DCC33"));
-        DCC33->setGeometry(QRect(185, 50, 30, 30));
-        DCC23 = new QTextEdit(groupBox_11);
-        DCC23->setObjectName(QStringLiteral("DCC23"));
-        DCC23->setGeometry(QRect(405, 20, 30, 30));
-        DCC103 = new QTextEdit(groupBox_11);
-        DCC103->setObjectName(QStringLiteral("DCC103"));
-        DCC103->setGeometry(QRect(405, 140, 30, 30));
-        DCC83 = new QTextEdit(groupBox_11);
-        DCC83->setObjectName(QStringLiteral("DCC83"));
-        DCC83->setGeometry(QRect(405, 110, 30, 30));
-        DCC63 = new QTextEdit(groupBox_11);
-        DCC63->setObjectName(QStringLiteral("DCC63"));
-        DCC63->setGeometry(QRect(405, 80, 30, 30));
-        DCC123 = new QTextEdit(groupBox_11);
-        DCC123->setObjectName(QStringLiteral("DCC123"));
-        DCC123->setGeometry(QRect(405, 190, 30, 30));
-        DCC43 = new QTextEdit(groupBox_11);
-        DCC43->setObjectName(QStringLiteral("DCC43"));
-        DCC43->setGeometry(QRect(405, 50, 30, 30));
+        DCC111->setGeometry(QRect(0, 190, 130, 30));
         label_45 = new QLabel(groupBox_11);
         label_45->setObjectName(QStringLiteral("label_45"));
-        label_45->setGeometry(QRect(10, 170, 131, 16));
+        label_45->setGeometry(QRect(10, 170, 181, 16));
+        DCC13 = new QComboBox(groupBox_11);
+        DCC13->setObjectName(QStringLiteral("DCC13"));
+        DCC13->setGeometry(QRect(105, 20, 115, 30));
+        DCC33 = new QComboBox(groupBox_11);
+        DCC33->setObjectName(QStringLiteral("DCC33"));
+        DCC33->setGeometry(QRect(105, 50, 115, 30));
+        DCC53 = new QComboBox(groupBox_11);
+        DCC53->setObjectName(QStringLiteral("DCC53"));
+        DCC53->setGeometry(QRect(105, 80, 115, 30));
+        DCC73 = new QComboBox(groupBox_11);
+        DCC73->setObjectName(QStringLiteral("DCC73"));
+        DCC73->setGeometry(QRect(105, 110, 115, 30));
+        DCC93 = new QComboBox(groupBox_11);
+        DCC93->setObjectName(QStringLiteral("DCC93"));
+        DCC93->setGeometry(QRect(105, 140, 115, 30));
+        DCC113 = new QComboBox(groupBox_11);
+        DCC113->setObjectName(QStringLiteral("DCC113"));
+        DCC113->setGeometry(QRect(105, 190, 115, 30));
+        DCC43 = new QComboBox(groupBox_11);
+        DCC43->setObjectName(QStringLiteral("DCC43"));
+        DCC43->setGeometry(QRect(325, 50, 115, 30));
+        DCC23 = new QComboBox(groupBox_11);
+        DCC23->setObjectName(QStringLiteral("DCC23"));
+        DCC23->setGeometry(QRect(325, 20, 115, 30));
+        DCC63 = new QComboBox(groupBox_11);
+        DCC63->setObjectName(QStringLiteral("DCC63"));
+        DCC63->setGeometry(QRect(325, 80, 115, 30));
+        DCC123 = new QComboBox(groupBox_11);
+        DCC123->setObjectName(QStringLiteral("DCC123"));
+        DCC123->setGeometry(QRect(325, 190, 115, 30));
+        DCC103 = new QComboBox(groupBox_11);
+        DCC103->setObjectName(QStringLiteral("DCC103"));
+        DCC103->setGeometry(QRect(325, 140, 115, 30));
+        DCC83 = new QComboBox(groupBox_11);
+        DCC83->setObjectName(QStringLiteral("DCC83"));
+        DCC83->setGeometry(QRect(325, 110, 115, 30));
+        DCC43->raise();
+        DCC103->raise();
+        DCC23->raise();
+        DCC123->raise();
+        DCC63->raise();
+        DCC83->raise();
+        DCC73->raise();
+        DCC93->raise();
+        DCC113->raise();
+        DCC53->raise();
+        DCC33->raise();
+        DCC13->raise();
+        DCC12->raise();
+        DCC11->raise();
+        DCC22->raise();
+        DCC21->raise();
+        DCC32->raise();
+        DCC41->raise();
+        DCC42->raise();
+        DCC31->raise();
+        DCC52->raise();
+        DCC61->raise();
+        DCC62->raise();
+        DCC51->raise();
+        DCC72->raise();
+        DCC81->raise();
+        DCC82->raise();
+        DCC71->raise();
+        DCC92->raise();
+        DCC101->raise();
+        DCC102->raise();
+        DCC91->raise();
+        DCC112->raise();
+        DCC121->raise();
+        DCC122->raise();
+        DCC111->raise();
+        label_45->raise();
         tabWidget->addTab(tab_7, QString());
         tab_8 = new QWidget();
         tab_8->setObjectName(QStringLiteral("tab_8"));
@@ -4665,7 +4967,7 @@ public:
         seg181->setGeometry(QRect(220, 270, 135, 30));
         groupBox_18 = new QGroupBox(tab_9);
         groupBox_18->setObjectName(QStringLiteral("groupBox_18"));
-        groupBox_18->setGeometry(QRect(0, 310, 441, 241));
+        groupBox_18->setGeometry(QRect(0, 310, 441, 211));
         history12 = new QTextEdit(groupBox_18);
         history12->setObjectName(QStringLiteral("history12"));
         history12->setGeometry(QRect(170, 30, 45, 30));
@@ -4750,18 +5052,117 @@ public:
         history111 = new QTextEdit(groupBox_18);
         history111->setObjectName(QStringLiteral("history111"));
         history111->setGeometry(QRect(0, 180, 171, 30));
-        history132 = new QTextEdit(groupBox_18);
-        history132->setObjectName(QStringLiteral("history132"));
-        history132->setGeometry(QRect(170, 210, 45, 30));
-        history141 = new QTextEdit(groupBox_18);
-        history141->setObjectName(QStringLiteral("history141"));
-        history141->setGeometry(QRect(220, 210, 175, 30));
-        history142 = new QTextEdit(groupBox_18);
-        history142->setObjectName(QStringLiteral("history142"));
-        history142->setGeometry(QRect(395, 210, 45, 30));
-        history131 = new QTextEdit(groupBox_18);
-        history131->setObjectName(QStringLiteral("history131"));
-        history131->setGeometry(QRect(0, 210, 171, 30));
+        groupBox_27 = new QGroupBox(tab_9);
+        groupBox_27->setObjectName(QStringLiteral("groupBox_27"));
+        groupBox_27->setGeometry(QRect(0, 530, 440, 181));
+        fix63 = new QTextEdit(groupBox_27);
+        fix63->setObjectName(QStringLiteral("fix63"));
+        fix63->setGeometry(QRect(400, 85, 40, 30));
+        fix22 = new QTextEdit(groupBox_27);
+        fix22->setObjectName(QStringLiteral("fix22"));
+        fix22->setGeometry(QRect(360, 25, 40, 30));
+        fix43 = new QTextEdit(groupBox_27);
+        fix43->setObjectName(QStringLiteral("fix43"));
+        fix43->setGeometry(QRect(400, 55, 40, 30));
+        fix52 = new QTextEdit(groupBox_27);
+        fix52->setObjectName(QStringLiteral("fix52"));
+        fix52->setGeometry(QRect(150, 85, 40, 30));
+        fix11 = new QTextEdit(groupBox_27);
+        fix11->setObjectName(QStringLiteral("fix11"));
+        fix11->setGeometry(QRect(5, 25, 145, 30));
+        fix13 = new QTextEdit(groupBox_27);
+        fix13->setObjectName(QStringLiteral("fix13"));
+        fix13->setGeometry(QRect(190, 25, 40, 30));
+        fix53 = new QTextEdit(groupBox_27);
+        fix53->setObjectName(QStringLiteral("fix53"));
+        fix53->setGeometry(QRect(190, 85, 40, 30));
+        fix62 = new QTextEdit(groupBox_27);
+        fix62->setObjectName(QStringLiteral("fix62"));
+        fix62->setGeometry(QRect(360, 85, 40, 30));
+        fix12 = new QTextEdit(groupBox_27);
+        fix12->setObjectName(QStringLiteral("fix12"));
+        fix12->setGeometry(QRect(150, 25, 40, 30));
+        fix32 = new QTextEdit(groupBox_27);
+        fix32->setObjectName(QStringLiteral("fix32"));
+        fix32->setGeometry(QRect(150, 55, 40, 30));
+        fix61 = new QTextEdit(groupBox_27);
+        fix61->setObjectName(QStringLiteral("fix61"));
+        fix61->setGeometry(QRect(229, 85, 131, 30));
+        fix41 = new QTextEdit(groupBox_27);
+        fix41->setObjectName(QStringLiteral("fix41"));
+        fix41->setGeometry(QRect(229, 55, 131, 30));
+        fix33 = new QTextEdit(groupBox_27);
+        fix33->setObjectName(QStringLiteral("fix33"));
+        fix33->setGeometry(QRect(190, 55, 40, 30));
+        fix31 = new QTextEdit(groupBox_27);
+        fix31->setObjectName(QStringLiteral("fix31"));
+        fix31->setGeometry(QRect(5, 55, 145, 30));
+        fix42 = new QTextEdit(groupBox_27);
+        fix42->setObjectName(QStringLiteral("fix42"));
+        fix42->setGeometry(QRect(360, 55, 40, 30));
+        fix21 = new QTextEdit(groupBox_27);
+        fix21->setObjectName(QStringLiteral("fix21"));
+        fix21->setGeometry(QRect(229, 25, 131, 30));
+        fix51 = new QTextEdit(groupBox_27);
+        fix51->setObjectName(QStringLiteral("fix51"));
+        fix51->setGeometry(QRect(5, 85, 145, 30));
+        fix23 = new QTextEdit(groupBox_27);
+        fix23->setObjectName(QStringLiteral("fix23"));
+        fix23->setGeometry(QRect(400, 25, 40, 30));
+        fix82 = new QTextEdit(groupBox_27);
+        fix82->setObjectName(QStringLiteral("fix82"));
+        fix82->setGeometry(QRect(360, 115, 40, 30));
+        fix73 = new QTextEdit(groupBox_27);
+        fix73->setObjectName(QStringLiteral("fix73"));
+        fix73->setGeometry(QRect(190, 115, 40, 30));
+        fix81 = new QTextEdit(groupBox_27);
+        fix81->setObjectName(QStringLiteral("fix81"));
+        fix81->setGeometry(QRect(229, 115, 131, 30));
+        fix72 = new QTextEdit(groupBox_27);
+        fix72->setObjectName(QStringLiteral("fix72"));
+        fix72->setGeometry(QRect(150, 115, 40, 30));
+        fix83 = new QTextEdit(groupBox_27);
+        fix83->setObjectName(QStringLiteral("fix83"));
+        fix83->setGeometry(QRect(400, 115, 40, 30));
+        fix71 = new QTextEdit(groupBox_27);
+        fix71->setObjectName(QStringLiteral("fix71"));
+        fix71->setGeometry(QRect(5, 115, 145, 30));
+        fix101 = new QTextEdit(groupBox_27);
+        fix101->setObjectName(QStringLiteral("fix101"));
+        fix101->setGeometry(QRect(229, 145, 131, 30));
+        fix103 = new QTextEdit(groupBox_27);
+        fix103->setObjectName(QStringLiteral("fix103"));
+        fix103->setGeometry(QRect(400, 145, 40, 30));
+        fix91 = new QTextEdit(groupBox_27);
+        fix91->setObjectName(QStringLiteral("fix91"));
+        fix91->setGeometry(QRect(5, 145, 145, 30));
+        fix93 = new QTextEdit(groupBox_27);
+        fix93->setObjectName(QStringLiteral("fix93"));
+        fix93->setGeometry(QRect(190, 145, 40, 30));
+        fix92 = new QTextEdit(groupBox_27);
+        fix92->setObjectName(QStringLiteral("fix92"));
+        fix92->setGeometry(QRect(150, 145, 40, 30));
+        fix102 = new QTextEdit(groupBox_27);
+        fix102->setObjectName(QStringLiteral("fix102"));
+        fix102->setGeometry(QRect(360, 145, 40, 30));
+        label_184 = new QLabel(groupBox_27);
+        label_184->setObjectName(QStringLiteral("label_184"));
+        label_184->setGeometry(QRect(15, 10, 61, 16));
+        label_185 = new QLabel(groupBox_27);
+        label_185->setObjectName(QStringLiteral("label_185"));
+        label_185->setGeometry(QRect(255, 10, 61, 16));
+        label_186 = new QLabel(groupBox_27);
+        label_186->setObjectName(QStringLiteral("label_186"));
+        label_186->setGeometry(QRect(200, 10, 31, 16));
+        label_187 = new QLabel(groupBox_27);
+        label_187->setObjectName(QStringLiteral("label_187"));
+        label_187->setGeometry(QRect(365, 10, 31, 16));
+        label_188 = new QLabel(groupBox_27);
+        label_188->setObjectName(QStringLiteral("label_188"));
+        label_188->setGeometry(QRect(410, 10, 31, 16));
+        label_189 = new QLabel(groupBox_27);
+        label_189->setObjectName(QStringLiteral("label_189"));
+        label_189->setGeometry(QRect(155, 10, 31, 16));
         tabWidget->addTab(tab_9, QString());
         tab_10 = new QWidget();
         tab_10->setObjectName(QStringLiteral("tab_10"));
@@ -5244,15 +5645,15 @@ public:
 
     void retranslateUi(QWidget *EEPROM_Data_VerifierClass)
     {
-        EEPROM_Data_VerifierClass->setWindowTitle(QApplication::translate("EEPROM_Data_VerifierClass", "EEPROM_Verifier_20220907", Q_NULLPTR));
+        EEPROM_Data_VerifierClass->setWindowTitle(QApplication::translate("EEPROM_Data_VerifierClass", "EEPROM_Verifier_20220921", Q_NULLPTR));
         label->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Input Memory Data", Q_NULLPTR));
         label_3->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Result & logs", Q_NULLPTR));
         pushButton_golden->setText(QApplication::translate("EEPROM_Data_VerifierClass", "AWB Golden", Q_NULLPTR));
         groupBox->setTitle(QApplication::translate("EEPROM_Data_VerifierClass", "Data Parse Result", Q_NULLPTR));
         tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("EEPROM_Data_VerifierClass", "Main", Q_NULLPTR));
-        radioButton_255->setText(QApplication::translate("EEPROM_Data_VerifierClass", "%255", Q_NULLPTR));
-        radioButton_255_1->setText(QApplication::translate("EEPROM_Data_VerifierClass", "%255+1", Q_NULLPTR));
-        radioButton_256->setText(QApplication::translate("EEPROM_Data_VerifierClass", "%FFFF", Q_NULLPTR));
+        radioButton_255->setText(QApplication::translate("EEPROM_Data_VerifierClass", "%FF", Q_NULLPTR));
+        radioButton_255_1->setText(QApplication::translate("EEPROM_Data_VerifierClass", "%FF+1", Q_NULLPTR));
+        radioButton_256->setText(QApplication::translate("EEPROM_Data_VerifierClass", "%10000", Q_NULLPTR));
         flag_valid->setHtml(QApplication::translate("EEPROM_Data_VerifierClass", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -5336,14 +5737,74 @@ public:
         label_76->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Minute", Q_NULLPTR));
         label_77->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Second", Q_NULLPTR));
         info_fuse_2->setText(QString());
+        label_194->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Line", Q_NULLPTR));
+        label_195->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Factory", Q_NULLPTR));
         tabWidget->setTabText(tabWidget->indexOf(tab_3), QApplication::translate("EEPROM_Data_VerifierClass", "Info", Q_NULLPTR));
-        groupBox_3->setTitle(QApplication::translate("EEPROM_Data_VerifierClass", "QC LSC 17*13", Q_NULLPTR));
-        QC_LSC_552->setText(QApplication::translate("EEPROM_Data_VerifierClass", "5+52", Q_NULLPTR));
-        QC_LSC_8->setText(QApplication::translate("EEPROM_Data_VerifierClass", "8byte", Q_NULLPTR));
+        groupBox_3->setTitle(QApplication::translate("EEPROM_Data_VerifierClass", "LSC Data", Q_NULLPTR));
         label_35->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Start", Q_NULLPTR));
-        label_37->setText(QApplication::translate("EEPROM_Data_VerifierClass", "QC LSC1_Name `", Q_NULLPTR));
-        label_38->setText(QApplication::translate("EEPROM_Data_VerifierClass", "QC LSC2_Name", Q_NULLPTR));
+        label_37->setText(QApplication::translate("EEPROM_Data_VerifierClass", "LSC_Name", Q_NULLPTR));
+        label_38->setText(QApplication::translate("EEPROM_Data_VerifierClass", "LSC_Name", Q_NULLPTR));
         label_34->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Start", Q_NULLPTR));
+        label_182->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Type", Q_NULLPTR));
+        label_183->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Type", Q_NULLPTR));
+        lsc14->clear();
+        lsc14->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2byte,QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,1.25b,QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "13x9, Q7, SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15, 2b, MTK", Q_NULLPTR)
+        );
+        lsc34->clear();
+        lsc34->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2byte,QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,1.25b,QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "13x9, Q7, SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15, 2b, MTK", Q_NULLPTR)
+        );
+        lsc54->clear();
+        lsc54->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2byte,QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,1.25b,QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "13x9, Q7, SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15, 2b, MTK", Q_NULLPTR)
+        );
+        lsc74->clear();
+        lsc74->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2byte,QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,1.25b,QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "13x9, Q7, SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15, 2b, MTK", Q_NULLPTR)
+        );
+        lsc64->clear();
+        lsc64->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2byte,QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,1.25b,QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "13x9, Q7, SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15, 2b, MTK", Q_NULLPTR)
+        );
+        lsc44->clear();
+        lsc44->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2byte,QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,1.25b,QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "13x9, Q7, SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15, 2b, MTK", Q_NULLPTR)
+        );
+        lsc24->clear();
+        lsc24->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2byte,QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,1.25b,QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "13x9, Q7, SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15, 2b, MTK", Q_NULLPTR)
+        );
+        lsc84->clear();
+        lsc84->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2byte,QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,1.25b,QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "13x9, Q7, SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15, 2b, MTK", Q_NULLPTR)
+        );
+        label_190->setText(QApplication::translate("EEPROM_Data_VerifierClass", "offset", Q_NULLPTR));
+        label_191->setText(QApplication::translate("EEPROM_Data_VerifierClass", "offset", Q_NULLPTR));
         groupBox_4->setTitle(QApplication::translate("EEPROM_Data_VerifierClass", "Shift Cal", Q_NULLPTR));
         label_46->setText(QApplication::translate("EEPROM_Data_VerifierClass", "X_Start", Q_NULLPTR));
         label_47->setText(QApplication::translate("EEPROM_Data_VerifierClass", "P_Byte", Q_NULLPTR));
@@ -5453,9 +5914,14 @@ public:
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>", Q_NULLPTR));
         label_110->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Count", Q_NULLPTR));
         label_127->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Format", Q_NULLPTR));
-        SFR_HEX->setText(QApplication::translate("EEPROM_Data_VerifierClass", "HEX", Q_NULLPTR));
-        SFR_DEC->setText(QApplication::translate("EEPROM_Data_VerifierClass", "DEC", Q_NULLPTR));
         pushButton_dump_SFR->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Dump_TXT", Q_NULLPTR));
+        SFR_Format->clear();
+        SFR_Format->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "Hex 1b", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "DEC 1b", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "DEC 2b", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "PIMA 2b", Q_NULLPTR)
+        );
         groupBox_17->setTitle(QApplication::translate("EEPROM_Data_VerifierClass", "long Size Hex Info", Q_NULLPTR));
         AF_info11->setHtml(QApplication::translate("EEPROM_Data_VerifierClass", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
@@ -5512,7 +5978,7 @@ public:
 "</style></head><body style=\" font-family:'SimSun'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>", Q_NULLPTR));
         tabWidget->setTabText(tabWidget->indexOf(tab_5), QApplication::translate("EEPROM_Data_VerifierClass", "AF", Q_NULLPTR));
-        groupBox_12->setTitle(QApplication::translate("EEPROM_Data_VerifierClass", "OIS & Hall Info data", Q_NULLPTR));
+        groupBox_12->setTitle(QApplication::translate("EEPROM_Data_VerifierClass", "Fixed Value or Variate data", Q_NULLPTR));
         label_54->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Item Name", Q_NULLPTR));
         label_70->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Addr", Q_NULLPTR));
         label_71->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Item Name", Q_NULLPTR));
@@ -5521,6 +5987,8 @@ public:
         label_74->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Byte", Q_NULLPTR));
         label_180->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Value", Q_NULLPTR));
         label_181->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Value", Q_NULLPTR));
+        OIS_HL->setText(QApplication::translate("EEPROM_Data_VerifierClass", "HL", Q_NULLPTR));
+        OIS_LH->setText(QApplication::translate("EEPROM_Data_VerifierClass", "LH", Q_NULLPTR));
         groupBox_13->setTitle(QApplication::translate("EEPROM_Data_VerifierClass", "OIS Cal", Q_NULLPTR));
         label_92->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Gyro offset X name", Q_NULLPTR));
         label_93->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Gyro offset Y name", Q_NULLPTR));
@@ -5557,22 +6025,156 @@ public:
         label_140->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Tilt_Y", Q_NULLPTR));
         label_141->setText(QApplication::translate("EEPROM_Data_VerifierClass", "CPS", Q_NULLPTR));
         tabWidget->setTabText(tabWidget->indexOf(tab_6), QApplication::translate("EEPROM_Data_VerifierClass", "OIS", Q_NULLPTR));
-        groupBox_9->setTitle(QApplication::translate("EEPROM_Data_VerifierClass", "PDAF Info data (Default is 2 Byte Format)", Q_NULLPTR));
-        label_39->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Gain Map Item", Q_NULLPTR));
+        groupBox_9->setTitle(QApplication::translate("EEPROM_Data_VerifierClass", "2Byte Fixed Info data", Q_NULLPTR));
+        label_39->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Item_Name", Q_NULLPTR));
         label_40->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Spec", Q_NULLPTR));
         label_64->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Addr", Q_NULLPTR));
-        label_41->setText(QApplication::translate("EEPROM_Data_VerifierClass", "DCC Item", Q_NULLPTR));
+        label_41->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Item_Name", Q_NULLPTR));
         label_42->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Spec", Q_NULLPTR));
         label_65->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Addr", Q_NULLPTR));
-        groupBox_10->setTitle(QApplication::translate("EEPROM_Data_VerifierClass", "QC Gain Map 17*13", Q_NULLPTR));
+        groupBox_10->setTitle(QApplication::translate("EEPROM_Data_VerifierClass", "Gain Map/LRC", Q_NULLPTR));
         label_43->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Item Name", Q_NULLPTR));
         label_66->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Addr", Q_NULLPTR));
         label_67->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Addr", Q_NULLPTR));
         label_44->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Item Name", Q_NULLPTR));
-        label_144->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Offset", Q_NULLPTR));
-        label_145->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Offset", Q_NULLPTR));
-        groupBox_11->setTitle(QApplication::translate("EEPROM_Data_VerifierClass", "DCC/PD/FV/Focus Map/PD offset  8*6", Q_NULLPTR));
+        label_144->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Type", Q_NULLPTR));
+        label_145->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Type", Q_NULLPTR));
+        Gmap14->clear();
+        Gmap14->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2byte, QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,1.10,SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15,2byte,MTK", Q_NULLPTR)
+        );
+        Gmap34->clear();
+        Gmap34->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2byte, QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,1.10,SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15,2byte,MTK", Q_NULLPTR)
+        );
+        Gmap54->clear();
+        Gmap54->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2byte, QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,1.10,SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15,2byte,MTK", Q_NULLPTR)
+        );
+        Gmap74->clear();
+        Gmap74->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2byte, QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,1.10,SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15,2byte,MTK", Q_NULLPTR)
+        );
+        Gmap94->clear();
+        Gmap94->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2byte, QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,1.10,SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15,2byte,MTK", Q_NULLPTR)
+        );
+        Gmap44->clear();
+        Gmap44->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2byte, QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,1.10,SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15,2byte,MTK", Q_NULLPTR)
+        );
+        Gmap84->clear();
+        Gmap84->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2byte, QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,1.10,SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15,2byte,MTK", Q_NULLPTR)
+        );
+        Gmap104->clear();
+        Gmap104->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2byte, QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,1.10,SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15,2byte,MTK", Q_NULLPTR)
+        );
+        Gmap64->clear();
+        Gmap64->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2byte, QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,1.10,SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15,2byte,MTK", Q_NULLPTR)
+        );
+        Gmap24->clear();
+        Gmap24->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2byte, QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,1.10,SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15,2byte,MTK", Q_NULLPTR)
+        );
+        label_192->setText(QApplication::translate("EEPROM_Data_VerifierClass", "offset", Q_NULLPTR));
+        label_193->setText(QApplication::translate("EEPROM_Data_VerifierClass", "offset", Q_NULLPTR));
+        groupBox_11->setTitle(QApplication::translate("EEPROM_Data_VerifierClass", "DCC/PD/FV/Focus Map", Q_NULLPTR));
         label_45->setText(QApplication::translate("EEPROM_Data_VerifierClass", "PD offset Map(4 byte)", Q_NULLPTR));
+        DCC13->clear();
+        DCC13->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "8x6, 2byte,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,2b,SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15,2b, MTK", Q_NULLPTR)
+        );
+        DCC33->clear();
+        DCC33->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "8x6, 2byte,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,2b,SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15,2b, MTK", Q_NULLPTR)
+        );
+        DCC53->clear();
+        DCC53->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "8x6, 2byte,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,2b,SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15,2b, MTK", Q_NULLPTR)
+        );
+        DCC73->clear();
+        DCC73->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "8x6, 2byte,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,2b,SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15,2b, MTK", Q_NULLPTR)
+        );
+        DCC93->clear();
+        DCC93->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "8x6, 2byte,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,2b,SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15,2b, MTK", Q_NULLPTR)
+        );
+        DCC113->clear();
+        DCC113->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "8x6, 2byte,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,2b,SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15,2b, MTK", Q_NULLPTR)
+        );
+        DCC43->clear();
+        DCC43->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "8x6, 2byte,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,2b,SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15,2b, MTK", Q_NULLPTR)
+        );
+        DCC23->clear();
+        DCC23->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "8x6, 2byte,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,2b,SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15,2b, MTK", Q_NULLPTR)
+        );
+        DCC63->clear();
+        DCC63->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "8x6, 2byte,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,2b,SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15,2b, MTK", Q_NULLPTR)
+        );
+        DCC123->clear();
+        DCC123->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "8x6, 2byte,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,2b,SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15,2b, MTK", Q_NULLPTR)
+        );
+        DCC103->clear();
+        DCC103->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "8x6, 2byte,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,2b,SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15,2b, MTK", Q_NULLPTR)
+        );
+        DCC83->clear();
+        DCC83->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "8x6, 2byte,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,2b,SONY", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "15x15,2b, MTK", Q_NULLPTR)
+        );
         tabWidget->setTabText(tabWidget->indexOf(tab_7), QApplication::translate("EEPROM_Data_VerifierClass", "PDAF", Q_NULLPTR));
         tabWidget->setTabText(tabWidget->indexOf(tab_8), QApplication::translate("EEPROM_Data_VerifierClass", "Dual", Q_NULLPTR));
         groupBox_16->setTitle(QApplication::translate("EEPROM_Data_VerifierClass", "Segment", Q_NULLPTR));
@@ -5587,6 +6189,13 @@ public:
         label_88->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Addr", Q_NULLPTR));
         label_89->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Addr", Q_NULLPTR));
         label_90->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Item Name", Q_NULLPTR));
+        groupBox_27->setTitle(QApplication::translate("EEPROM_Data_VerifierClass", "Fixed Data Check Compare with Project bin file", Q_NULLPTR));
+        label_184->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Item Name", Q_NULLPTR));
+        label_185->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Item Name", Q_NULLPTR));
+        label_186->setText(QApplication::translate("EEPROM_Data_VerifierClass", "END", Q_NULLPTR));
+        label_187->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Start", Q_NULLPTR));
+        label_188->setText(QApplication::translate("EEPROM_Data_VerifierClass", "END", Q_NULLPTR));
+        label_189->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Start", Q_NULLPTR));
         tabWidget->setTabText(tabWidget->indexOf(tab_9), QApplication::translate("EEPROM_Data_VerifierClass", "Seg", Q_NULLPTR));
         label_148->setText(QApplication::translate("EEPROM_Data_VerifierClass", "END", Q_NULLPTR));
         label_150->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Item Name", Q_NULLPTR));
@@ -5595,7 +6204,7 @@ public:
         label_157->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Start", Q_NULLPTR));
         groupBox_23->setTitle(QApplication::translate("EEPROM_Data_VerifierClass", "Duplicate Data Check", Q_NULLPTR));
         label_158->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Item Name", Q_NULLPTR));
-        groupBox_25->setTitle(QApplication::translate("EEPROM_Data_VerifierClass", "           Value Check ([u]char/[u]short/[u]int/2dcm/4dcm/float/double)", Q_NULLPTR));
+        groupBox_25->setTitle(QApplication::translate("EEPROM_Data_VerifierClass", "           ValueCheck([u]char/[u]short/[u]int/2dcm/4dcm/float/double/Q)", Q_NULLPTR));
         sData_item11->setHtml(QApplication::translate("EEPROM_Data_VerifierClass", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"

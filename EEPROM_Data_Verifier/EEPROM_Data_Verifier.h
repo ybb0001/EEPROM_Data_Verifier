@@ -64,7 +64,6 @@ private:
 	void on_pushButton_clear_clicked();
 	void on_pushButton_dump_value_clicked();
 	void on_pushButton_dump_SFR_clicked();
-
 	void selectModel();
 
 	void DisplayOutput();
@@ -80,10 +79,11 @@ private:
 	int info_Data_Parse();
 	void Oppo_AWB_Parse(int group);
 	void VIVO_AWB_Parse(int group);
+	void SONY_AWB_Parse(int group);
 	void XiaoMi_AWB_Parse(int group);
 	void History_Date_Parser();
 
-	int QC_LSC_Parse(int start);
+	int LSC_Parse(int start,int group);
 	int MTK_LSC_Parse(int start);
 	void vivo_MTK_AWB_Parse(int group);
 	void MTK_AWB_Parse(int group);
@@ -99,8 +99,9 @@ private:
 	int bin_Area_Check();
 	int duplicate_Check();
 	int value_duplicate_Check();
-
 	int value_Data_Parse();
+	int fix_Data_Check();
+	int read_Spec_Bin();
 
 	int Reserved_Check();
 

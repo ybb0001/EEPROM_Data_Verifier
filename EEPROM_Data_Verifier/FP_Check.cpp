@@ -11,6 +11,7 @@ int LSC_H_TABLE[8], LSC_V_TABLE[6], LSC_H_TABLE_RE[8], LSC_V_TABLE_RE[6];
 float GainMap_Diff = 0.3, GainMap_LR_Diff = 0.3, GainMap_TB_Diff = 0.3, DCC_Diff=0.4;
 float MTK_LSC_H_TABLE[7], MTK_LSC_V_TABLE[7], MTK_LSC_H_TABLE_RE[7], MTK_LSC_V_TABLE_RE[7];
 float LSC_COR_USL = 0.9, LSC_COR_LSL = 0.1, LSC_MINMAX_SPEC[4],MTK_LSC_MINMAX_SPEC[4];
+float golden_Spec[2][3] = {0};
 unsigned int awb_distance[3], awb_tolerance[3][3];
 int QSC_Min, QSC_Max, LSC_Sequence_check=1;
 int log_type = 1, awb_golden_check=1;
@@ -34,7 +35,7 @@ void FP_logFile_Close() {
 }
 
 typedef struct {
-	int range_min = 0, range_max = 1020;
+	int range_min = 0, range_max = 1020, POS1_diff=0, POS2_diff = 0,Mac_diff=0,Inf_diff=0;
 	float mid1_coef = 0, mid2_coef = 0;
 }AF_Code_Spec_Type;
 AF_Code_Spec_Type af_Code_Spec;
@@ -102,6 +103,21 @@ void load_Spec(int x) {
 	GetPrivateProfileString(TEXT("Spec_Set"), TEXT("MTK_LSC_MINMAX_SPEC_B"), TEXT(""), lpTexts, 8, CA2CT(INI_Path.c_str()));
 	MTK_LSC_MINMAX_SPEC[3] = atof(CT2A(lpTexts));
 
+	GetPrivateProfileString(TEXT("SONY"), TEXT("golden_rg_High_Color"), TEXT("0"), lpTexts, 10, CA2CT(INI_Path.c_str()));
+	
+	golden_Spec[0][0] = atof(CT2A(lpTexts));
+	GetPrivateProfileString(TEXT("SONY"), TEXT("golden_bg_High_Color"), TEXT("0"), lpTexts, 10, CA2CT(INI_Path.c_str()));
+	golden_Spec[0][1] = atof(CT2A(lpTexts));
+	GetPrivateProfileString(TEXT("SONY"), TEXT("golden_gbgr_High_Color"), TEXT("0"), lpTexts, 10, CA2CT(INI_Path.c_str()));
+	golden_Spec[0][2] = atof(CT2A(lpTexts));
+	GetPrivateProfileString(TEXT("SONY"), TEXT("golden_rg_Low_Color"), TEXT("0"), lpTexts, 10, CA2CT(INI_Path.c_str()));
+	golden_Spec[1][0] = atof(CT2A(lpTexts));
+	GetPrivateProfileString(TEXT("SONY"), TEXT("golden_bg_Low_Color"), TEXT("0"), lpTexts, 10, CA2CT(INI_Path.c_str()));
+	golden_Spec[1][1] = atof(CT2A(lpTexts));
+	GetPrivateProfileString(TEXT("SONY"), TEXT("golden_gbgr_Low_Color"), TEXT("0"), lpTexts, 10, CA2CT(INI_Path.c_str()));
+	golden_Spec[1][2] = atof(CT2A(lpTexts));
+
+
 	LSC_MINMAX_CORNER_ONOFF = GetPrivateProfileInt(_T("Spec_Set"), TEXT("LSC_MINMAX_CORNER_ONOFF"), LSC_MINMAX_CORNER_ONOFF, CA2CT(INI_Path.c_str()));
 	LSC_MINMAX_ERRCOUNT = GetPrivateProfileInt(_T("Spec_Set"), TEXT("LSC_MINMAX_ERRCOUNT"), LSC_MINMAX_CORNER_ONOFF, CA2CT(INI_Path.c_str()));
 	LSC_MINMAX_ERRCOUNT_SPEC = GetPrivateProfileInt(_T("Spec_Set"), TEXT("LSC_MINMAX_ERRCOUNT_SPEC"), LSC_MINMAX_CORNER_ONOFF, CA2CT(INI_Path.c_str()));
@@ -138,7 +154,12 @@ void load_Spec(int x) {
 	}
 
 	af_Code_Spec.range_min = GetPrivateProfileInt(_T("Spec_Set"), TEXT("VCA_GAP_INF2MAC2"), 100, CA2CT(INI_Path.c_str()));
-	af_Code_Spec.range_max = GetPrivateProfileInt(_T("Spec_Set"), TEXT("VCA_GAP_INF2MAC2_H"), 900, CA2CT(INI_Path.c_str()));
+	af_Code_Spec.range_max = GetPrivateProfileInt(_T("Spec_Set"), TEXT("VCA_GAP_INF2MAC2_H"), 1000, CA2CT(INI_Path.c_str()));
+	af_Code_Spec.POS1_diff = GetPrivateProfileInt(_T("Spec_Set"), TEXT("POS1_Diff_Spec"), 0, CA2CT(INI_Path.c_str()));
+	af_Code_Spec.POS2_diff = GetPrivateProfileInt(_T("Spec_Set"), TEXT("POS2_Diff_Spec"), 0, CA2CT(INI_Path.c_str()));
+	af_Code_Spec.Mac_diff = GetPrivateProfileInt(_T("Spec_Set"), TEXT("Mac_twice_Diff"), 0, CA2CT(INI_Path.c_str()));
+	af_Code_Spec.Inf_diff = GetPrivateProfileInt(_T("Spec_Set"), TEXT("Inf_twice_Diff"), 0, CA2CT(INI_Path.c_str()));
+
 	GetPrivateProfileString(TEXT("Spec_Set"), TEXT("POS1_LENS_SHIFT"), TEXT("0"), lpTexts, 64, CA2CT(INI_Path.c_str()));
 	str = CT2A(lpTexts);
 	af_Code_Spec.mid1_coef = atof(str.c_str());
@@ -149,95 +170,111 @@ void load_Spec(int x) {
 }
 
 
-int QC_LSC_FP_Check(int LSC[13][17][4]) {
+int QC_LSC_FP_Check(int LSC[15][17][4],int type) {
 	int ret = 0;
-	string color[4] = { "QC_LSC Table1 ","QC_LSC Table2 ","QC_LSC Table3 ","QC_LSC Table4 " };
+	string color[4] = { "LSC Table1 ","LSC Table2 ","LSC Table3 ","LSC Table4 " };
 
 	if (LSC[6][8][0] == 0xFFFF || LSC[6][8][0] == 0) {
 		ret |= 1;
 	}
+	int W = 17, H = 13, T = 4, C = 1024;
 
-//	FP_log << "----------- QC LSC FP Check Result----------" << endl;
-
-	///////////////  H/V Diff Check
-	for (int k = 0; k < 4; k++)
-		for (int i = 0; i < 13; i++)
-			for (int j = 0; j < 17; j++) {
-				if (j < 8) {
-					if (LSC[i][j + 1][k] - LSC[i][j][k]>LSC_H_TABLE[j] || LSC[i][j][k] - LSC[i][j + 1][k]>LSC_H_TABLE_RE[j]) {
-						ret = ret | 2;
-						FP_log << color[k] << "_H_[" << i << "," << j << "]" << "[" << i << "," << j + 1 << "]" << " Diff NG!" << endl;
+	if (type<2) {
+		///////////////  H/V Diff Check
+		for (int k = 0; k < 4; k++)
+			for (int i = 0; i < 13; i++)
+				for (int j = 0; j < 17; j++) {
+					if (j < 8) {
+						if (LSC[i][j + 1][k] - LSC[i][j][k]>LSC_H_TABLE[j] || LSC[i][j][k] - LSC[i][j + 1][k]>LSC_H_TABLE_RE[j]) {
+							ret = ret | 2;
+							FP_log << color[k] << "_H_[" << i << "," << j << "]" << "[" << i << "," << j + 1 << "]" << " Diff NG!" << endl;
+						}
+					}
+					else if (j > 8) {
+						if (LSC[i][j - 1][k] - LSC[i][j][k]>LSC_H_TABLE[16 - j] || LSC[i][j][k] - LSC[i][j - 1][k]>LSC_H_TABLE_RE[16 - j]) {
+							ret = ret | 2;
+							FP_log << color[k] << "_H_[" << i << "," << j + 1 << "]" << "[" << i << "," << j << "]" << " Diff NG!" << endl;
+						}
 					}
 				}
-				else if (j > 8) {
-					if (LSC[i][j - 1][k] - LSC[i][j][k]>LSC_H_TABLE[16 - j] || LSC[i][j][k] - LSC[i][j - 1][k]>LSC_H_TABLE_RE[16 - j]) {
-						ret = ret | 2;
-						FP_log << color[k] << "_H_[" << i << "," << j + 1 << "]" << "[" << i << "," << j << "]" << " Diff NG!" << endl;
+
+		for (int k = 0; k < 4; k++)
+			for (int j = 0; j < 17; j++)
+				for (int i = 0; i < 13; i++) {
+					if (i < 6) {
+						if (LSC[i + 1][j][k] - LSC[i][j][k]>LSC_V_TABLE[i] || LSC[i][j][k] - LSC[i + 1][j][k]>LSC_V_TABLE_RE[i]) {
+							ret = ret | 2;
+							FP_log << color[k] << "_V_[" << i << "," << j << "]" << "[" << i + 1 << "," << j << "]" << " Diff NG!" << endl;
+						}
+					}
+					else if (i > 6) {
+						if (LSC[i - 1][j][k] - LSC[i][j][k]>LSC_V_TABLE[12 - i] || LSC[i][j][k] - LSC[i - 1][j][k] > LSC_V_TABLE_RE[12 - i]) {
+							ret = ret | 2;
+							FP_log << color[k] << "_V_[" << i + 1 << "," << j << "]" << "[" << i << "," << j << "]" << " Diff NG!" << endl;
+						}
 					}
 				}
-			}
 
-	for (int k = 0; k < 4; k++)
-		for (int j = 0; j < 17; j++)
-			for (int i = 0; i < 13; i++) {
-				if (i < 6) {
-					if (LSC[i + 1][j][k] - LSC[i][j][k]>LSC_V_TABLE[i] || LSC[i][j][k] - LSC[i + 1][j][k]>LSC_V_TABLE_RE[i]) {
-						ret = ret | 2;
-						FP_log << color[k] << "_V_[" << i << "," << j << "]" << "[" << i + 1 << "," << j << "]" << " Diff NG!" << endl;
+		if ((ret & 2) > 0 || log_type == 0) {
+
+			for (int k = 0; k < 4; k++) {
+				for (int i = 0; i < 13; i++) {
+					for (int j = 0; j < 16; j++) {
+						FP_log << LSC[i][j][k] - LSC[i][j + 1][k] << "	";
 					}
-				}
-				else if (i > 6) {
-					if (LSC[i - 1][j][k] - LSC[i][j][k]>LSC_V_TABLE[12 - i] || LSC[i][j][k] - LSC[i - 1][j][k] > LSC_V_TABLE_RE[12 - i]) {
-						ret = ret | 2;
-						FP_log << color[k] << "_V_[" << i + 1 << "," << j << "]" << "[" << i << "," << j << "]" << " Diff NG!" << endl;
-					}
-				}
-			}
-
-	if ((ret & 2)>0 || log_type == 0) {
-
-		for (int k = 0; k < 4; k++) {
-			for (int i = 0; i < 13; i++) {
-				for (int j = 0; j < 16; j++) {
-					FP_log << LSC[i][j][k] - LSC[i][j + 1][k] << "	";
+					FP_log << endl;
 				}
 				FP_log << endl;
 			}
-			FP_log << endl;
-		}
 
-		for (int k = 0; k < 4; k++) {
-			for (int j = 0; j < 17; j++) {
-				for (int i = 0; i < 12; i++) {
-					FP_log << LSC[i][j][k] - LSC[i + 1][j][k] << "	";
+			for (int k = 0; k < 4; k++) {
+				for (int j = 0; j < 17; j++) {
+					for (int i = 0; i < 12; i++) {
+						FP_log << LSC[i][j][k] - LSC[i + 1][j][k] << "	";
+					}
+					FP_log << endl;
 				}
 				FP_log << endl;
 			}
-			FP_log << endl;
+		}
+
+		///////////////  R & B Swap check 
+		int xx = 0;
+		if (LSC[0][0][0] * LSC[0][0][2] * 0.95 > LSC[0][0][3] * LSC[0][0][1])
+			xx++;
+		if (LSC[0][16][0] * LSC[0][16][2] * 0.95 > LSC[0][16][3] * LSC[0][16][1])
+			xx++;
+		if (LSC[12][0][0] * LSC[12][0][2] * 0.95 > LSC[12][0][3] * LSC[12][0][1])
+			xx++;
+		if (LSC[12][16][0] * LSC[12][16][2] * 0.95 > LSC[12][16][3] * LSC[12][16][1])
+			xx++;
+
+		if (xx > 2 && awb_golden_check == 1) {
+			ret |= 4;
+			FP_log << " QC LSC R Gr Gb B Sequence NG!" << endl;
+		}
+	}
+	else if (type == 2) {
+		W = 13, H = 9, T = 3,C=128;
+		for (int i = 1; i < H; i++)
+			for (int j = 1; j < W; j++) {
+				if (LSC[i][j][3] < 123 || LSC[i][j][3]>133) {
+ 					ret = ret | 16;
+					break;
+				}
+			}
+
+		if ((ret&16) > 0) {
+			FP_log << "LSC Gb/Gr Diff check NG!" << endl;
 		}
 	}
 
-	///////////////  R & B Swap check 
-	int xx = 0;
-	if (LSC[0][0][0] * LSC[0][0][2]*0.95 > LSC[0][0][3] * LSC[0][0][1])
-		xx++;
-	if (LSC[0][16][0] * LSC[0][16][2] * 0.95 > LSC[0][16][3] * LSC[0][16][1])
-		xx++;
-	if (LSC[12][0][0] * LSC[12][0][2] * 0.95 > LSC[12][0][3] * LSC[12][0][1])
-		xx++;
-	if (LSC[12][16][0] * LSC[12][16][2] * 0.95 > LSC[12][16][3] * LSC[12][16][1])
-		xx++;
-
-	if (xx > 2&& awb_golden_check==1) {
-		ret |= 4;
-		FP_log << " QC LSC R Gr Gb B Sequence NG!" << endl;
-	}
 
 	///////////////  LSC balance Check
-	float LSC_AVG[13][17][4] = { 0 };
-	for (int k = 0; k < 4; k++)
-		for (int i = 1; i < 12; i++)
-			for (int j = 1; j < 16; j++) {
+	float LSC_AVG[15][17][4] = { 0 };
+	for (int k = 0; k < T; k++)
+		for (int i = 1; i < H-1; i++)
+			for (int j = 1; j < W-1; j++) {
 
 				float sum = 0;
 				for (int a = -1; a < 2; a++)
@@ -250,40 +287,40 @@ int QC_LSC_FP_Check(int LSC[13][17][4]) {
 
 	float LSC_MAX_DIFF[6][8][4];
 	int ERRCOUNT = 0, cnt=0;
-	for (int k = 0; k < 4; k++)
-		for (int i = 1; i < 6; i++)
-			for (int j = 1; j < 8; j++) {
-				float max = -1024, min = 1024;
+	for (int k = 0; k < T; k++)
+		for (int i = 1; i < H/2; i++)
+			for (int j = 1; j < W/2; j++) {
+				float max = -70000, min = 70000;
 
 				if (LSC_AVG[i][j][k] < min)
 					min = LSC_AVG[i][j][k];
 				if (LSC_AVG[i][j][k] > max)
 					max = LSC_AVG[i][j][k];
-				if (LSC_AVG[i][16 - j][k] < min)
-					min = LSC_AVG[i][16 - j][k];
-				if (LSC_AVG[i][16 - j][k] > max)
-					max = LSC_AVG[i][16 - j][k];
-				if (LSC_AVG[12 - i][j][k] < min)
-					min = LSC_AVG[12 - i][j][k];
-				if (LSC_AVG[12 - i][j][k] > max)
-					max = LSC_AVG[12 - i][j][k];
-				if (LSC_AVG[12 - i][16 - j][k] < min)
-					min = LSC_AVG[12 - i][16 - j][k];
-				if (LSC_AVG[12 - i][16 - j][k] > max)
-					max = LSC_AVG[12 - i][16 - j][k];
+				if (LSC_AVG[i][W-1 - j][k] < min)
+					min = LSC_AVG[i][W-1 - j][k];
+				if (LSC_AVG[i][W-1 - j][k] > max)
+					max = LSC_AVG[i][W-1 - j][k];
+				if (LSC_AVG[H-1 - i][j][k] < min)
+					min = LSC_AVG[H-1 - i][j][k];
+				if (LSC_AVG[H-1 - i][j][k] > max)
+					max = LSC_AVG[H-1 - i][j][k];
+				if (LSC_AVG[H-1 - i][W-1 - j][k] < min)
+					min = LSC_AVG[H-1 - i][W-1 - j][k];
+				if (LSC_AVG[H-1 - i][W-1 - j][k] > max)
+					max = LSC_AVG[H-1 - i][W-1 - j][k];
 
 				LSC_MAX_DIFF[i][j][k] = max - min;
-				if (LSC_MAX_DIFF[i][j][k] > LSC_MINMAX_SPEC[k]) {
+				if (LSC_MAX_DIFF[i][j][k] > LSC_MINMAX_SPEC[k]*C/1024.0) {
 					ret = ret | 8;
-					FP_log << color[k] << " [" << i << "," << j << "]" << "QC LSC block NG!" << endl;			
+					FP_log << color[k] << " [" << i << "," << j << "]" << "LSC block NG!" << endl;			
 				}
 			}
 
 	if ((ret & 8) > 0 || log_type == 0) {
-	
-		for (int k = 0; k < 4; k++) {
-			for (int i = 1; i < 6; i++) {
-				for (int j = 1; j < 8; j++) {
+		FP_log << "LSC balance check log:	" << endl;
+		for (int k = 0; k < T; k++) {
+			for (int i = 1; i < H/2; i++) {
+				for (int j = 1; j < W/2; j++) {
 					FP_log << LSC_MAX_DIFF[i][j][k] << "	";
 				}
 				FP_log << endl;
@@ -291,6 +328,7 @@ int QC_LSC_FP_Check(int LSC[13][17][4]) {
 			FP_log << endl;
 		}
 	}
+
 	return ret;
 
 }
@@ -769,9 +807,7 @@ int VIVO_QC_AWB_FP_Check(vivo_AWB_Format VIVO_AWB[2]) {
 
 	int ret = 0;
 	string color[2] = { "5100k","3100k" };
-
 	float AWB_diff[2][3];
-
 
 	for (int i = 0; i < 2; i++)
 		for (int j = 0; j < 3; j++) {
@@ -781,17 +817,16 @@ int VIVO_QC_AWB_FP_Check(vivo_AWB_Format VIVO_AWB[2]) {
 				return 4096;
 		}
 
-
 	for (int i = 0; i < 2; i++)
 		for (int j = 0; j < 3; j++) {
-			AWB_diff[i][j] = float(VIVO_AWB[i].AWB[j] - VIVO_AWB[i].Golden[j]) / VIVO_AWB[i].Golden[j];
+			AWB_diff[i][j] = abs(VIVO_AWB[i].AWB[j]*1.0 - VIVO_AWB[i].Golden[j]) / VIVO_AWB[i].Golden[j];
 		}
 
 	/////////////awb_distance check
 	for (int i = 0; i < 2; i++) {
 		float d = sqrt(pow(AWB_diff[i][0], 2) + pow(AWB_diff[i][1], 2));
 		if (d > awb_distance[i] / 100.0) {
-			FP_log << "QC " << color[i] << " awb_distance=: " << d << endl;
+			FP_log << color[i] << " awb_distance=: " << d << endl;
 			ret = ret | 1;
 		}
 	}
@@ -860,15 +895,71 @@ int VIVO_QC_AWB_FP_Check(vivo_AWB_Format VIVO_AWB[2]) {
 	}
 
 	return ret;
+}
+
+
+int SONY_AWB_FP_Check(vivo_AWB_Format VIVO_AWB[2]) {
+
+	int ret = 0;
+	string color[2] = { "High color","Low color" };
+
+	float AWB_diff[2][3]; float max_value = 1 << 24;
+
+	for (int i = 0; i < 2; i++)
+		for (int j = 0; j < 3; j++) {
+			if (VIVO_AWB[i].AWB[j]>max_value*2 || VIVO_AWB[i].AWB[j] < 100)
+				return 4096;
+		}
+
+	for (int i = 0; i < 2; i++)
+		for (int j = 0; j < 3; j++) {
+			AWB_diff[i][j] = abs(VIVO_AWB[i].AWB[j]/max_value - golden_Spec[i][j]) / golden_Spec[i][j];
+		}
+
+	/////////////awb_distance check
+	for (int i = 0; i < 2; i++) {
+		float d = sqrt(pow(AWB_diff[i][0], 2) + pow(AWB_diff[i][1], 2));
+		if (d > awb_distance[i] / 100.0) {
+			FP_log << color[i] << " SONY awb_distance=: " << d << endl;
+			ret = ret | 1;
+		}
+	}
+
+	if ((ret & 1) > 0) {
+		FP_log << "SONY awb_distance spec check NG!" << endl;
+	}
+
+	for (int i = 0; i < 2; i++) {
+
+		if (abs(AWB_diff[i][0]) > awb_tolerance[i][0] / 100.0) {
+			FP_log << "SONY " << color[i] << "R_G awb_tolerance=: " << AWB_diff[i][0] << endl;
+			ret = ret | 2;
+		}
+
+		if (abs(AWB_diff[i][1]) > awb_tolerance[i][1] / 100.0) {
+			FP_log << "SONY " << color[i] << "B_G awb_tolerance=: " << AWB_diff[i][1] << endl;
+			ret = ret | 2;
+		}
+
+		if (abs(AWB_diff[i][2]) > awb_tolerance[i][2] / 10000.0) {
+			FP_log << "SONY " << color[i] << "Gr_Gb awb_tolerance=: " << AWB_diff[i][1] << endl;
+			ret = ret | 2;
+		}
+	}
+
+	if ((ret & 2) > 0) {
+		FP_log << "SONY awb_tolerance spec check NG!" << endl;
+	}
+
+	return ret;
 
 }
 
 
 int XiaoMi_QC_AWB_FP_Check(vivo_AWB_Format AWB) {
 
-	int ret = 0;float AWB_diff[3];
-
-	int golden_Spec[3];
+	int ret = 0;
+	float AWB_diff[3], golden_Spec[3];
 
 	string item = "master_rg_5100k";
 	golden_Spec[0] = GetPrivateProfileInt(_T("XIAOMI"), CA2CT(item.c_str()), 0, CA2CT(INI_Path.c_str()));
@@ -877,14 +968,11 @@ int XiaoMi_QC_AWB_FP_Check(vivo_AWB_Format AWB) {
 	item = "master_gbgr_5100k";
 	golden_Spec[2] = GetPrivateProfileInt(_T("XIAOMI"), CA2CT(item.c_str()), 0, CA2CT(INI_Path.c_str()));
 
-
 	for (int j = 0; j < 3; j++) {
-		AWB_diff[j] = float(AWB.AWB[j] - golden_Spec[j]) / golden_Spec[j];
-
+		AWB_diff[j] = (AWB.AWB[j] - golden_Spec[j]) / golden_Spec[j];
 		if (AWB.AWB[j]>1100 || AWB.AWB[j] < 100)
 			return 4096;
 	}
-
 	/////////////awb_distance check
 	float d = sqrt(pow(AWB_diff[0], 2) + pow(AWB_diff[1], 2));
 	if (d > awb_distance[0] / 100.0) {
@@ -921,9 +1009,9 @@ int drift_FP_Check(int shift_Data[2][21], int cnt, int step) {
 	for (int k = 0; k < 2; k++) {
 		peak_cnt = 0;
 		for (int i = 2; i < cnt - 2; i++) {
-			if (shift_Data[k][i + 1] > shift_Data[k][i] && shift_Data[k][i - 1]>shift_Data[k][i])
+			if (shift_Data[k][i + 1] >= shift_Data[k][i] && shift_Data[k][i - 1]>=shift_Data[k][i])
 				peak_cnt++;
-			if (shift_Data[k][i + 1] < shift_Data[k][i] && shift_Data[k][i - 1] < shift_Data[k][i])
+			if (shift_Data[k][i + 1] <= shift_Data[k][i] && shift_Data[k][i - 1] <= shift_Data[k][i])
 				peak_cnt++;
 		}
 		if (peak_cnt > 1)
@@ -939,7 +1027,7 @@ int drift_FP_Check(int shift_Data[2][21], int cnt, int step) {
 }
 
 
-int SFR_FP_Check(int SFR_Data[50], int cnt, int group) {
+int SFR_FP_Check(int SFR_Data[50], int cnt, int group,int SFR_Format) {
 	int ret = 0;
 	for (int i = 0; i < cnt; i++) {
 		string item = "SFR_Spec" + to_string(group) + "_" + to_string(i + 1);
@@ -960,7 +1048,7 @@ int AF_FP_Check(int AF_Data[6][3]) {
 
 	for (int i = 0; i < 6; i++) {
 
-		if (AF_Data[i][0] != 0 && i < 2) {
+	//	if (AF_Data[i][0] != 0 && i < 2) {
 			if (AF_Data[i][1] != 0)
 				if (AF_Data[i][0] < AF_Data[i][1]) {
 					ret |= (int)pow(2, i);
@@ -969,55 +1057,55 @@ int AF_FP_Check(int AF_Data[6][3]) {
 				if (AF_Data[i][0] > AF_Data[i][2]) {
 					ret |= (int)pow(2, i);
 				}
-		}
-		if (AF_Data[i][0] != 0 && i >= 4) {
-			if (AF_Data[i][1] != 0)
-				if (AF_Data[i][0] - AF_Data[i - 4][0] < AF_Data[i][1]) {
-					ret |= (int)pow(2, i);
-				}
-			if (AF_Data[i][2] != 0)
-				if (AF_Data[i][0] - AF_Data[i - 4][0] > AF_Data[i][2]) {
-					ret |= (int)pow(2, i);
-				}
-		}
+		//}
+		//if (AF_Data[i][0] != 0 && i >= 4) {
+		//	if (AF_Data[i][1] != 0)
+		//		if (AF_Data[i][0] - AF_Data[i - 4][0] < AF_Data[i][1]) {
+		//			ret |= (int)pow(2, i);
+		//		}
+		//	if (AF_Data[i][2] != 0)
+		//		if (AF_Data[i][0] - AF_Data[i - 4][0] > AF_Data[i][2]) {
+		//			ret |= (int)pow(2, i);
+		//		}
+		//}
 	}
 
 	int code_range = AF_Data[0][0] - AF_Data[1][0];
 	if(code_range > af_Code_Spec.range_max|| code_range<af_Code_Spec.range_min)
 		ret |= (int)pow(2, 6);
 
-	if (af_Code_Spec.mid1_coef != 0 && AF_Data[2][0] != 0) {
-		if (AF_Data[2][1] != 0) {
-			if(AF_Data[2][0] -AF_Data[1][0]-code_range*af_Code_Spec.mid1_coef<AF_Data[2][1])
-				ret |= (int)pow(2, 2);
-		}
-		if (AF_Data[2][2] != 0) {
-			if (AF_Data[2][0] - AF_Data[1][0] - code_range*af_Code_Spec.mid1_coef>AF_Data[2][2])
-				ret |= (int)pow(2, 2);
-		}
+	if (af_Code_Spec.mid1_coef != 0 && af_Code_Spec.POS1_diff != 0&& AF_Data[2][0]!=0) {
+		if (abs(AF_Data[2][0] - AF_Data[1][0] - code_range*af_Code_Spec.mid1_coef)>af_Code_Spec.POS1_diff)
+			ret |= (int)pow(2, 3);
 	}
 
-	if (af_Code_Spec.mid2_coef != 0 && AF_Data[3][0] != 0) {
-		if (AF_Data[3][1] != 0) {
-			if (AF_Data[3][0] - AF_Data[1][0] - code_range*af_Code_Spec.mid2_coef<AF_Data[3][1])
-				ret |= (int)pow(2, 3);
-		}
-		if (AF_Data[3][2] != 0) {
-			if (AF_Data[3][0] - AF_Data[1][0] - code_range*af_Code_Spec.mid2_coef>AF_Data[3][2])
-				ret |= (int)pow(2, 3);
-		}
+	if (af_Code_Spec.mid2_coef != 0 && af_Code_Spec.POS2_diff != 0 && AF_Data[3][0] != 0) {
+		if (abs(AF_Data[3][0] - AF_Data[1][0] - code_range*af_Code_Spec.mid2_coef)>af_Code_Spec.POS2_diff)
+			ret |= (int)pow(2, 4);
+	}
+
+	if (AF_Data[4][0] != 0 && af_Code_Spec.Mac_diff != 0) {
+		if (abs(AF_Data[4][0] - AF_Data[0][0] )>af_Code_Spec.Mac_diff)
+			ret |= (int)pow(2, 5);
+	}
+	if (AF_Data[5][0] != 0 && af_Code_Spec.Inf_diff != 0) {
+		if (abs(AF_Data[5][0] - AF_Data[1][0])>af_Code_Spec.Inf_diff)
+			ret |= (int)pow(2, 6);
 	}
 
 	if (ret > 0)
-		FP_log << " AF Code Spec NG!\n";
+		FP_log << " AF Code Check NG!\n";
 
 	return ret;
 }
 
 
-int GainMap_FP_Check(int PDgainLeft[13][17], int PDgainRight[13][17]) {
+int GainMap_FP_Check(int PDgainLeft[15][17], int PDgainRight[15][17], int type) {
 
-	int ret = 0;
+	int ret = 0, W=17,H=13;
+	if (type == 1) {
+		W = 16, H = 12;
+	}
 
 	if (PDgainLeft[6][8] == 0xFFFF || PDgainLeft[6][8] == 0) {
 		ret |= 8;
@@ -1027,88 +1115,78 @@ int GainMap_FP_Check(int PDgainLeft[13][17], int PDgainRight[13][17]) {
 	}
 
 	if ( (ret&8) > 0){
-		FP_log << "QC Gainmap invalid!" << endl;
+		FP_log << "Gainmap invalid!" << endl;
 		return ret;
 	}
 
-	for (int i = 0; i < 13; i++)
-		for (int j = 0; j < 16; j++) {
+	for (int i = 0; i < H; i++)
+		for (int j = 0; j < W-1; j++) {
 			int x = max(PDgainLeft[i][j], PDgainLeft[i][j + 1]);
 			float y = abs(PDgainLeft[i][j] - PDgainLeft[i][j + 1]);
 			if (y / x > GainMap_Diff) {
-				FP_log << "QC left_Gainmap [" << i << "," << j << "]= " << y / x << " H_Diff Check NG!" << endl;
+				FP_log << "left_Gainmap [" << i << "," << j << "]= " << y / x << " H_Diff Check NG!" << endl;
 				ret |= 1;
 			}
 			x = max(PDgainRight[i][j], PDgainRight[i][j + 1]);
 			y = abs(PDgainRight[i][j] - PDgainRight[i][j + 1]);
 			if (y/x > GainMap_Diff) {
 				ret |= 1;
-				FP_log << "QC right_Gainmap [" << i << "," << j << "]= " << y / x << " H_Diff Check NG!" << endl;
+				FP_log << "right_Gainmap [" << i << "," << j << "]= " << y / x << " H_Diff Check NG!" << endl;
 			}
 		}
 
-	for (int j = 0; j < 17; j++)
-		for (int i = 0; i < 12; i++) {
+	for (int j = 0; j < W; j++)
+		for (int i = 0; i < H-1; i++) {
 			int x = max(PDgainLeft[i + 1][j], PDgainLeft[i][j]);
 			float y = abs(PDgainLeft[i + 1][j] - PDgainLeft[i][j]);
 			if (y / x > GainMap_Diff) {
 				ret |= 1;
 				ret |= 1;
-				FP_log << "QC left_Gainmap [" << i << "," << j << "]= " << y / x << " V_Diff Check NG!" << endl;
+				FP_log << "Left_Gainmap [" << i << "," << j << "]= " << y / x << " V_Diff Check NG!" << endl;
 			}
 			x = max(PDgainRight[i + 1][j], PDgainRight[i][j]);
 			y = abs(PDgainRight[i + 1][j] - PDgainRight[i][j]);
 			if (y/x > GainMap_Diff) {
 				ret |= 1;
-				FP_log << "QC right_Gainmap [" << i << "," << j << "]= " << y / x << " V_Diff Check NG!" << endl;
+				FP_log << "right_Gainmap [" << i << "," << j << "]= " << y / x << " V_Diff Check NG!" << endl;
 			}
 		}
 
 	/////////////// Left vs Right Mirror Diff Check
-	//for (int i = 0; i < 13; i++)
-	//	for (int j = 0; j < 17; j++) {
-	//		int x = min(PDgainLeft[i][j], PDgainRight[i][16 - j]);
-	//		float y = abs(PDgainLeft[i][j] - PDgainRight[i][16 - j]);
-
-	//		if(y/x >GainMap_LR_Diff){
-	//			FP_log << "QC Gainmap Left ["<< i <<","<<j<<"]= "<< y/x <<" vs Right Mirror Diff Check NG!" << endl;
-	//			ret |= 2;
-	//	    }
-	//	}
 	int tsum = 0, diff_sum = 0;
-	for (int i = 0; i < 13; i++)
-		for (int j = 0; j < 17; j++) {
-			diff_sum += abs(PDgainLeft[i][j] - PDgainRight[i][16 - j]);
-			tsum += PDgainLeft[i][j] + PDgainRight[i][16 - j];
+	for (int i = 0; i < H; i++)
+		for (int j = 0; j < W; j++) {
+			diff_sum += abs(PDgainLeft[i][j] - PDgainRight[i][W-1 - j]);
+			tsum += PDgainLeft[i][j] + PDgainRight[i][W-1 - j];
 		}
 
 	float max_diff = diff_sum / (float)tsum;
 	if (max_diff> GainMap_LR_Diff || log_type==0) {
-		FP_log << "QC Gainmap Left vs Right Mirror Diff=	" << max_diff << endl;
+		FP_log << "Gainmap Left vs Right Mirror Diff=	" << max_diff << endl;
 		if (max_diff> GainMap_LR_Diff)
 			ret |= 2;
 	}
 	/////////////// Seft Top_Down Diff Check
-	for (int i = 0; i < 6; i++)
-		for (int j = 0; j < 17; j++) {
-			int x = min(PDgainLeft[i][j], PDgainLeft[12-i][j]);
-			float y = abs(PDgainLeft[i][j] - PDgainLeft[12-i][j]);
+	for (int i = 0; i < H/2; i++)
+		for (int j = 0; j < W; j++) {
+			int x = min(PDgainLeft[i][j], PDgainLeft[H-1-i][j]);
+			float y = abs(PDgainLeft[i][j] - PDgainLeft[H-1-i][j]);
 
 			if (y / x >GainMap_TB_Diff) {
 				ret |= 4;
 			}
 
-			x = min(PDgainRight[i][j], PDgainRight[12 - i][j]);
-			y = abs(PDgainRight[i][j] - PDgainRight[12 - i][j]);
+			x = min(PDgainRight[i][j], PDgainRight[H-1 - i][j]);
+			y = abs(PDgainRight[i][j] - PDgainRight[H-1 - i][j]);
 
 			if (y / x >GainMap_TB_Diff) {
-				FP_log << "QC Gainmap Top [" << i << "," << j << "]= " << y / x << " vs Self Bottom Diff Check NG!" << endl;
+				FP_log << "Gainmap Top [" << i << "," << j << "]= " << y / x << " vs Self Bottom Diff Check NG!" << endl;
 				ret |= 4;
 			}
 		}
 
 	if ((ret & 4) > 0) {
-		FP_log << "QC Gainmap Seft Top_Down Diff Check NG!" << endl;
+		FP_log << "Gainmap Seft Top_Down Diff Check NG!" << endl;
 	}
 
 	return ret;
@@ -1116,28 +1194,31 @@ int GainMap_FP_Check(int PDgainLeft[13][17], int PDgainRight[13][17]) {
 }
 
 
-int DCC_FP_Check( int DCC[6][8]) {
+int DCC_FP_Check( int DCC[15][17], int type) {
 
-	int ret = 0;
+	int ret = 0,W=8,H=6;
+	if (type == 1) {
+		W = 16, H = 12;
+	}
 	if (DCC[3][4] == 0xFFFF || DCC[3][4] == 0) {
 		ret |= 8;
 	}
 
 	if ((ret & 8) > 0) {
-		FP_log << "QC DCC Data invalid!" << endl;
+		FP_log << "DCC Data invalid!" << endl;
 		return ret;
 	}
 
-	for (int i = 0; i < 6; i++)
-		for (int j = 0; j < 7; j++) {
+	for (int i = 0; i < H; i++)
+		for (int j = 0; j < W-1; j++) {
 			int x = max(DCC[i][j], DCC[i][j + 1]);
 			float y = abs(DCC[i][j] - DCC[i][j + 1]);
 			if (y / x > DCC_Diff) {
 				ret |= 1;
 			}
 		}
-	for (int j = 0; j < 8; j++)
-		for (int i = 0; i < 5; i++) {
+	for (int j = 0; j < W; j++)
+		for (int i = 0; i < H-1; i++) {
 			int x = max(DCC[i + 1][j], DCC[i][j]);
 			float y = abs(DCC[i + 1][j] - DCC[i][j]);
 			if (y / x > DCC_Diff) {

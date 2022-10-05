@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_EEPROM_Data_Verifier_t {
-    QByteArrayData data[49];
-    char stringdata0[844];
+    QByteArrayData data[52];
+    char stringdata0[885];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -53,33 +53,36 @@ QT_MOC_LITERAL(18, 335, 15), // "info_Data_Parse"
 QT_MOC_LITERAL(19, 351, 14), // "Oppo_AWB_Parse"
 QT_MOC_LITERAL(20, 366, 5), // "group"
 QT_MOC_LITERAL(21, 372, 14), // "VIVO_AWB_Parse"
-QT_MOC_LITERAL(22, 387, 16), // "XiaoMi_AWB_Parse"
-QT_MOC_LITERAL(23, 404, 19), // "History_Date_Parser"
-QT_MOC_LITERAL(24, 424, 12), // "QC_LSC_Parse"
-QT_MOC_LITERAL(25, 437, 5), // "start"
-QT_MOC_LITERAL(26, 443, 13), // "MTK_LSC_Parse"
-QT_MOC_LITERAL(27, 457, 18), // "vivo_MTK_AWB_Parse"
-QT_MOC_LITERAL(28, 476, 13), // "MTK_AWB_Parse"
-QT_MOC_LITERAL(29, 490, 13), // "LSI_AWB_Parse"
-QT_MOC_LITERAL(30, 504, 11), // "drift_Parse"
-QT_MOC_LITERAL(31, 516, 11), // "cross_Parse"
-QT_MOC_LITERAL(32, 528, 8), // "af_Parse"
-QT_MOC_LITERAL(33, 537, 10), // "PDAF_Parse"
-QT_MOC_LITERAL(34, 548, 9), // "QSC_Parse"
-QT_MOC_LITERAL(35, 558, 9), // "OIS_Parse"
-QT_MOC_LITERAL(36, 568, 9), // "AEC_Parse"
-QT_MOC_LITERAL(37, 578, 16), // "XiaoMi_Seg_Check"
-QT_MOC_LITERAL(38, 595, 14), // "bin_Area_Check"
-QT_MOC_LITERAL(39, 610, 15), // "duplicate_Check"
-QT_MOC_LITERAL(40, 626, 21), // "value_duplicate_Check"
-QT_MOC_LITERAL(41, 648, 16), // "value_Data_Parse"
-QT_MOC_LITERAL(42, 665, 14), // "Reserved_Check"
-QT_MOC_LITERAL(43, 680, 29), // "on_pushButton_openBIN_clicked"
-QT_MOC_LITERAL(44, 710, 29), // "on_pushButton_saveBIN_clicked"
-QT_MOC_LITERAL(45, 740, 30), // "on_pushButton_checkSum_clicked"
-QT_MOC_LITERAL(46, 771, 29), // "on_pushButton_setsave_clicked"
-QT_MOC_LITERAL(47, 801, 30), // "on_pushButton_load_lsc_clicked"
-QT_MOC_LITERAL(48, 832, 11) // "display_EEP"
+QT_MOC_LITERAL(22, 387, 14), // "SONY_AWB_Parse"
+QT_MOC_LITERAL(23, 402, 16), // "XiaoMi_AWB_Parse"
+QT_MOC_LITERAL(24, 419, 19), // "History_Date_Parser"
+QT_MOC_LITERAL(25, 439, 9), // "LSC_Parse"
+QT_MOC_LITERAL(26, 449, 5), // "start"
+QT_MOC_LITERAL(27, 455, 13), // "MTK_LSC_Parse"
+QT_MOC_LITERAL(28, 469, 18), // "vivo_MTK_AWB_Parse"
+QT_MOC_LITERAL(29, 488, 13), // "MTK_AWB_Parse"
+QT_MOC_LITERAL(30, 502, 13), // "LSI_AWB_Parse"
+QT_MOC_LITERAL(31, 516, 11), // "drift_Parse"
+QT_MOC_LITERAL(32, 528, 11), // "cross_Parse"
+QT_MOC_LITERAL(33, 540, 8), // "af_Parse"
+QT_MOC_LITERAL(34, 549, 10), // "PDAF_Parse"
+QT_MOC_LITERAL(35, 560, 9), // "QSC_Parse"
+QT_MOC_LITERAL(36, 570, 9), // "OIS_Parse"
+QT_MOC_LITERAL(37, 580, 9), // "AEC_Parse"
+QT_MOC_LITERAL(38, 590, 16), // "XiaoMi_Seg_Check"
+QT_MOC_LITERAL(39, 607, 14), // "bin_Area_Check"
+QT_MOC_LITERAL(40, 622, 15), // "duplicate_Check"
+QT_MOC_LITERAL(41, 638, 21), // "value_duplicate_Check"
+QT_MOC_LITERAL(42, 660, 16), // "value_Data_Parse"
+QT_MOC_LITERAL(43, 677, 14), // "fix_Data_Check"
+QT_MOC_LITERAL(44, 692, 13), // "read_Spec_Bin"
+QT_MOC_LITERAL(45, 706, 14), // "Reserved_Check"
+QT_MOC_LITERAL(46, 721, 29), // "on_pushButton_openBIN_clicked"
+QT_MOC_LITERAL(47, 751, 29), // "on_pushButton_saveBIN_clicked"
+QT_MOC_LITERAL(48, 781, 30), // "on_pushButton_checkSum_clicked"
+QT_MOC_LITERAL(49, 812, 29), // "on_pushButton_setsave_clicked"
+QT_MOC_LITERAL(50, 842, 30), // "on_pushButton_load_lsc_clicked"
+QT_MOC_LITERAL(51, 873, 11) // "display_EEP"
 
     },
     "EEPROM_Data_Verifier\0on_pushButton_parser_clicked\0"
@@ -93,14 +96,16 @@ QT_MOC_LITERAL(48, 832, 11) // "display_EEP"
     "load_Panel\0dump_Check\0get_Data_Type\0"
     "x\0CheckSum_Check\0info_Data_Parse\0"
     "Oppo_AWB_Parse\0group\0VIVO_AWB_Parse\0"
-    "XiaoMi_AWB_Parse\0History_Date_Parser\0"
-    "QC_LSC_Parse\0start\0MTK_LSC_Parse\0"
-    "vivo_MTK_AWB_Parse\0MTK_AWB_Parse\0"
-    "LSI_AWB_Parse\0drift_Parse\0cross_Parse\0"
-    "af_Parse\0PDAF_Parse\0QSC_Parse\0OIS_Parse\0"
-    "AEC_Parse\0XiaoMi_Seg_Check\0bin_Area_Check\0"
+    "SONY_AWB_Parse\0XiaoMi_AWB_Parse\0"
+    "History_Date_Parser\0LSC_Parse\0start\0"
+    "MTK_LSC_Parse\0vivo_MTK_AWB_Parse\0"
+    "MTK_AWB_Parse\0LSI_AWB_Parse\0drift_Parse\0"
+    "cross_Parse\0af_Parse\0PDAF_Parse\0"
+    "QSC_Parse\0OIS_Parse\0AEC_Parse\0"
+    "XiaoMi_Seg_Check\0bin_Area_Check\0"
     "duplicate_Check\0value_duplicate_Check\0"
-    "value_Data_Parse\0Reserved_Check\0"
+    "value_Data_Parse\0fix_Data_Check\0"
+    "read_Spec_Bin\0Reserved_Check\0"
     "on_pushButton_openBIN_clicked\0"
     "on_pushButton_saveBIN_clicked\0"
     "on_pushButton_checkSum_clicked\0"
@@ -116,7 +121,7 @@ static const uint qt_meta_data_EEPROM_Data_Verifier[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      44,   14, // methods
+      47,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -124,50 +129,53 @@ static const uint qt_meta_data_EEPROM_Data_Verifier[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,  234,    2, 0x08 /* Private */,
-       3,    0,  235,    2, 0x08 /* Private */,
-       4,    0,  236,    2, 0x08 /* Private */,
-       5,    0,  237,    2, 0x08 /* Private */,
-       6,    0,  238,    2, 0x08 /* Private */,
-       7,    0,  239,    2, 0x08 /* Private */,
-       8,    0,  240,    2, 0x08 /* Private */,
-       9,    0,  241,    2, 0x08 /* Private */,
-      10,    0,  242,    2, 0x08 /* Private */,
-      11,    0,  243,    2, 0x08 /* Private */,
-      12,    0,  244,    2, 0x08 /* Private */,
-      13,    0,  245,    2, 0x08 /* Private */,
-      14,    0,  246,    2, 0x08 /* Private */,
-      15,    1,  247,    2, 0x08 /* Private */,
-      17,    0,  250,    2, 0x08 /* Private */,
-      18,    0,  251,    2, 0x08 /* Private */,
-      19,    1,  252,    2, 0x08 /* Private */,
-      21,    1,  255,    2, 0x08 /* Private */,
-      22,    1,  258,    2, 0x08 /* Private */,
-      23,    0,  261,    2, 0x08 /* Private */,
-      24,    1,  262,    2, 0x08 /* Private */,
-      26,    1,  265,    2, 0x08 /* Private */,
-      27,    1,  268,    2, 0x08 /* Private */,
-      28,    1,  271,    2, 0x08 /* Private */,
-      29,    1,  274,    2, 0x08 /* Private */,
-      30,    0,  277,    2, 0x08 /* Private */,
-      31,    0,  278,    2, 0x08 /* Private */,
-      32,    0,  279,    2, 0x08 /* Private */,
-      33,    0,  280,    2, 0x08 /* Private */,
-      34,    0,  281,    2, 0x08 /* Private */,
-      35,    0,  282,    2, 0x08 /* Private */,
-      36,    0,  283,    2, 0x08 /* Private */,
-      37,    0,  284,    2, 0x08 /* Private */,
-      38,    0,  285,    2, 0x08 /* Private */,
-      39,    0,  286,    2, 0x08 /* Private */,
-      40,    0,  287,    2, 0x08 /* Private */,
-      41,    0,  288,    2, 0x08 /* Private */,
-      42,    0,  289,    2, 0x08 /* Private */,
-      43,    0,  290,    2, 0x08 /* Private */,
-      44,    0,  291,    2, 0x08 /* Private */,
-      45,    0,  292,    2, 0x08 /* Private */,
-      46,    0,  293,    2, 0x08 /* Private */,
-      47,    0,  294,    2, 0x08 /* Private */,
-      48,    0,  295,    2, 0x08 /* Private */,
+       1,    0,  249,    2, 0x08 /* Private */,
+       3,    0,  250,    2, 0x08 /* Private */,
+       4,    0,  251,    2, 0x08 /* Private */,
+       5,    0,  252,    2, 0x08 /* Private */,
+       6,    0,  253,    2, 0x08 /* Private */,
+       7,    0,  254,    2, 0x08 /* Private */,
+       8,    0,  255,    2, 0x08 /* Private */,
+       9,    0,  256,    2, 0x08 /* Private */,
+      10,    0,  257,    2, 0x08 /* Private */,
+      11,    0,  258,    2, 0x08 /* Private */,
+      12,    0,  259,    2, 0x08 /* Private */,
+      13,    0,  260,    2, 0x08 /* Private */,
+      14,    0,  261,    2, 0x08 /* Private */,
+      15,    1,  262,    2, 0x08 /* Private */,
+      17,    0,  265,    2, 0x08 /* Private */,
+      18,    0,  266,    2, 0x08 /* Private */,
+      19,    1,  267,    2, 0x08 /* Private */,
+      21,    1,  270,    2, 0x08 /* Private */,
+      22,    1,  273,    2, 0x08 /* Private */,
+      23,    1,  276,    2, 0x08 /* Private */,
+      24,    0,  279,    2, 0x08 /* Private */,
+      25,    2,  280,    2, 0x08 /* Private */,
+      27,    1,  285,    2, 0x08 /* Private */,
+      28,    1,  288,    2, 0x08 /* Private */,
+      29,    1,  291,    2, 0x08 /* Private */,
+      30,    1,  294,    2, 0x08 /* Private */,
+      31,    0,  297,    2, 0x08 /* Private */,
+      32,    0,  298,    2, 0x08 /* Private */,
+      33,    0,  299,    2, 0x08 /* Private */,
+      34,    0,  300,    2, 0x08 /* Private */,
+      35,    0,  301,    2, 0x08 /* Private */,
+      36,    0,  302,    2, 0x08 /* Private */,
+      37,    0,  303,    2, 0x08 /* Private */,
+      38,    0,  304,    2, 0x08 /* Private */,
+      39,    0,  305,    2, 0x08 /* Private */,
+      40,    0,  306,    2, 0x08 /* Private */,
+      41,    0,  307,    2, 0x08 /* Private */,
+      42,    0,  308,    2, 0x08 /* Private */,
+      43,    0,  309,    2, 0x08 /* Private */,
+      44,    0,  310,    2, 0x08 /* Private */,
+      45,    0,  311,    2, 0x08 /* Private */,
+      46,    0,  312,    2, 0x08 /* Private */,
+      47,    0,  313,    2, 0x08 /* Private */,
+      48,    0,  314,    2, 0x08 /* Private */,
+      49,    0,  315,    2, 0x08 /* Private */,
+      50,    0,  316,    2, 0x08 /* Private */,
+      51,    0,  317,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
@@ -189,12 +197,15 @@ static const uint qt_meta_data_EEPROM_Data_Verifier[] = {
     QMetaType::Void, QMetaType::Int,   20,
     QMetaType::Void, QMetaType::Int,   20,
     QMetaType::Void, QMetaType::Int,   20,
+    QMetaType::Void, QMetaType::Int,   20,
     QMetaType::Void,
-    QMetaType::Int, QMetaType::Int,   25,
-    QMetaType::Int, QMetaType::Int,   25,
+    QMetaType::Int, QMetaType::Int, QMetaType::Int,   26,   20,
+    QMetaType::Int, QMetaType::Int,   26,
     QMetaType::Void, QMetaType::Int,   20,
     QMetaType::Void, QMetaType::Int,   20,
     QMetaType::Void, QMetaType::Int,   20,
+    QMetaType::Int,
+    QMetaType::Int,
     QMetaType::Int,
     QMetaType::Int,
     QMetaType::Int,
@@ -245,47 +256,52 @@ void EEPROM_Data_Verifier::qt_static_metacall(QObject *_o, QMetaObject::Call _c,
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
         case 16: _t->Oppo_AWB_Parse((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 17: _t->VIVO_AWB_Parse((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 18: _t->XiaoMi_AWB_Parse((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 19: _t->History_Date_Parser(); break;
-        case 20: { int _r = _t->QC_LSC_Parse((*reinterpret_cast< int(*)>(_a[1])));
+        case 18: _t->SONY_AWB_Parse((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 19: _t->XiaoMi_AWB_Parse((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 20: _t->History_Date_Parser(); break;
+        case 21: { int _r = _t->LSC_Parse((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])));
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
-        case 21: { int _r = _t->MTK_LSC_Parse((*reinterpret_cast< int(*)>(_a[1])));
+        case 22: { int _r = _t->MTK_LSC_Parse((*reinterpret_cast< int(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
-        case 22: _t->vivo_MTK_AWB_Parse((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 23: _t->MTK_AWB_Parse((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 24: _t->LSI_AWB_Parse((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 25: { int _r = _t->drift_Parse();
+        case 23: _t->vivo_MTK_AWB_Parse((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 24: _t->MTK_AWB_Parse((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 25: _t->LSI_AWB_Parse((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 26: { int _r = _t->drift_Parse();
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
-        case 26: { int _r = _t->cross_Parse();
+        case 27: { int _r = _t->cross_Parse();
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
-        case 27: { int _r = _t->af_Parse();
+        case 28: { int _r = _t->af_Parse();
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
-        case 28: { int _r = _t->PDAF_Parse();
+        case 29: { int _r = _t->PDAF_Parse();
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
-        case 29: { int _r = _t->QSC_Parse();
+        case 30: { int _r = _t->QSC_Parse();
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
-        case 30: { int _r = _t->OIS_Parse();
+        case 31: { int _r = _t->OIS_Parse();
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
-        case 31: { int _r = _t->AEC_Parse();
+        case 32: { int _r = _t->AEC_Parse();
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
-        case 32: { int _r = _t->XiaoMi_Seg_Check();
+        case 33: { int _r = _t->XiaoMi_Seg_Check();
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
-        case 33: { int _r = _t->bin_Area_Check();
+        case 34: { int _r = _t->bin_Area_Check();
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
-        case 34: { int _r = _t->duplicate_Check();
+        case 35: { int _r = _t->duplicate_Check();
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
-        case 35: { int _r = _t->value_duplicate_Check();
+        case 36: { int _r = _t->value_duplicate_Check();
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
-        case 36: { int _r = _t->value_Data_Parse();
+        case 37: { int _r = _t->value_Data_Parse();
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
-        case 37: { int _r = _t->Reserved_Check();
+        case 38: { int _r = _t->fix_Data_Check();
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
-        case 38: _t->on_pushButton_openBIN_clicked(); break;
-        case 39: _t->on_pushButton_saveBIN_clicked(); break;
-        case 40: _t->on_pushButton_checkSum_clicked(); break;
-        case 41: _t->on_pushButton_setsave_clicked(); break;
-        case 42: _t->on_pushButton_load_lsc_clicked(); break;
-        case 43: _t->display_EEP(); break;
+        case 39: { int _r = _t->read_Spec_Bin();
+            if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
+        case 40: { int _r = _t->Reserved_Check();
+            if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
+        case 41: _t->on_pushButton_openBIN_clicked(); break;
+        case 42: _t->on_pushButton_saveBIN_clicked(); break;
+        case 43: _t->on_pushButton_checkSum_clicked(); break;
+        case 44: _t->on_pushButton_setsave_clicked(); break;
+        case 45: _t->on_pushButton_load_lsc_clicked(); break;
+        case 46: _t->display_EEP(); break;
         default: ;
         }
     }
@@ -316,13 +332,13 @@ int EEPROM_Data_Verifier::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 44)
+        if (_id < 47)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 44;
+        _id -= 47;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 44)
+        if (_id < 47)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 44;
+        _id -= 47;
     }
     return _id;
 }

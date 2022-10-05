@@ -15,20 +15,20 @@
 using namespace std;
 
 char D[524288][2] = { 0};
-bool useData[524288];
-unsigned char DecData[524288], dflt_Data;
-int LSC[13][17][4], MTK_LSC[15][15][4], LSC_LSI1[25][33][4], LSC_LSI2[11][13][4];
+bool useData[524288], spec_Bin_Ready=false;
+unsigned char DecData[524288], dflt_Data,spec_Data[524288];
+int LSC[15][17][4], MTK_LSC[15][15][4], LSC_LSI1[25][33][4], LSC_LSI2[11][13][4];
 int PDgainLeft[13][17], PDgainRight[13][17],shift_Data[2][21], Cross_DW_before[2][21], Cross_DW_after[2][14];
-int GainMostBrightLeft[13][17], GainMostBrightRight[13][17];
-int DCC[6][8], checkSum_addr[30][4], selection = 0,SR_Spec[2][2];
-int AF_Data[6][3],SFR_Data[50],LCC_CrossTalk[3];
+int GainMostBrightLeft[15][17], GainMostBrightRight[15][17];
+int DCC[15][17], checkSum_addr[30][4],SR_Spec[2][2], Gmap_Item3[12], PD_Item3[14];
+int AF_Data[6][3],SFR_Data[50],LCC_CrossTalk[3],LSC_Item3[10];
 char chk[2], Fuse_ID[30];  int fuse_ID_Length = 16;
 string global_STR, shift_Item[4], cross_Item[3], akm_cross_Item[3], AF_Item[6][5],AF_info_Item[10][4],SFR_Item[4][4],ZOOM_Item[3][3],Magnification[9];
 string PDAF_info_Item[18][3],Gmap_Item[12][3],PD_Item[14][3], OIS_info_Item[30][4],OIS_data_Item[8][3], AA_Item[18],sData_Item[20][5];
+string Fix_Data_Item[10][3];
 int HL = 0, checkDivisor = 0, customer_Data_END = 0, customer_end = 0, first_Pixel = 0, mode = 0, OK=0, NG=0;
 float QSC_Data[4][4][12][16] = { 0 };
-int reserved_check = 1,duplicate_value_NG_ratio=50;
-
+int selection = 0,reserved_check = 1,duplicate_value_NG_ratio=50, SFR_Format=0;
 extern void EEPMap_Out();
 extern void set_Map_inf(string info, string ref, int addr, data_Type t);
 
@@ -61,7 +61,7 @@ string EEPROM_Map;
 
 string src;
 //ofstream fout(".\\MemoryParseData.txt");
-ofstream fout;
+ofstream  fout;
 //ofstream dump_result(".\\dump_result.txt");
 ofstream dump_result;
 
@@ -80,10 +80,10 @@ info_Format infoData[40],QR_Data,Fuse_Data,Fuse_Data2,QC_LSC_Data[8], MTK_LSC_Da
 typedef struct {
 	string item[2] = { "","" };
 }dual_info_Format;
-dual_info_Format AEC_Data[12], History_Data[14], QSC_Item;
+dual_info_Format AEC_Data[12], History_Data[12], QSC_Item;
 
 typedef struct {
-	string item[7] = { "","","","","","","" };
+	string item[10] = { "","","","","","","","","",""};
 	int year = 0, month = 0, Day = 0;
 }date_Format;
 date_Format product_Date;
@@ -174,6 +174,7 @@ string GetASCII(int x, int y) {
 }
 
 void getHex(unsigned int tmp) {
+	tmp = tmp % 256;
 	int a = tmp / 16;
 	int b = tmp % 16;
 	if (a < 10)
@@ -292,17 +293,18 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 		ui.sr_hex->setChecked(true);
 	}
 	if ((selection & 32) >0) {
-		ui.QC_LSC_552->setChecked(true);
+		ui.shift_HL->setChecked(true);
 	}
 	else {
-		ui.QC_LSC_8->setChecked(true);
+		ui.shift_LH->setChecked(true);
 	}
-	if ((selection & 64) >0) {
-		ui.SFR_HEX->setChecked(true);
-	}
-	else {
-		ui.SFR_DEC->setChecked(true);
-	}
+
+	//if ((selection & 64) >0) {
+	//	ui.SFR_HEX->setChecked(true);
+	//}
+	//else {
+	//	ui.SFR_DEC->setChecked(true);
+	//}
 	if ((selection & 128) >0) {
 		ui.checkBox_ZOOM->setChecked(true);
 	}
@@ -360,7 +362,6 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 		ui.B->setChecked(true);
 	}
 
-	
 	//////////////////////////////////DataFormat
 	if ((DataFormat %10) == 1) {
 		ui.oppo->setChecked(true);
@@ -380,6 +381,50 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 	else if ((DataFormat % 10) == 6) {
 		ui.CS_other->setChecked(true);
 	}
+
+	ui.SFR_Format->setCurrentIndex(SFR_Format);
+
+	////////////////////fix_data_check
+	ui.fix11->setText(Fix_Data_Item[0][0].c_str());
+	ui.fix12->setText(Fix_Data_Item[0][1].c_str());
+	ui.fix13->setText(Fix_Data_Item[0][2].c_str());
+
+	ui.fix21->setText(Fix_Data_Item[1][0].c_str());
+	ui.fix22->setText(Fix_Data_Item[1][1].c_str());
+	ui.fix23->setText(Fix_Data_Item[1][2].c_str());
+
+	ui.fix31->setText(Fix_Data_Item[2][0].c_str());
+	ui.fix32->setText(Fix_Data_Item[2][1].c_str());
+	ui.fix33->setText(Fix_Data_Item[2][2].c_str());
+
+	ui.fix41->setText(Fix_Data_Item[3][0].c_str());
+	ui.fix42->setText(Fix_Data_Item[3][1].c_str());
+	ui.fix43->setText(Fix_Data_Item[3][2].c_str());
+
+	ui.fix51->setText(Fix_Data_Item[4][0].c_str());
+	ui.fix52->setText(Fix_Data_Item[4][1].c_str());
+	ui.fix53->setText(Fix_Data_Item[4][2].c_str());
+
+	ui.fix61->setText(Fix_Data_Item[5][0].c_str());
+	ui.fix62->setText(Fix_Data_Item[5][1].c_str());
+	ui.fix63->setText(Fix_Data_Item[5][2].c_str());
+
+	ui.fix71->setText(Fix_Data_Item[6][0].c_str());
+	ui.fix72->setText(Fix_Data_Item[6][1].c_str());
+	ui.fix73->setText(Fix_Data_Item[6][2].c_str());
+
+	ui.fix81->setText(Fix_Data_Item[7][0].c_str());
+	ui.fix82->setText(Fix_Data_Item[7][1].c_str());
+	ui.fix83->setText(Fix_Data_Item[7][2].c_str());
+
+	ui.fix91->setText(Fix_Data_Item[8][0].c_str());
+	ui.fix92->setText(Fix_Data_Item[8][1].c_str());
+	ui.fix93->setText(Fix_Data_Item[8][2].c_str());
+
+	ui.fix101->setText(Fix_Data_Item[9][0].c_str());
+	ui.fix102->setText(Fix_Data_Item[9][1].c_str());
+	ui.fix103->setText(Fix_Data_Item[9][2].c_str());
+
 	////////////////////Zoom AF Formula
 	ui.ZOOM11->setText(ZOOM_Item[0][0].c_str());
 	ui.ZOOM12->setText(ZOOM_Item[0][1].c_str());
@@ -441,12 +486,6 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 
 	ui.history121->setText(History_Data[11].item[0].c_str());
 	ui.history122->setText(History_Data[11].item[1].c_str());
-
-	ui.history131->setText(History_Data[12].item[0].c_str());
-	ui.history132->setText(History_Data[12].item[1].c_str());
-
-	ui.history141->setText(History_Data[13].item[0].c_str());
-	ui.history142->setText(History_Data[13].item[1].c_str());
 
 	///////////////////AEC_data
 	ui.AEC11->setText(AEC_Data[0].item[0].c_str());
@@ -809,51 +848,51 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 	//////////////PD data info
 	ui.DCC11->setText(PD_Item[0][0].c_str());
 	ui.DCC12->setText(PD_Item[0][1].c_str());
-	ui.DCC13->setText(PD_Item[0][2].c_str());
+	ui.DCC13->setCurrentIndex(PD_Item3[0]);
 
 	ui.DCC21->setText(PD_Item[1][0].c_str());
 	ui.DCC22->setText(PD_Item[1][1].c_str());
-	ui.DCC23->setText(PD_Item[1][2].c_str());
+	ui.DCC23->setCurrentIndex(PD_Item3[1]);
 
 	ui.DCC31->setText(PD_Item[2][0].c_str());
 	ui.DCC32->setText(PD_Item[2][1].c_str());
-	ui.DCC33->setText(PD_Item[2][2].c_str());
+	ui.DCC33->setCurrentIndex(PD_Item3[2]);
 
 	ui.DCC41->setText(PD_Item[3][0].c_str());
 	ui.DCC42->setText(PD_Item[3][1].c_str());
-	ui.DCC43->setText(PD_Item[3][2].c_str());
+	ui.DCC43->setCurrentIndex(PD_Item3[3]);
 
 	ui.DCC51->setText(PD_Item[4][0].c_str());
 	ui.DCC52->setText(PD_Item[4][1].c_str());
-	ui.DCC53->setText(PD_Item[4][2].c_str());
+	ui.DCC53->setCurrentIndex(PD_Item3[4]);
 
 	ui.DCC61->setText(PD_Item[5][0].c_str());
 	ui.DCC62->setText(PD_Item[5][1].c_str());
-	ui.DCC63->setText(PD_Item[5][2].c_str());
+	ui.DCC63->setCurrentIndex(PD_Item3[5]);
 
 	ui.DCC71->setText(PD_Item[6][0].c_str());
 	ui.DCC72->setText(PD_Item[6][1].c_str());
-	ui.DCC73->setText(PD_Item[6][2].c_str());
+	ui.DCC73->setCurrentIndex(PD_Item3[6]);
 
 	ui.DCC81->setText(PD_Item[7][0].c_str());
 	ui.DCC82->setText(PD_Item[7][1].c_str());
-	ui.DCC83->setText(PD_Item[7][2].c_str());
+	ui.DCC83->setCurrentIndex(PD_Item3[7]);
 
 	ui.DCC91->setText(PD_Item[8][0].c_str());
 	ui.DCC92->setText(PD_Item[8][1].c_str());
-	ui.DCC93->setText(PD_Item[8][2].c_str());
+	ui.DCC93->setCurrentIndex(PD_Item3[8]);
 
 	ui.DCC101->setText(PD_Item[9][0].c_str());
 	ui.DCC102->setText(PD_Item[9][1].c_str());
-	ui.DCC103->setText(PD_Item[9][2].c_str());
+	ui.DCC103->setCurrentIndex(PD_Item3[9]);
 
 	ui.DCC111->setText(PD_Item[10][0].c_str());
 	ui.DCC112->setText(PD_Item[10][1].c_str());
-	ui.DCC113->setText(PD_Item[10][1].c_str());
+	ui.DCC113->setCurrentIndex(PD_Item3[10]);
 
 	ui.DCC121->setText(PD_Item[11][0].c_str());
 	ui.DCC122->setText(PD_Item[11][1].c_str());
-	ui.DCC123->setText(PD_Item[11][2].c_str());
+	ui.DCC123->setCurrentIndex(PD_Item3[11]);
 
 	//ui.DCC131->setText(PD_Item[12][0].c_str());
 	//ui.DCC132->setText(PD_Item[12][1].c_str());
@@ -867,43 +906,53 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 	////////Gmap addr setting
 	ui.Gmap11->setText(Gmap_Item[0][0].c_str());
 	ui.Gmap12->setText(Gmap_Item[0][1].c_str());
- 	ui.Gmap13->setText(Gmap_Item[0][2].c_str());
+	ui.Gmap13->setText(Gmap_Item[0][2].c_str());
+ 	ui.Gmap14->setCurrentIndex(Gmap_Item3[0]);
 
 	ui.Gmap21->setText(Gmap_Item[1][0].c_str());
 	ui.Gmap22->setText(Gmap_Item[1][1].c_str());
 	ui.Gmap23->setText(Gmap_Item[1][2].c_str());
+	ui.Gmap24->setCurrentIndex(Gmap_Item3[1]);
 
 	ui.Gmap31->setText(Gmap_Item[2][0].c_str());
 	ui.Gmap32->setText(Gmap_Item[2][1].c_str());
 	ui.Gmap33->setText(Gmap_Item[2][2].c_str());
+	ui.Gmap34->setCurrentIndex(Gmap_Item3[2]);
 
 	ui.Gmap41->setText(Gmap_Item[3][0].c_str());
 	ui.Gmap42->setText(Gmap_Item[3][1].c_str());
 	ui.Gmap43->setText(Gmap_Item[3][2].c_str());
+	ui.Gmap44->setCurrentIndex(Gmap_Item3[3]);
 
 	ui.Gmap51->setText(Gmap_Item[4][0].c_str());
 	ui.Gmap52->setText(Gmap_Item[4][1].c_str());
 	ui.Gmap53->setText(Gmap_Item[4][2].c_str());
+	ui.Gmap54->setCurrentIndex(Gmap_Item3[4]);
 
 	ui.Gmap61->setText(Gmap_Item[5][0].c_str());
 	ui.Gmap62->setText(Gmap_Item[5][1].c_str());
 	ui.Gmap63->setText(Gmap_Item[5][2].c_str());
+	ui.Gmap64->setCurrentIndex(Gmap_Item3[5]);
 
 	ui.Gmap71->setText(Gmap_Item[6][0].c_str());
 	ui.Gmap72->setText(Gmap_Item[6][1].c_str());
 	ui.Gmap73->setText(Gmap_Item[6][2].c_str());
+	ui.Gmap74->setCurrentIndex(Gmap_Item3[6]);
 
 	ui.Gmap81->setText(Gmap_Item[7][0].c_str());
 	ui.Gmap82->setText(Gmap_Item[7][1].c_str());
 	ui.Gmap83->setText(Gmap_Item[7][2].c_str());
+	ui.Gmap84->setCurrentIndex(Gmap_Item3[7]);
 
 	ui.Gmap91->setText(Gmap_Item[8][0].c_str());
 	ui.Gmap92->setText(Gmap_Item[8][1].c_str());
 	ui.Gmap93->setText(Gmap_Item[8][2].c_str());
+	ui.Gmap94->setCurrentIndex(Gmap_Item3[8]);
 
 	ui.Gmap101->setText(Gmap_Item[9][0].c_str());
 	ui.Gmap102->setText(Gmap_Item[9][1].c_str());
 	ui.Gmap103->setText(Gmap_Item[9][2].c_str());
+	ui.Gmap104->setCurrentIndex(Gmap_Item3[9]);
 
 	//////////////////PDAF INFO
 	ui.PDAF_info11->setText(PDAF_info_Item[0][0].c_str());
@@ -993,28 +1042,43 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 
 	ui.lsc11->setText(QC_LSC_Data[0].item[0].c_str());
 	ui.lsc12->setText(QC_LSC_Data[0].item[1].c_str());
+	ui.lsc13->setText(QC_LSC_Data[0].item[2].c_str());
+	ui.lsc14->setCurrentIndex(LSC_Item3[0]);
 
 	ui.lsc21->setText(QC_LSC_Data[1].item[0].c_str());
 	ui.lsc22->setText(QC_LSC_Data[1].item[1].c_str());
+	ui.lsc23->setText(QC_LSC_Data[1].item[2].c_str());
+	ui.lsc24->setCurrentIndex(LSC_Item3[1]);
 
 	ui.lsc31->setText(QC_LSC_Data[2].item[0].c_str());
 	ui.lsc32->setText(QC_LSC_Data[2].item[1].c_str());
+	ui.lsc33->setText(QC_LSC_Data[2].item[2].c_str());
+	ui.lsc34->setCurrentIndex(LSC_Item3[2]);
 
 	ui.lsc41->setText(QC_LSC_Data[3].item[0].c_str());
 	ui.lsc42->setText(QC_LSC_Data[3].item[1].c_str());
+	ui.lsc43->setText(QC_LSC_Data[3].item[2].c_str());
+	ui.lsc44->setCurrentIndex(LSC_Item3[3]);
 
 	ui.lsc51->setText(QC_LSC_Data[4].item[0].c_str());
 	ui.lsc52->setText(QC_LSC_Data[4].item[1].c_str());
+	ui.lsc53->setText(QC_LSC_Data[4].item[2].c_str());
+	ui.lsc54->setCurrentIndex(LSC_Item3[4]);
 
 	ui.lsc61->setText(QC_LSC_Data[5].item[0].c_str());
 	ui.lsc62->setText(QC_LSC_Data[5].item[1].c_str());
+	ui.lsc63->setText(QC_LSC_Data[5].item[2].c_str());
+	ui.lsc64->setCurrentIndex(LSC_Item3[5]);
 
 	ui.lsc71->setText(QC_LSC_Data[6].item[0].c_str());
 	ui.lsc72->setText(QC_LSC_Data[6].item[1].c_str());
+	ui.lsc73->setText(QC_LSC_Data[6].item[2].c_str());
+	ui.lsc74->setCurrentIndex(LSC_Item3[6]);
 
 	ui.lsc81->setText(QC_LSC_Data[7].item[0].c_str());
 	ui.lsc82->setText(QC_LSC_Data[7].item[1].c_str());
-
+	ui.lsc83->setText(QC_LSC_Data[7].item[2].c_str());
+	ui.lsc84->setCurrentIndex(LSC_Item3[7]);
 
 	ui.MTK_LSC11->setText(MTK_LSC_Data[0].item[0].c_str());
 	ui.MTK_LSC12->setText(MTK_LSC_Data[0].item[1].c_str());
@@ -1384,8 +1448,11 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 	else if (checkDivisor == 1)ui.radioButton_255_1->setChecked(true);
 	else if (checkDivisor == 2)ui.radioButton_256->setChecked(true);
 
-	if (HL == 1)ui.radioButton_HL->setChecked(true);
-	else if (HL == 0)ui.radioButton_LH->setChecked(true);
+	if (HL&1)ui.radioButton_HL->setChecked(true);
+	else ui.radioButton_LH->setChecked(true);
+
+	if (HL & 2)ui.OIS_HL->setChecked(true);
+	else ui.OIS_LH->setChecked(true);
 
 	ui.info11->setText(infoData[0].item[0].c_str());
 	ui.info12->setText(infoData[0].item[1].c_str());
@@ -1522,6 +1589,8 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 	ui.hour->setText(product_Date.item[4].c_str());
 	ui.minute->setText(product_Date.item[5].c_str());
 	ui.second->setText(product_Date.item[6].c_str());
+	ui.factory->setText(product_Date.item[7].c_str());
+	ui.line->setText(product_Date.item[8].c_str());
 
 	ui.same11->setText(Same_Item[0].item[0].c_str());
 	ui.same12->setText(Same_Item[0].item[1].c_str());
@@ -1557,8 +1626,9 @@ void EEPROM_Data_Verifier::load_EEPROM_Address() {
 		value_Hash[i].item_name = "";
 	}
 	set_ini_Path(EEPROM_Map);
+	spec_Bin_Ready=read_Spec_Bin();
 
-	TCHAR lpTexts[64]; int temp = 0; string str;
+	TCHAR lpTexts[256]; int temp = 0; string str;
 	USES_CONVERSION;
 	for (int i = 0; i < 40; i++)
 		for (int k = 0; k < 5; k++) {
@@ -1571,6 +1641,8 @@ void EEPROM_Data_Verifier::load_EEPROM_Address() {
 		if (checkSum[i].item[0].length()>1) {
 			if (i < 38) {
 				checkSum[i].flag = unstringHex2int(checkSum[i].item[1]);
+				if (checkSum[i].item[1].length() < 1)
+					checkSum[i].flag = -1;
 				checkSum[i].start = unstringHex2int(checkSum[i].item[2]);
 				checkSum[i].end = unstringHex2int(checkSum[i].item[3]);
 				checkSum[i].checksum = unstringHex2int(checkSum[i].item[4]);
@@ -1613,7 +1685,7 @@ void EEPROM_Data_Verifier::load_EEPROM_Address() {
 	for (int i = 0; i < 10; i++)
 		for (int k = 0; k < 4; k++) {
 			string item = "AF_info" + to_string(i + 1) + to_string(k + 1);
-			GetPrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
+			GetPrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), TEXT(""), lpTexts, 255, CA2CT(EEPROM_Map.c_str()));
 			AF_info_Item[i][k] = CT2A(lpTexts);
 		}
 
@@ -1641,19 +1713,36 @@ void EEPROM_Data_Verifier::load_EEPROM_Address() {
 
 	for (int i = 0; i < 10; i++)
 		for (int k = 0; k < 3; k++) {
-			string item = "Gmap_Item" + to_string(i + 1) + to_string(k + 1);
+			string item = "Fix_Data" + to_string(i + 1) + to_string(k + 1);
 			GetPrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
-			Gmap_Item[i][k] = CT2A(lpTexts);
+			Fix_Data_Item[i][k] = CT2A(lpTexts);
 		}
 
+	for (int i = 0; i < 10; i++) 
+		for (int k = 0; k < 4; k++) {
+			string item = "Gmap_Item" + to_string(i + 1) + to_string(k + 1);
+			if (k < 3) {
+				GetPrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
+				Gmap_Item[i][k] = CT2A(lpTexts);
+			}
+			else {
+				Gmap_Item3[i]= GetPrivateProfileInt(_T("EEPROM_Address"), CA2CT(item.c_str()), 0, CA2CT(EEPROM_Map.c_str()));
+			}
+		}
+	
 	for (int i = 0; i < 12; i++)
 		for (int k = 0; k < 3; k++) {
 			string item = "PD_Item" + to_string(i + 1) + to_string(k + 1);
-			GetPrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
-			PD_Item[i][k] = CT2A(lpTexts);
+			if (k < 2) {
+				GetPrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
+				PD_Item[i][k] = CT2A(lpTexts);
+			}
+			else {
+				PD_Item3[i] = GetPrivateProfileInt(_T("EEPROM_Address"), CA2CT(item.c_str()), 0, CA2CT(EEPROM_Map.c_str()));
+			}
 		}
 
-	for (int i = 0; i < 14; i++)
+	for (int i = 0; i < 12; i++)
 		for (int k = 0; k < 2; k++) {
 			string item = "History_info" + to_string(i + 1) + to_string(k + 1);
 			GetPrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
@@ -1710,10 +1799,15 @@ void EEPROM_Data_Verifier::load_EEPROM_Address() {
 		}
 
 	for (int i = 0; i < 8; i++)
-		for (int k = 0; k < 2; k++) {
+		for (int k = 0; k < 4; k++) {
 			string item = "LSC_info" + to_string(i + 1) + to_string(k + 1);
-			GetPrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
-			QC_LSC_Data[i].item[k] = CT2A(lpTexts);
+			if (k < 3) {
+				GetPrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
+				QC_LSC_Data[i].item[k] = CT2A(lpTexts);
+			}
+			else {
+				LSC_Item3[i] = GetPrivateProfileInt(_T("EEPROM_Address"), CA2CT(item.c_str()), 0, CA2CT(EEPROM_Map.c_str()));
+			}
 		}
 
 	for (int i = 0; i < 3; i++)
@@ -1752,6 +1846,10 @@ void EEPROM_Data_Verifier::load_EEPROM_Address() {
 	product_Date.item[5] = CT2A(lpTexts);
 	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("Second"), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
 	product_Date.item[6] = CT2A(lpTexts);
+	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("Factory"), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
+	product_Date.item[7] = CT2A(lpTexts);
+	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("Line"), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
+	product_Date.item[8] = CT2A(lpTexts);
 
 	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("QR_start"), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
 	QR_Data.item[0] = CT2A(lpTexts);
@@ -1760,18 +1858,18 @@ void EEPROM_Data_Verifier::load_EEPROM_Address() {
 	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("QR_spec"), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
 	QR_Data.item[2] = CT2A(lpTexts);
 
-	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("Fuse_start"), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
+	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("Fuse_start"), TEXT(""), lpTexts, 256, CA2CT(EEPROM_Map.c_str()));
 	Fuse_Data.item[0] = CT2A(lpTexts);
-	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("Fuse_end"), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
+	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("Fuse_end"), TEXT(""), lpTexts, 256, CA2CT(EEPROM_Map.c_str()));
 	Fuse_Data.item[1] = CT2A(lpTexts);
-	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("Fuse_spec"), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
+	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("Fuse_spec"), TEXT(""), lpTexts, 256, CA2CT(EEPROM_Map.c_str()));
 	Fuse_Data.item[2] = CT2A(lpTexts);
 
-	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("Fuse_start2"), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
+	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("Fuse_start2"), TEXT(""), lpTexts, 256, CA2CT(EEPROM_Map.c_str()));
 	Fuse_Data2.item[0] = CT2A(lpTexts);
-	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("Fuse_end2"), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
+	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("Fuse_end2"), TEXT(""), lpTexts, 256, CA2CT(EEPROM_Map.c_str()));
 	Fuse_Data2.item[1] = CT2A(lpTexts);
-	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("Fuse_spec2"), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
+	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("Fuse_spec2"), TEXT(""), lpTexts, 256, CA2CT(EEPROM_Map.c_str()));
 	Fuse_Data2.item[2] = CT2A(lpTexts);
 
 	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("MTK_LSC_Data11"), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
@@ -1817,6 +1915,8 @@ void EEPROM_Data_Verifier::load_EEPROM_Address() {
 	dflt_Data=noData.dec = unstringHex2int(str);
 	ui.noData->setText(str.c_str());
 
+	SFR_Format=GetPrivateProfileInt(_T("EEPROM_Address"), TEXT("SFR_Format"), 0, CA2CT(EEPROM_Map.c_str()));
+
 	HL = GetPrivateProfileInt(_T("EEPROM_Set"), TEXT("HL"), HL, CA2CT(EEPROM_Map.c_str()));
 	checkDivisor = GetPrivateProfileInt(_T("EEPROM_Set"), TEXT("checkDivisor"), checkDivisor, CA2CT(EEPROM_Map.c_str()));
 
@@ -1849,84 +1949,85 @@ void EEPROM_Data_Verifier::load_EEPROM_Address() {
 void EEPROM_Data_Verifier::load_Panel() {
 
 	modelSelect = ui.model->document()->toPlainText().toInt();
+	SFR_Format = ui.SFR_Format->currentIndex();
 
 	if (ui.info_date->isChecked()) {
 		selection |= 1;
 	}
 	else {
-		selection &= 0xFFFFFFFF - 1;;
+		selection &= 0xFFFFFFFF - 1;
 	}
 	if (ui.info_QR->isChecked()) {
 		selection |= 2;
 	}
 	else {
-		selection &= 0xFFFFFFFF - 2;;
+		selection &= 0xFFFFFFFF - 2;
 	}
 	if (ui.info_fuse->isChecked()) {
 		selection |= 4;
 	}
 	else {
-		selection &= 0xFFFFFFFF - 4;;
+		selection &= 0xFFFFFFFF - 4;
 	}
 	if (ui.gyro_dec->isChecked()) {
 		selection |= 8;
 	}
 	else {
-		selection &= 0xFFFFFFFF - 8;;
+		selection &= 0xFFFFFFFF - 8;
 	}
 	if (ui.sr_hl->isChecked()) {
 		selection |= 16;
 	}
 	else {
-		selection &= 0xFFFFFFFF - 16;;
+		selection &= 0xFFFFFFFF - 16;
 	}
-	if (ui.QC_LSC_552->isChecked()) {
+	if (ui.shift_HL->isChecked()) {
 		selection |= 32;
 	}
 	else {
 		selection &= 0xFFFFFFFF - 32;;
 	}
-	if (ui.SFR_HEX->isChecked()) {
-		selection |= 64;
-	}
-	else {
-		selection &= 0xFFFFFFFF - 64;;
-	}
+	//if (ui.SFR_HEX->isChecked()) {
+	//	selection |= 64;
+	//}
+	//else {
+	//	selection &= 0xFFFFFFFF - 64;
+	//}
 	if (ui.checkBox_ZOOM->isChecked()) {
 		selection |= 128;
 	}
 	else {
-		selection &= 0xFFFFFFFF - 128;;
+		selection &= 0xFFFFFFFF - 128;
 	}
 	if (ui.gyro_int->isChecked()) {
 		selection |= 256;
 	}
 	else {
-		selection &= 0xFFFFFFFF - 256;;
+		selection &= 0xFFFFFFFF - 256;
 	}
 	if (ui.QC->isChecked()) {
 		selection |= 512;
 	}
 	else {
-		selection &= 0xFFFFFFFF - 512;;
+		selection &= 0xFFFFFFFF - 512;
 	}
 	if (ui.MTK->isChecked()) {
 		selection |= 1024;
 	}
 	else {
-		selection &= 0xFFFFFFFF - 1024;;
+		selection &= 0xFFFFFFFF - 1024;
 	}
 	if (ui.LSI->isChecked()) {
 		selection |= 2048;
 	}
 	else {
-		selection &= 0xFFFFFFFF - 2048;;
+		selection &= 0xFFFFFFFF - 2048;
 	}
 	if (ui.QSC3->isChecked()) {
 		selection |= 4096;
 	}
 	else {
-		selection &= 0xFFFFFFFF - 4096;;
+		selection &= 0xFFFFFFFF - 4096;
 	}
 	if (ui.info_fuse_2->isChecked()) {
 		selection |= 8192;
@@ -1943,7 +2044,7 @@ void EEPROM_Data_Verifier::load_Panel() {
 		DataFormat = DataFormat / 10 + 2;
 	}
 	else if (ui.xiaomi->isChecked()) {
-		DataFormat = DataFormat / 10 + 3;
+		DataFormat = DataFormat / 10 + 3; 
 	}
 	else if (ui.sony->isChecked()) {
 		DataFormat = DataFormat / 10 + 4;
@@ -1966,6 +2067,19 @@ void EEPROM_Data_Verifier::load_Panel() {
 	}
 	else if (ui.B->isChecked()) {
 		first_Pixel = 3;
+	}
+
+	if (ui.radioButton_HL->isChecked()) {
+		HL |= 1;
+	}else {
+		HL &= 0xFFFFFFFF - 1;
+	}
+
+	if (ui.OIS_HL->isChecked()) {
+		HL |= 2;
+	}
+	else {
+		HL &= 0xFFFFFFFF - 2;
 	}
 
 	///////////////////Same_Item
@@ -2051,12 +2165,6 @@ void EEPROM_Data_Verifier::load_Panel() {
 
 	History_Data[11].item[0] = string((const char *)ui.history121->document()->toPlainText().toLocal8Bit());
 	History_Data[11].item[1] = string((const char *)ui.history122->document()->toPlainText().toLocal8Bit());
-
-	History_Data[12].item[0] = string((const char *)ui.history131->document()->toPlainText().toLocal8Bit());
-	History_Data[12].item[1] = string((const char *)ui.history132->document()->toPlainText().toLocal8Bit());
-
-	History_Data[13].item[0] = string((const char *)ui.history141->document()->toPlainText().toLocal8Bit());
-	History_Data[13].item[1] = string((const char *)ui.history142->document()->toPlainText().toLocal8Bit());
 
 	///////////////////AEC_data
 
@@ -2319,6 +2427,38 @@ void EEPROM_Data_Verifier::load_Panel() {
 	OIS_data_Item[7][0] = string((const char *)ui.OIS_data81->document()->toPlainText().toLocal8Bit());
 	OIS_data_Item[7][1] = string((const char *)ui.OIS_data82->document()->toPlainText().toLocal8Bit());
 
+	///////////////////Fix_Value
+	Fix_Data_Item[0][0] = string((const char *)ui.fix11->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[0][1] = string((const char *)ui.fix12->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[0][2] = string((const char *)ui.fix13->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[1][0] = string((const char *)ui.fix21->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[1][1] = string((const char *)ui.fix22->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[1][2] = string((const char *)ui.fix23->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[2][0] = string((const char *)ui.fix31->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[2][1] = string((const char *)ui.fix32->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[2][2] = string((const char *)ui.fix33->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[3][0] = string((const char *)ui.fix41->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[3][1] = string((const char *)ui.fix42->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[3][2] = string((const char *)ui.fix43->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[4][0] = string((const char *)ui.fix51->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[4][1] = string((const char *)ui.fix52->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[4][2] = string((const char *)ui.fix53->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[5][0] = string((const char *)ui.fix61->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[5][1] = string((const char *)ui.fix62->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[5][2] = string((const char *)ui.fix63->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[6][0] = string((const char *)ui.fix71->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[6][1] = string((const char *)ui.fix72->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[6][2] = string((const char *)ui.fix73->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[7][0] = string((const char *)ui.fix81->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[7][1] = string((const char *)ui.fix82->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[7][2] = string((const char *)ui.fix83->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[8][0] = string((const char *)ui.fix91->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[8][1] = string((const char *)ui.fix92->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[8][2] = string((const char *)ui.fix93->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[9][0] = string((const char *)ui.fix101->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[9][1] = string((const char *)ui.fix102->document()->toPlainText().toLocal8Bit());
+	Fix_Data_Item[9][2] = string((const char *)ui.fix103->document()->toPlainText().toLocal8Bit());
+
 	///////////////////OIS_info
 	OIS_info_Item[0][0] = string((const char *)ui.OIS_info11->document()->toPlainText().toLocal8Bit());
 	OIS_info_Item[0][1] = string((const char *)ui.OIS_info12->document()->toPlainText().toLocal8Bit());
@@ -2443,40 +2583,52 @@ void EEPROM_Data_Verifier::load_Panel() {
 	///////////////////DCC_Data
 	PD_Item[0][0] = string((const char *)ui.DCC11->document()->toPlainText().toLocal8Bit());
 	PD_Item[0][1] = string((const char *)ui.DCC12->document()->toPlainText().toLocal8Bit());
-	PD_Item[0][2] = string((const char *)ui.DCC13->document()->toPlainText().toLocal8Bit());
+//	PD_Item[0][2] = string((const char *)ui.DCC13->document()->toPlainText().toLocal8Bit());
+	PD_Item3[0] = ui.DCC13->currentIndex();
 	PD_Item[1][0] = string((const char *)ui.DCC21->document()->toPlainText().toLocal8Bit());
 	PD_Item[1][1] = string((const char *)ui.DCC22->document()->toPlainText().toLocal8Bit());
-	PD_Item[1][2] = string((const char *)ui.DCC23->document()->toPlainText().toLocal8Bit());
+//	PD_Item[1][2] = string((const char *)ui.DCC23->document()->toPlainText().toLocal8Bit());
+	PD_Item3[1] = ui.DCC23->currentIndex();
 	PD_Item[2][0] = string((const char *)ui.DCC31->document()->toPlainText().toLocal8Bit());
 	PD_Item[2][1] = string((const char *)ui.DCC32->document()->toPlainText().toLocal8Bit());
-	PD_Item[2][2] = string((const char *)ui.DCC33->document()->toPlainText().toLocal8Bit());
+//	PD_Item[2][2] = string((const char *)ui.DCC33->document()->toPlainText().toLocal8Bit());
+	PD_Item3[2] = ui.DCC33->currentIndex();
 	PD_Item[3][0] = string((const char *)ui.DCC41->document()->toPlainText().toLocal8Bit());
 	PD_Item[3][1] = string((const char *)ui.DCC42->document()->toPlainText().toLocal8Bit());
-	PD_Item[3][2] = string((const char *)ui.DCC43->document()->toPlainText().toLocal8Bit());
+//	PD_Item[3][2] = string((const char *)ui.DCC43->document()->toPlainText().toLocal8Bit());
+	PD_Item3[3] = ui.DCC43->currentIndex();
 	PD_Item[4][0] = string((const char *)ui.DCC51->document()->toPlainText().toLocal8Bit());
 	PD_Item[4][1] = string((const char *)ui.DCC52->document()->toPlainText().toLocal8Bit());
-	PD_Item[4][2] = string((const char *)ui.DCC53->document()->toPlainText().toLocal8Bit());
+//	PD_Item[4][2] = string((const char *)ui.DCC53->document()->toPlainText().toLocal8Bit());
+	PD_Item3[4] = ui.DCC53->currentIndex();
 	PD_Item[5][0] = string((const char *)ui.DCC61->document()->toPlainText().toLocal8Bit());
 	PD_Item[5][1] = string((const char *)ui.DCC62->document()->toPlainText().toLocal8Bit());
-	PD_Item[5][2] = string((const char *)ui.DCC63->document()->toPlainText().toLocal8Bit());
+//	PD_Item[5][2] = string((const char *)ui.DCC63->document()->toPlainText().toLocal8Bit());
+	PD_Item3[5] = ui.DCC63->currentIndex();
 	PD_Item[6][0] = string((const char *)ui.DCC71->document()->toPlainText().toLocal8Bit());
 	PD_Item[6][1] = string((const char *)ui.DCC72->document()->toPlainText().toLocal8Bit());
-	PD_Item[6][2] = string((const char *)ui.DCC73->document()->toPlainText().toLocal8Bit());
+//	PD_Item[6][2] = string((const char *)ui.DCC73->document()->toPlainText().toLocal8Bit());
+	PD_Item3[6] = ui.DCC73->currentIndex();
 	PD_Item[7][0] = string((const char *)ui.DCC81->document()->toPlainText().toLocal8Bit());
 	PD_Item[7][1] = string((const char *)ui.DCC82->document()->toPlainText().toLocal8Bit());
-	PD_Item[7][2] = string((const char *)ui.DCC83->document()->toPlainText().toLocal8Bit());
+//	PD_Item[7][2] = string((const char *)ui.DCC83->document()->toPlainText().toLocal8Bit());
+	PD_Item3[7] = ui.DCC83->currentIndex();
 	PD_Item[8][0] = string((const char *)ui.DCC91->document()->toPlainText().toLocal8Bit());
 	PD_Item[8][1] = string((const char *)ui.DCC92->document()->toPlainText().toLocal8Bit());
-	PD_Item[8][2] = string((const char *)ui.DCC93->document()->toPlainText().toLocal8Bit());
+//	PD_Item[8][2] = string((const char *)ui.DCC93->document()->toPlainText().toLocal8Bit());
+	PD_Item3[8] = ui.DCC93->currentIndex();
 	PD_Item[9][0] = string((const char *)ui.DCC101->document()->toPlainText().toLocal8Bit());
 	PD_Item[9][1] = string((const char *)ui.DCC102->document()->toPlainText().toLocal8Bit());
-	PD_Item[9][2] = string((const char *)ui.DCC103->document()->toPlainText().toLocal8Bit());
+//	PD_Item[9][2] = string((const char *)ui.DCC103->document()->toPlainText().toLocal8Bit());
+	PD_Item3[9] = ui.DCC103->currentIndex();
 	PD_Item[10][0] = string((const char *)ui.DCC111->document()->toPlainText().toLocal8Bit());
 	PD_Item[10][1] = string((const char *)ui.DCC112->document()->toPlainText().toLocal8Bit());
-	PD_Item[10][2] = string((const char *)ui.DCC113->document()->toPlainText().toLocal8Bit());
+//	PD_Item[10][2] = string((const char *)ui.DCC113->document()->toPlainText().toLocal8Bit());
+	PD_Item3[10] = ui.DCC113->currentIndex();
 	PD_Item[11][0] = string((const char *)ui.DCC121->document()->toPlainText().toLocal8Bit());
 	PD_Item[11][1] = string((const char *)ui.DCC122->document()->toPlainText().toLocal8Bit());
-	PD_Item[11][2] = string((const char *)ui.DCC123->document()->toPlainText().toLocal8Bit());
+//	PD_Item[11][2] = string((const char *)ui.DCC123->document()->toPlainText().toLocal8Bit());
+	PD_Item3[11] = ui.DCC123->currentIndex();
 	//PD_Item[12][0] = string((const char *)ui.DCC131->document()->toPlainText().toLocal8Bit());
 	//PD_Item[12][1] = string((const char *)ui.DCC132->document()->toPlainText().toLocal8Bit());
 	//PD_Item[12][2] = string((const char *)ui.DCC133->document()->toPlainText().toLocal8Bit());
@@ -2488,42 +2640,52 @@ void EEPROM_Data_Verifier::load_Panel() {
 	Gmap_Item[0][0] = string((const char *)ui.Gmap11->document()->toPlainText().toLocal8Bit());
 	Gmap_Item[0][1] = string((const char *)ui.Gmap12->document()->toPlainText().toLocal8Bit());
 	Gmap_Item[0][2] = string((const char *)ui.Gmap13->document()->toPlainText().toLocal8Bit());
+	Gmap_Item3[0] = ui.Gmap14->currentIndex();
 
 	Gmap_Item[1][0] = string((const char *)ui.Gmap21->document()->toPlainText().toLocal8Bit());
 	Gmap_Item[1][1] = string((const char *)ui.Gmap22->document()->toPlainText().toLocal8Bit());
 	Gmap_Item[1][2] = string((const char *)ui.Gmap23->document()->toPlainText().toLocal8Bit());
+	Gmap_Item3[1] = ui.Gmap24->currentIndex();
 
 	Gmap_Item[2][0] = string((const char *)ui.Gmap31->document()->toPlainText().toLocal8Bit());
 	Gmap_Item[2][1] = string((const char *)ui.Gmap32->document()->toPlainText().toLocal8Bit());
 	Gmap_Item[2][2] = string((const char *)ui.Gmap33->document()->toPlainText().toLocal8Bit());
+	Gmap_Item3[2] = ui.Gmap34->currentIndex();
 
 	Gmap_Item[3][0] = string((const char *)ui.Gmap41->document()->toPlainText().toLocal8Bit());
 	Gmap_Item[3][1] = string((const char *)ui.Gmap42->document()->toPlainText().toLocal8Bit());
 	Gmap_Item[3][2] = string((const char *)ui.Gmap43->document()->toPlainText().toLocal8Bit());
+	Gmap_Item3[3] = ui.Gmap44->currentIndex();
 
 	Gmap_Item[4][0] = string((const char *)ui.Gmap51->document()->toPlainText().toLocal8Bit());
 	Gmap_Item[4][1] = string((const char *)ui.Gmap52->document()->toPlainText().toLocal8Bit());
 	Gmap_Item[4][2] = string((const char *)ui.Gmap53->document()->toPlainText().toLocal8Bit());
+	Gmap_Item3[4] = ui.Gmap54->currentIndex();
 
 	Gmap_Item[5][0] = string((const char *)ui.Gmap61->document()->toPlainText().toLocal8Bit());
 	Gmap_Item[5][1] = string((const char *)ui.Gmap62->document()->toPlainText().toLocal8Bit());
 	Gmap_Item[5][2] = string((const char *)ui.Gmap63->document()->toPlainText().toLocal8Bit());
+	Gmap_Item3[5] = ui.Gmap64->currentIndex();
 
 	Gmap_Item[6][0] = string((const char *)ui.Gmap71->document()->toPlainText().toLocal8Bit());
 	Gmap_Item[6][1] = string((const char *)ui.Gmap72->document()->toPlainText().toLocal8Bit());
 	Gmap_Item[6][2] = string((const char *)ui.Gmap73->document()->toPlainText().toLocal8Bit());
+	Gmap_Item3[6] = ui.Gmap74->currentIndex();
 
 	Gmap_Item[7][0] = string((const char *)ui.Gmap81->document()->toPlainText().toLocal8Bit());
 	Gmap_Item[7][1] = string((const char *)ui.Gmap82->document()->toPlainText().toLocal8Bit());
 	Gmap_Item[7][2] = string((const char *)ui.Gmap83->document()->toPlainText().toLocal8Bit());
+	Gmap_Item3[7] = ui.Gmap84->currentIndex();
 
 	Gmap_Item[8][0] = string((const char *)ui.Gmap91->document()->toPlainText().toLocal8Bit());
 	Gmap_Item[8][1] = string((const char *)ui.Gmap92->document()->toPlainText().toLocal8Bit());
 	Gmap_Item[8][2] = string((const char *)ui.Gmap93->document()->toPlainText().toLocal8Bit());
+	Gmap_Item3[8] = ui.Gmap94->currentIndex();
 
 	Gmap_Item[9][0] = string((const char *)ui.Gmap101->document()->toPlainText().toLocal8Bit());
 	Gmap_Item[9][1] = string((const char *)ui.Gmap102->document()->toPlainText().toLocal8Bit());
 	Gmap_Item[9][2] = string((const char *)ui.Gmap103->document()->toPlainText().toLocal8Bit());
+	Gmap_Item3[9] = ui.Gmap104->currentIndex();
 
 	///////////////////PDAF_info
 	PDAF_info_Item[0][0] = string((const char *)ui.PDAF_info11->document()->toPlainText().toLocal8Bit());
@@ -2613,28 +2775,44 @@ void EEPROM_Data_Verifier::load_Panel() {
 
 	QC_LSC_Data[0].item[0] = string((const char *)ui.lsc11->document()->toPlainText().toLocal8Bit());
 	QC_LSC_Data[0].item[1] = string((const char *)ui.lsc12->document()->toPlainText().toLocal8Bit());
+	QC_LSC_Data[0].item[2] = string((const char *)ui.lsc13->document()->toPlainText().toLocal8Bit());
+	LSC_Item3[0] = ui.lsc14->currentIndex();
 
 	QC_LSC_Data[1].item[0] = string((const char *)ui.lsc21->document()->toPlainText().toLocal8Bit());
 	QC_LSC_Data[1].item[1] = string((const char *)ui.lsc22->document()->toPlainText().toLocal8Bit());
+	QC_LSC_Data[1].item[2] = string((const char *)ui.lsc23->document()->toPlainText().toLocal8Bit());
+	LSC_Item3[1] = ui.lsc24->currentIndex();
 
 	QC_LSC_Data[2].item[0] = string((const char *)ui.lsc31->document()->toPlainText().toLocal8Bit());
 	QC_LSC_Data[2].item[1] = string((const char *)ui.lsc32->document()->toPlainText().toLocal8Bit());
+	QC_LSC_Data[2].item[2] = string((const char *)ui.lsc33->document()->toPlainText().toLocal8Bit());
+	LSC_Item3[2] = ui.lsc34->currentIndex();
 
 	QC_LSC_Data[3].item[0] = string((const char *)ui.lsc41->document()->toPlainText().toLocal8Bit());
 	QC_LSC_Data[3].item[1] = string((const char *)ui.lsc42->document()->toPlainText().toLocal8Bit());
+	QC_LSC_Data[3].item[2] = string((const char *)ui.lsc43->document()->toPlainText().toLocal8Bit());
+	LSC_Item3[3] = ui.lsc44->currentIndex();
 
 	QC_LSC_Data[4].item[0] = string((const char *)ui.lsc51->document()->toPlainText().toLocal8Bit());
 	QC_LSC_Data[4].item[1] = string((const char *)ui.lsc52->document()->toPlainText().toLocal8Bit());
+	QC_LSC_Data[4].item[2] = string((const char *)ui.lsc53->document()->toPlainText().toLocal8Bit());
+	LSC_Item3[4] = ui.lsc54->currentIndex();
 
 	QC_LSC_Data[5].item[0] = string((const char *)ui.lsc61->document()->toPlainText().toLocal8Bit());
 	QC_LSC_Data[5].item[1] = string((const char *)ui.lsc62->document()->toPlainText().toLocal8Bit());
+	QC_LSC_Data[5].item[2] = string((const char *)ui.lsc63->document()->toPlainText().toLocal8Bit());
+	LSC_Item3[5] = ui.lsc64->currentIndex();
 
 	QC_LSC_Data[6].item[0] = string((const char *)ui.lsc71->document()->toPlainText().toLocal8Bit());
 	QC_LSC_Data[6].item[1] = string((const char *)ui.lsc72->document()->toPlainText().toLocal8Bit());
+	QC_LSC_Data[6].item[2] = string((const char *)ui.lsc73->document()->toPlainText().toLocal8Bit());
+	LSC_Item3[6] = ui.lsc74->currentIndex();
 
 	QC_LSC_Data[7].item[0] = string((const char *)ui.lsc81->document()->toPlainText().toLocal8Bit());
 	QC_LSC_Data[7].item[1] = string((const char *)ui.lsc82->document()->toPlainText().toLocal8Bit());
-
+	QC_LSC_Data[7].item[2] = string((const char *)ui.lsc83->document()->toPlainText().toLocal8Bit());
+	LSC_Item3[7] = ui.lsc84->currentIndex();
+ 
 	MTK_LSC_Data[0].item[0] = string((const char *)ui.MTK_LSC11->document()->toPlainText().toLocal8Bit());
 	MTK_LSC_Data[0].item[1] = string((const char *)ui.MTK_LSC12->document()->toPlainText().toLocal8Bit());
 
@@ -3132,6 +3310,9 @@ void EEPROM_Data_Verifier::load_Panel() {
 	product_Date.item[4] = string((const char *)ui.hour->document()->toPlainText().toLocal8Bit());
 	product_Date.item[5] = string((const char *)ui.minute->document()->toPlainText().toLocal8Bit());
 	product_Date.item[6] = string((const char *)ui.second->document()->toPlainText().toLocal8Bit());
+	product_Date.item[7] = string((const char *)ui.factory->document()->toPlainText().toLocal8Bit());
+	product_Date.item[8] = string((const char *)ui.line->document()->toPlainText().toLocal8Bit());
+
 }
 
 
@@ -3192,17 +3373,31 @@ void EEPROM_Data_Verifier::save_EEPROM_Address() {
 
 	for (int i = 0; i < 10; i++)
 		for (int k = 0; k < 3; k++) {
+			string item = "Fix_Data" + to_string(i + 1) + to_string(k + 1);
+			WritePrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), CA2CT(Fix_Data_Item[i][k].c_str()), CA2CT(EEPROM_Map.c_str()));
+		}
+
+	for (int i = 0; i < 10; i++)
+		for (int k = 0; k < 4; k++) {
 			string item = "Gmap_Item" + to_string(i + 1) + to_string(k + 1);
-			WritePrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), CA2CT(Gmap_Item[i][k].c_str()), CA2CT(EEPROM_Map.c_str()));
+			if (k < 3) {
+				WritePrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), CA2CT(Gmap_Item[i][k].c_str()), CA2CT(EEPROM_Map.c_str()));
+			}else {
+				WritePrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), CA2CT(to_string(Gmap_Item3[i]).c_str()), CA2CT(EEPROM_Map.c_str()));
+			}
 		}
 
 	for (int i = 0; i < 12; i++)
 		for (int k = 0; k < 3; k++) {
 			string item = "PD_Item" + to_string(i + 1) + to_string(k + 1);
-			WritePrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), CA2CT(PD_Item[i][k].c_str()), CA2CT(EEPROM_Map.c_str()));
+			if (k < 2) {
+				WritePrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), CA2CT(PD_Item[i][k].c_str()), CA2CT(EEPROM_Map.c_str()));
+			}	else {
+				WritePrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), CA2CT(to_string(PD_Item3[i]).c_str()), CA2CT(EEPROM_Map.c_str()));
+			}
 		}
 
-	for (int i = 0; i < 14; i++)
+	for (int i = 0; i < 12; i++)
 		for (int k = 0; k < 2; k++) {
 			string item = "History_info" + to_string(i + 1) + to_string(k + 1);
 			WritePrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), CA2CT(History_Data[i].item[k].c_str()), CA2CT(EEPROM_Map.c_str()));
@@ -3251,9 +3446,13 @@ void EEPROM_Data_Verifier::save_EEPROM_Address() {
 		}
 
 	for (int i = 0; i < 8; i++)
-		for (int k = 0; k < 2; k++) {
+		for (int k = 0; k < 4; k++) {
 			string item = "LSC_info" + to_string(i + 1) + to_string(k + 1);
-			WritePrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), CA2CT(QC_LSC_Data[i].item[k].c_str()), CA2CT(EEPROM_Map.c_str()));
+			if (k < 3) {
+				WritePrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), CA2CT(QC_LSC_Data[i].item[k].c_str()), CA2CT(EEPROM_Map.c_str()));
+			}else {
+				WritePrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), CA2CT(to_string(LSC_Item3[i]).c_str()), CA2CT(EEPROM_Map.c_str()));
+			}
 		}
 
 	for (int i = 0; i < 3; i++)
@@ -3273,6 +3472,8 @@ void EEPROM_Data_Verifier::save_EEPROM_Address() {
 		}
 	}
 
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("SFR_Format"), CA2CT(to_string(SFR_Format).c_str()), CA2CT(EEPROM_Map.c_str()));
+
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("Year_H"), CA2CT(product_Date.item[0].c_str()), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("Year_L"), CA2CT(product_Date.item[1].c_str()), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("Month"), CA2CT(product_Date.item[2].c_str()), CA2CT(EEPROM_Map.c_str()));
@@ -3280,6 +3481,8 @@ void EEPROM_Data_Verifier::save_EEPROM_Address() {
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("Hour"), CA2CT(product_Date.item[4].c_str()), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("Minute"), CA2CT(product_Date.item[5].c_str()), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("Second"), CA2CT(product_Date.item[6].c_str()), CA2CT(EEPROM_Map.c_str()));
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("Factory"), CA2CT(product_Date.item[7].c_str()), CA2CT(EEPROM_Map.c_str()));
+	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("Line"), CA2CT(product_Date.item[8].c_str()), CA2CT(EEPROM_Map.c_str()));
 
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("QR_start"), CA2CT(QR_Data.item[0].c_str()), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("QR_end"), CA2CT(QR_Data.item[1].c_str()), CA2CT(EEPROM_Map.c_str()));
@@ -3313,16 +3516,11 @@ void EEPROM_Data_Verifier::save_EEPROM_Address() {
 	WritePrivateProfileString(TEXT("EEPROM_Address"), TEXT("akm_cross3"), CA2CT(akm_cross_Item[2].c_str()), CA2CT(EEPROM_Map.c_str()));
 
 	/////////////////////////////////EEPROM_Set
-
 	WritePrivateProfileString(TEXT("EEPROM_Set"), TEXT("noData"), CA2CT(noData.hex.c_str()), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Set"), TEXT("validFlag"), CA2CT(Flag[0].hex.c_str()), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Set"), TEXT("invalidFlag"), CA2CT(Flag[1].hex.c_str()), CA2CT(EEPROM_Map.c_str()));
 
-
-	if(ui.radioButton_HL->isChecked())
-		WritePrivateProfileString(TEXT("EEPROM_Set"), TEXT("HL"), TEXT("1"), CA2CT(EEPROM_Map.c_str()));
-	else if(HL == 1)
-		WritePrivateProfileString(TEXT("EEPROM_Set"), TEXT("HL"), TEXT("0"), CA2CT(EEPROM_Map.c_str()));
+	WritePrivateProfileString(TEXT("EEPROM_Set"), TEXT("HL"), CA2CT(to_string(HL).c_str()), CA2CT(EEPROM_Map.c_str()));
 
 	if (ui.radioButton_255->isChecked())
 		WritePrivateProfileString(TEXT("EEPROM_Set"), TEXT("checkDivisor"), TEXT("0"), CA2CT(EEPROM_Map.c_str()));
@@ -3334,7 +3532,6 @@ void EEPROM_Data_Verifier::save_EEPROM_Address() {
 	WritePrivateProfileString(TEXT("EEPROM_Set"), TEXT("selection"), CA2CT(to_string(selection).c_str()), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Set"), TEXT("DataFormat"), CA2CT(to_string(DataFormat).c_str()), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Set"), TEXT("first_Pixel"), CA2CT(to_string(first_Pixel).c_str()), CA2CT(EEPROM_Map.c_str()));
-
 
 	save_EEPROM_Setting();
 }
@@ -3392,6 +3589,18 @@ short short_Out(int e, bool H_L) {
 	return tmp ;
 
 }
+
+int ushort_Out(int e, bool H_L) {
+	int tmp = 0;
+	if (H_L) {
+		tmp = DecData[e] * 256 + DecData[e + 1];
+	}
+	else {
+		tmp = DecData[e + 1] * 256 + DecData[e];
+	}
+	return tmp;
+}
+
 
 float gyro_Out(int e, bool H_L) {
 
@@ -3480,6 +3689,27 @@ int int_Out(int e, bool H_L) {
 }
 
 
+unsigned int uint_Out(int e, bool H_L) {
+
+	unsigned int tmp = 0;
+	if (H_L) {
+		for (int i = 0; i < 4; i++) {
+			tmp *= 256;
+			tmp += DecData[e + i];
+			useData[e + i] = 1;
+		}
+	}
+	else {
+		for (int i = 3; i >= 0; i--) {
+			tmp *= 256;
+			tmp += DecData[e + i];
+			useData[e + i] = 1;
+		}
+	}
+	return tmp;
+}
+
+
 float flt_Out(int e, bool H_L) {
 
 	unsigned int tmp = 0;
@@ -3552,14 +3782,15 @@ void EEPROM_Data_Verifier::selectModel() {
 }
 
 
-int EEPROM_Data_Verifier::QC_LSC_Parse(int start) {
+int EEPROM_Data_Verifier::LSC_Parse(int start, int group) {
 
 	int e = start, ret=0;
+	int W = 17, H = 13;
 	if (e > 0) {
+		if (LSC_Item3[group]==1){
 
-		if (ui.QC_LSC_552->isChecked()){
-			for (int i = 0; i < 13; i++)
-				for (int j = 0; j < 17; j++) {
+			for (int i = 0; i < H; i++)
+				for (int j = 0; j < W; j++) {
 					for (int k = 0; k < 4; k++) {
 						LSC[i][j][k] = DecData[e + k];
 						LSC[i][j][k] += 256 * ((DecData[e + 4] >> (6 - 2 * k)) & 3);
@@ -3572,13 +3803,13 @@ int EEPROM_Data_Verifier::QC_LSC_Parse(int start) {
 					}
 				}
 		}
-		else if (ui.QC_LSC_8->isChecked()) {
+		else if (LSC_Item3[group] == 0) {
 
-			for (int i = 0; i < 13; i++)
-				for (int j = 0; j < 17; j++)
+			for (int i = 0; i < H; i++)
+				for (int j = 0; j < W; j++)
 					for (int k = 0; k < 4; k++) {
 
-						if (HL == 1)
+						if (HL&1)
 							LSC[i][j][k] = 256 * DecData[e] + DecData[e + 1];
 						else
 							LSC[i][j][k] = 256 * DecData[e + 1] + DecData[e];
@@ -3587,34 +3818,54 @@ int EEPROM_Data_Verifier::QC_LSC_Parse(int start) {
 						e += 2;
 					}
 		}
+		else if (LSC_Item3[group] == 2) {
+			int offset = atoi(QC_LSC_Data[group].item[2].c_str());
+			W = 13, H = 9 ;
+			for (int k = 0; k < 3; k++)
+				for (int i = 0; i < H; i++)
+					for (int j = 0; j < W; j++){
+						LSC[i][j][k] = DecData[e];
+						useData[e] = 1;
+						e += 1;
+					}
+			e = start + offset;
+
+			for (int i = 0; i < H; i++)
+				for (int j = 0; j < W; j++) {
+					LSC[i][j][3] = DecData[e];
+					useData[e] = 1;
+					e += 1;
+				}
+		}
+
 		if (mode == 0) {
 			fout << "~~~Red Channel LSC:" << endl;
-			for (int i = 0; i < 13; i++) {
-				for (int j = 0; j < 17; j++) {
+			for (int i = 0; i < H; i++) {
+				for (int j = 0; j < W; j++) {
 					fout << LSC[i][j][0] << "	";
 				}
 				fout << endl;
 			}
 
 			fout << "~~~Gr Channel LSC:" << endl;
-			for (int i = 0; i < 13; i++) {
-				for (int j = 0; j < 17; j++) {
+			for (int i = 0; i < H; i++) {
+				for (int j = 0; j < W; j++) {
 					fout << LSC[i][j][1] << "	";
 				}
 				fout << endl;
 			}
 
 			fout << "~~~Gb Channel LSC:" << endl;
-			for (int i = 0; i < 13; i++) {
-				for (int j = 0; j < 17; j++) {
+			for (int i = 0; i < H; i++) {
+				for (int j = 0; j < W; j++) {
 					fout << LSC[i][j][2] << "	";
 				}
 				fout << endl;
 			}
 
 			fout << "~~~Blue Channel LSC:" << endl;
-			for (int i = 0; i < 13; i++) {
-				for (int j = 0; j < 17; j++) {
+			for (int i = 0; i < H; i++) {
+				for (int j = 0; j < W; j++) {
 					fout << LSC[i][j][3] << "	";
 				}
 				fout << endl;
@@ -3622,14 +3873,15 @@ int EEPROM_Data_Verifier::QC_LSC_Parse(int start) {
 			fout << endl;
 		}
 
-		if (LSC[6][8][0]>0 && LSC[6][8][0]<1024) {
-			ret = QC_LSC_FP_Check(LSC);
+		if (LSC[H/2][W/2][0]>0 && LSC[H/2][W/2][0]<0xF000) {
+			ret = QC_LSC_FP_Check(LSC, LSC_Item3[group]);
 			if (ret != 0) {
-				ui.log->insertPlainText("QC LSC FP NG, please check FP_log File!\n");
+				string s = "LSC"+to_string(group+1)+" FP NG, please check FP_log File!\n";
+				ui.log->insertPlainText(s.c_str());
 			}
 		}
 		else {
-			ui.log->insertPlainText("QC LSC Data is invalid!\n");
+			ui.log->insertPlainText("LSC Data is invalid!\n");
 			ret |= 1;
 		}
 
@@ -3884,7 +4136,7 @@ int EEPROM_Data_Verifier::CheckSum_Check() {
 	customer_Data_END = 0;
 
 	for (int i = 0; i < 40; i++) {
-		unsigned int tmp = 0, d = 0;
+		unsigned int tmp = 0, d = 0, temp_cksm=0;
 		if (checkSum[i].end > 0) {
 			if(checkSum[i].item[1].length()>2&&i<38)
 				map_Push(checkSum[i].flag, "Flag of " + checkSum[i].item[0], " ", Flag1);
@@ -3894,6 +4146,7 @@ int EEPROM_Data_Verifier::CheckSum_Check() {
 					tmp += DecData[k];
 					useData[k] = 1;
 				}
+				fout << checkSum[i].item[0] << "	";
 
 			}
 			else {
@@ -3906,19 +4159,36 @@ int EEPROM_Data_Verifier::CheckSum_Check() {
 					tmp += DecData[k];
 					useData[k] = 1;
 				}
+				fout << "Tsum_" <<i-37<< "	";
 			}
   			if (checkDivisor == 0)
 				d = tmp % 255;
 			else if (checkDivisor == 1)
 				d = tmp % 255 + 1;
 			else if (checkDivisor == 2)
-				d = tmp % 0xFFFF;
+				d = tmp % 0x10000;
 
 			getHex(d);
-
-			fout << checkSum[i].item[0] << "	";
-			fout << D[checkSum[i].checksum][0] << D[checkSum[i].checksum][1] << "	";
-			fout << chk[0] << chk[1] << "	";
+			string chk_str = "";
+		
+			if (checkDivisor != 2) {
+				fout << D[checkSum[i].checksum][0] << D[checkSum[i].checksum][1] << "	";
+				chk_str += chk[0];
+				chk_str += chk[1];	
+				fout << chk_str << "	";
+				temp_cksm = DecData[checkSum[i].checksum];
+			}
+			else {
+				temp_cksm = ushort_Out(checkSum[i].checksum, HL&1);
+				fout << D[checkSum[i].checksum][0] << D[checkSum[i].checksum][1] << D[checkSum[i].checksum+1][0] << D[checkSum[i].checksum+1][1] <<"	";
+				getHex(d / 256);
+				chk_str += chk[0];
+				chk_str += chk[1];
+				getHex(d % 256);
+				chk_str += chk[0];
+				chk_str += chk[1];
+				fout << chk_str << "	";
+			}
 
 			if (customer_Data_END < checkSum[i].checksum)
 				customer_Data_END = checkSum[i].checksum;
@@ -3926,7 +4196,7 @@ int EEPROM_Data_Verifier::CheckSum_Check() {
 			if (checkSum[i].checksum>customer_end)
 				customer_end = checkSum[i].checksum;
 
-			if (d != DecData[checkSum[i].checksum]) {
+			if (d != temp_cksm) {
 
 				QString strDisplay = checkSum[i].item[0].c_str();
 				strDisplay = strDisplay + " CheckSum in ";
@@ -3934,15 +4204,18 @@ int EEPROM_Data_Verifier::CheckSum_Check() {
 				strDisplay += " NG: 0x";
 				strDisplay.append(D[checkSum[i].checksum][0]);
 				strDisplay.append(D[checkSum[i].checksum][1]);
+				if (checkDivisor == 2) {
+					strDisplay.append(D[checkSum[i+1].checksum][0]);
+					strDisplay.append(D[checkSum[i+1].checksum][1]);
+				}
 				strDisplay += ", Calc is 0x";
-				strDisplay.append(chk[0]);
-				strDisplay.append(chk[1]);
+				strDisplay.append(chk_str.c_str());
 				strDisplay += '\n';
 					ui.log->insertPlainText(strDisplay);
 				ret |= 1;
 			}
 
-			if (checkSum[i].flag >= 0){
+			if (i < 38&&checkSum[i].flag >= 0){
 				fout << D[checkSum[i].flag][0] << D[checkSum[i].flag][1] << "	";
 				if (Flag[0].dec != DecData[checkSum[i].flag]) {
 					QString strDisplay = checkSum[i].item[0].c_str();
@@ -3963,6 +4236,9 @@ int EEPROM_Data_Verifier::drift_Parse() {
 	//AF Drift Compensation Data:
 	int e = unstringHex2int(shift_Item[0]), ret = 0;
 	string str;
+
+	bool drift_HL = selection & 32;
+
 	if (e > 0) {
 		ret = 0;
 		if (mode == 0)
@@ -3970,12 +4246,19 @@ int EEPROM_Data_Verifier::drift_Parse() {
 
 		int step = unstringHex2int(shift_Item[1]);
 		int point = unstringHex2int(shift_Item[2]);
-		if (HL == 0) {
+		int Y_start = unstringHex2int(shift_Item[3]);
+		if (!drift_HL) {
 			for (int i = 0; i < point; i++) {
-				shift_Data[0][i] = int_Out(e, 0);
+				if(step==4)
+					shift_Data[0][i] = int_Out(e, 0);
+				if (step == 2)
+					shift_Data[0][i] = short_Out(e, 0);
+				if (step == 1)
+					shift_Data[0][i] = char_Out(e);
+
 				if (mode == 0) {
 					fout << "X_Position_" << to_string(i) << ":	";
-					//shift_Data[0][i] = int_Out(e, HL);
+					//shift_Data[0][i] = int_Out(e, HL&1);
 					fout << shift_Data[0][i] << endl;
 					str = "X_Position_" + to_string(i);
 					map_Push(e, str + " [0]_L", " ", info1);
@@ -3986,12 +4269,17 @@ int EEPROM_Data_Verifier::drift_Parse() {
 				e += step;
 			}
 			fout << endl;
-
+			e = Y_start;
 			for (int i = 0; i < point; i++) {
-				shift_Data[1][i] = int_Out(e, 0);
+				if (step == 4)
+					shift_Data[1][i] = int_Out(e, 0);
+				if (step == 2)
+					shift_Data[0][i] = short_Out(e, 0);
+				if (step == 1)
+					shift_Data[0][i] = char_Out(e);
 				if (mode == 0) {
 					fout << "Y_Position_" << to_string(i) << ":	";
-					//shift_Data[1][i] = int_Out(e, HL);
+					//shift_Data[1][i] = int_Out(e, HL&1);
 					fout << shift_Data[1][i] << endl;
 					str = "Y_Position_" + to_string(i);
 					map_Push(e, str + " [0]_L", " ", info1);
@@ -4019,8 +4307,9 @@ int EEPROM_Data_Verifier::drift_Parse() {
 					e += step;
 				}
 				fout << endl;
+				e = Y_start;
 				for (int i = 0; i < point; i++) {
-					shift_Data[1][i] = int_Out(e, 1);
+					shift_Data[0][i] = int_Out(e, 1);
 					if (mode == 0) {
 						fout << "Y_Position_" << to_string(i) << ":	";
 						fout << shift_Data[1][i] << endl;
@@ -4035,7 +4324,7 @@ int EEPROM_Data_Verifier::drift_Parse() {
 			}
 			else if (step == 2) {
 				for (int i = 0; i < point; i++) {
-					shift_Data[0][i] = int_Out(e, 1);
+					shift_Data[0][i] = short_Out(e, 1);
 					if (mode == 0) {
 						fout << "X_Position_" << to_string(i) << ":	";
 						fout << shift_Data[0][i] << endl;
@@ -4046,8 +4335,9 @@ int EEPROM_Data_Verifier::drift_Parse() {
 					e += step;
 				}
 				fout << endl;
+				e = Y_start;
 				for (int i = 0; i < point; i++) {
-					shift_Data[1][i] = int_Out(e, 1);
+					shift_Data[1][i] = short_Out(e, 1);
 					if (mode == 0){
 						fout << "Y_Position_" << to_string(i) << ":	";
 						fout << shift_Data[1][i] << endl;
@@ -4071,7 +4361,7 @@ int EEPROM_Data_Verifier::drift_Parse() {
 				}
 				fout << endl;
 
-				e = unstringHex2int(shift_Item[3]);
+				e = Y_start;
 
 				for (int i = 0; i < point; i++) {
 					shift_Data[1][i] = char_Out(e);
@@ -4100,6 +4390,7 @@ int EEPROM_Data_Verifier::cross_Parse() {
 	int e = unstringHex2int(cross_Item[0]);
 	int e1 = unstringHex2int(cross_Item[1]),ret=0;
 	string str;
+
 	if (e > 0) {
 		ret = 0;
 		if (mode == 0)
@@ -4107,7 +4398,7 @@ int EEPROM_Data_Verifier::cross_Parse() {
 
 		int X = unstringHex2int(cross_Item[0]);
 		int Y = unstringHex2int(cross_Item[1]);
-		if (HL == 0) {
+		if (HL&1 == 0) {
 			for (int i = 0; i < 7; i++) {
 
 				Cross_DW_before[0][i] = short_Out(e, 0);
@@ -4431,7 +4722,7 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 			fout << PDAF_info_Item[i][0] << ":	";
 			unsigned int addr = unstringHex2int(PDAF_info_Item[i][1]);
 			unsigned int d = 0;
-			if (HL == 1) {
+			if (HL&1 == 1) {
 				string str = " ";
 				if (PDAF_info_Item[i][2].length() > 1)
 					str = PDAF_info_Item[i][2].substr(0, 2);
@@ -4467,9 +4758,12 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 
 	for (int k = 0; k < 10; k++)
 		if (Gmap_Item[k][1].length()>1) {
-			int offset = 0;
+			int W = 17, H = 13, offset = 0;
+			if (Gmap_Item3[k] == 1) {
+				W = 16, H = 12, offset= atoi(Gmap_Item[k][2].c_str());
+			}
 			unsigned int e = marking_Hex2int(Gmap_Item[k][1], Gmap_Item[k][0], "", QC_GainMap);
-
+			/*
 			if (Gmap_Item[k][2].length() > 0) {
 				offset = atoi(Gmap_Item[k][2].c_str());
 
@@ -4497,22 +4791,25 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 
 				e += offset;
 			}
-			for (int i = 0; i < 13; i++)
-				for (int j = 0; j < 17; j++) {
+			*/
+			for (int i = 0; i < H; i++)
+				for (int j = 0; j < W; j++) {
 					useData[e] = 1;
 					useData[e + 1] = 1;
-					if (HL == 1)
+					if (HL&1 == 1)
 						PDgainLeft[i][j] = DecData[e] * 256 + DecData[e + 1];
 					else
 						PDgainLeft[i][j] = DecData[e] + DecData[e + 1] * 256;
 					e += 2;
 				}
 
-			for (int i = 0; i < 13; i++)
-				for (int j = 0; j < 17; j++) {
+			e += offset;
+
+			for (int i = 0; i < H; i++)
+				for (int j = 0; j < W; j++) {
 					useData[e] = 1;
 					useData[e + 1] = 1;
-					if (HL == 1)
+					if (HL&1 == 1)
 						PDgainRight[i][j] = DecData[e] * 256 + DecData[e + 1];
 					else
 						PDgainRight[i][j] = DecData[e] + DecData[e + 1] * 256;
@@ -4521,16 +4818,16 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 
 			if (mode == 0){
 				fout << "~~~~~~~~~~~" << Gmap_Item[k][0] << " Left Gain map:" << endl;
-				for (int i = 0; i < 13; i++) {
-					for (int j = 0; j < 17; j++) {
+				for (int i = 0; i < H; i++) {
+					for (int j = 0; j < W; j++) {
 						fout << PDgainLeft[i][j] << "	";
 					}
 					fout << endl;
 				}
 
 				fout << "~~~~~~~~~~~" << Gmap_Item[k][0] << " Right Gain map:" << endl;
-				for (int i = 0; i < 13; i++) {
-					for (int j = 0; j < 17; j++) {
+				for (int i = 0; i < H; i++) {
+					for (int j = 0; j < W; j++) {
 						fout << PDgainRight[i][j] << "	";
 					}
 					fout << endl;
@@ -4538,7 +4835,7 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 				fout << endl;
 			}
 
-			if (GainMap_FP_Check(PDgainLeft, PDgainRight) > 0) {
+			if (GainMap_FP_Check(PDgainLeft, PDgainRight, Gmap_Item3[k]) > 0) {
 				string s = Gmap_Item[k][0] + " GainMap in 0x" + Gmap_Item[k][1] + " is NG!\n ";
 				ui.log->insertPlainText(s.c_str());
 				ret |= 4;
@@ -4548,15 +4845,18 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 	for (int k = 0; k < 12; k++)
 		if (PD_Item[k][1].length()>1) {
 			unsigned int e = marking_Hex2int(PD_Item[k][1], PD_Item[k][0], "", QC_DCC);
-			int offset = 0;
 			if (mode == 0)
 				fout << "~~~~~~~~~~~" << PD_Item[k][0] << " Map:" << endl;
 
-			if (PD_Item[k][2].length() > 0) 
-				offset = atoi(Gmap_Item[k][2].c_str());
+			int W = 8, H = 6, offset = 0;
+			if (Gmap_Item3[k] == 1) {
+				W = 16, H = 12;
+			}
+			//if (PD_Item[k][2].length() > 0) 
+			//	offset = atoi(Gmap_Item[k][2].c_str());
 
 			if (k < 10) {
-
+				/*
 				for (int i = 0; i < offset; i += 2) {
 					int d = 0;
 					string str = " ";
@@ -4578,14 +4878,14 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 						ret |= 8;
 					}
 				}
-
+				*/
 				e += offset;
 
-				for (int i = 0; i < 6; i++)
-					for (int j = 0; j < 8; j++) {
+				for (int i = 0; i < H; i++)
+					for (int j = 0; j < W; j++) {
 						useData[e] = 1;
 						useData[e + 1] = 1;
-						if (HL == 0)
+						if (HL&1 == 0)
 							DCC[i][j] = 256 * DecData[e + 1] + DecData[e];
 						else
 							DCC[i][j] = 256 * DecData[e] + DecData[e + 1];
@@ -4594,8 +4894,8 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 					}
 
 				if (mode == 0) {
-					for (int i = 0; i < 6; i++) {
-						for (int j = 0; j < 8; j++) {
+					for (int i = 0; i < H; i++) {
+						for (int j = 0; j < W; j++) {
 							fout << DCC[i][j] << "	";
 						}
 						fout << endl;
@@ -4603,7 +4903,7 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 					fout << endl;
 				}
 	
-				if (DCC_FP_Check(DCC) > 0) {
+				if (DCC_FP_Check(DCC, PD_Item3[k]) > 0) {
 					string s = PD_Item[k][0] + " in 0x" + PD_Item[k][1] + " is NG!\n ";
 					ui.log->insertPlainText(s.c_str());
 					ret |= 16;
@@ -4612,13 +4912,13 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 			else {
 				float F_DCC[6][8] = { 0 };
 
-				for (int i = 0; i < 6; i++)
-					for (int j = 0; j < 8; j++) {
+				for (int i = 0; i <H; i++)
+					for (int j = 0; j < W; j++) {
 
 						for (int a = 0; a < 4; a++)
 							useData[e + a] = 1;
 
-						F_DCC[i][j] = flt_Out(e, HL);
+						F_DCC[i][j] = flt_Out(e, HL&1);
 						if (F_DCC[i][j]>5|| F_DCC[i][j] < -5) {
 							ret |= 32;
 						}
@@ -4718,7 +5018,7 @@ int EEPMap_Data_add(int size, string addr, string item, string ref, data_Type t)
 
 	int e = unstringHex2int(addr);
 	if (size == 2){
-		if (HL == 1) {
+		if (HL&1 == 1) {
 			string str = " ";
 			if (ref.length() > 1)
 				str = ref.substr(0, 2);
@@ -4756,7 +5056,7 @@ int EEPROM_Data_Verifier::af_Parse() {
 			value_Hash[i].item_name = AF_Item[i][0];
 
 			int e = EEPMap_Data_add(2,AF_Item[i][1], AF_Item[i][0]," ", AF_Code);
-			if (HL == 0) {
+			if (HL&1 == 0) {
 				AF_Data[i][0] = DecData[e + 1] * 256 + DecData[e];
 			}
 			else {
@@ -4782,7 +5082,7 @@ int EEPROM_Data_Verifier::af_Parse() {
 			char n = 'A' + i;
 			string s = ZOOM_Item[0][0] + " " + n;
 			fout << s << ":	";
-			fout << dbl_Out(e + 8 * i, HL) << endl;
+			fout << dbl_Out(e + 8 * i, HL&1) << endl;
 
 			for (int k = 0; k < 8; k++) {
 				s += "_[" + to_string(k) + "]";
@@ -4807,7 +5107,7 @@ int EEPROM_Data_Verifier::af_Parse() {
 				char n = 'A' + i;
 				string s = ZOOM_Item[m][0] + " " + n;
 				fout << s << ":	";
-				fout << dbl_Out(e + 8 * i, HL) << endl;
+				fout << dbl_Out(e + 8 * i, HL&1) << endl;
 
 				for (int k = 0; k < 8; k++) {
 					s += "_[" + to_string(k) + "]";
@@ -4816,6 +5116,7 @@ int EEPROM_Data_Verifier::af_Parse() {
 			}
 		}
 	}
+
 	if (mode == 0) {
 		int SFR_ret = 0;
 		///////////////////// SFR data check
@@ -4835,16 +5136,25 @@ int EEPROM_Data_Verifier::af_Parse() {
 				int f = unstringHex2int(SFR_Item[i][1]);
 
 				for (int k = 0; k < cnt; k++) {
-					if (ui.SFR_HEX->isChecked()) {
+					if (SFR_Format==0) {
 						SFR_Data[k] = (int)(D[d + k][0] - '0') * 10 + (D[d + k][1] - '0');
-						fout << D[d + k][0] << D[d + k][1] << "	";
+						fout <<"0."<< D[d + k][0] << D[d + k][1] << "	";
 					}
-					else {
+					else if (SFR_Format == 1) {
 						SFR_Data[k] = DecData[d + k];
-						fout << (float)SFR_Data[k] / 100 << "	";
+						fout << (float)SFR_Data[k] / 100.0 << "	";
+					}
+					else if (SFR_Format == 2) {
+						SFR_Data[k] = DecData[d + 2 * k] * 256 + DecData[d + 2 * k + 1];
+						fout << (float)SFR_Data[k] / 10000.0 << "	";
+						SFR_Data[k] = SFR_Data[k]/100;
+					}
+					else if (SFR_Format == 3) {
+						SFR_Data[k] = DecData[d + 2 * k] * 256 + DecData[d + 2 * k + 1];
+						fout << SFR_Data[k]<< "	";
 					}
 				}
-				SFR_ret += SFR_FP_Check(SFR_Data, cnt, i + 1);
+				SFR_ret += SFR_FP_Check(SFR_Data, cnt, i + 1, SFR_Format);
 				fout << endl;
 			}
 		}
@@ -5073,11 +5383,11 @@ void EEPROM_Data_Verifier::VIVO_AWB_Parse(int group) {
 	TCHAR lpTexts[10]; int temp = 0, L, H;
 	int ret = 0;
 	string s, color = "AWB_5100K_", item;
-	fout << "-------" << color << " AWB Data------" << endl;
-	if (group == 0)
-		color = "AWB_5100K_";
-	else if (group == 1)
+
+	if (group == 1)
 		color = "AWB_3100K_";
+
+	fout << "-------" << color << "Data------" << endl;
 
 	/////////////////////////////////// AWB 
 	item = color + "Gain R/Gr";
@@ -5153,6 +5463,44 @@ void EEPROM_Data_Verifier::VIVO_AWB_Parse(int group) {
 	map_Push(H + 1, item + "Calibration L", "", VIVO_AWB);
 	VIVO_AWB_Data[group].Light[2] = DecData[H] * 256 + DecData[H + 1];
 	fout << item << " :	" << VIVO_AWB_Data[group].Light[2] << endl;
+
+	fout << endl;
+
+}
+
+
+void EEPROM_Data_Verifier::SONY_AWB_Parse(int group) {
+
+	TCHAR lpTexts[10]; int temp = 0, L, H;
+	int ret = 0;
+	string s, color = "High_Color", item;
+
+	if (group == 1)
+		color = "Low_Color";
+
+	fout << "-------SONY AWB " << color << "Data------" << endl;
+
+	/////////////////////////////////// AWB 
+	item = "SONY_rg_"+color;
+	GetPrivateProfileString(TEXT("SONY"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	s = CT2A(lpTexts);
+	H = marking_Hex2int(s, item, "", VIVO_AWB);
+	VIVO_AWB_Data[group].AWB[0] = uint_Out(H,HL);
+	fout << item << " :	" << (float)VIVO_AWB_Data[group].AWB[0] / (1 << 24) << endl;
+
+	item = "SONY_bg_" + color;
+	GetPrivateProfileString(TEXT("SONY"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	s = CT2A(lpTexts);
+	H = marking_Hex2int(s, item, "", VIVO_AWB);
+	VIVO_AWB_Data[group].AWB[1] = uint_Out(H, HL);
+	fout << item << " :	" << (float)VIVO_AWB_Data[group].AWB[1] / (1 << 24) << endl;
+
+	item = "SONY_gbgr_" + color;
+	GetPrivateProfileString(TEXT("SONY"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	s = CT2A(lpTexts);
+	H = marking_Hex2int(s, item , "", VIVO_AWB);
+	VIVO_AWB_Data[group].AWB[2] = uint_Out(H, HL);
+	fout << item << " :	" << (float)VIVO_AWB_Data[group].AWB[2] / (1 << 24) << endl;
 
 	fout << endl;
 
@@ -5540,6 +5888,7 @@ void dual_Cal_Parse(int S, int E) {
 int EEPROM_Data_Verifier::OIS_Parse() {
 
 	int ret = 0;
+	bool OIS_HL = HL & 2;
 
 	for (int i = 0; i < 26; i++) {
 		if (OIS_info_Item[i][1].length()>1) {
@@ -5562,8 +5911,8 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 
 				}
 				if (d == 2) {
-					c = short_Out(e, HL);
-					if (HL == 0) {
+					c = short_Out(e, OIS_HL);
+					if (OIS_HL == 0) {
 						map_Push(e, OIS_info_Item[i][0] + "_L", "",  OIS_Hall);
 						map_Push(e + 1, OIS_info_Item[i][0] + "_H","", OIS_Hall);
 					}
@@ -5578,8 +5927,8 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 					}
 				}
 				else if (d == 4) {
-					c = int_Out(e, HL);
-					if (HL == 0) {
+					c = int_Out(e, OIS_HL);
+					if (OIS_HL == 0) {
 						map_Push(e, OIS_info_Item[i][0] + "[0]_L", "", OIS_Hall);
 						map_Push(e + 1, OIS_info_Item[i][0] + "[1]_L", "", OIS_Hall);
 						map_Push(e + 2, OIS_info_Item[i][0] + "[2]_H", "", OIS_Hall);
@@ -5602,14 +5951,14 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 				//////////////////
 				if (OIS_info_Item[i][3].length() > 1) {
 					unsigned int start = unstringHex2int(OIS_info_Item[i][1]);
-					unsigned int size = unstringHex2int(OIS_info_Item[i][2]);
+					unsigned int size = atoi(OIS_info_Item[i][2].c_str());
 					string value;
-					for (int i = start; i < (start + size); i++) {
-						value += D[i][0];
-						value += D[i][1];
+					for (int a = start; a < (start + size);a++) {
+						value += D[a][0];
+						value += D[a][1];
 					}
 					if (strcmp(value.c_str(), OIS_info_Item[i][3].c_str()) != 0) {
-						string log_out = "OIS Info item" + to_string(i + 1);
+						string log_out = OIS_info_Item[i][0];
 						log_out += " Value NG!\n";
 						ui.log->insertPlainText(log_out.c_str());
 						ret |= 16;
@@ -5633,8 +5982,8 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 			if (i < 2) {
 				int d = unstringHex2int(OIS_data_Item[i][2]), c = 0;
 				if (d == 2) {
-					offset[i]=c = short_Out(e, HL);
-					if (HL == 0) {
+					offset[i]=c = short_Out(e, OIS_HL);
+					if (OIS_HL == 0) {
 						map_Push(e, OIS_data_Item[i][0] + "_L", "", OIS_Gyro);
 						map_Push(e + 1, OIS_data_Item[i][0] + "_H", "", OIS_Gyro);
 					}
@@ -5644,8 +5993,8 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 					}
 				}
 				else if (d == 4) {
-					offset[i] = c = int_Out(e, HL);
-					if (HL == 0) {
+					offset[i] = c = int_Out(e, OIS_HL);
+					if (OIS_HL == 0) {
 						map_Push(e, OIS_data_Item[i][0] + "[0]_LL", "", OIS_Gyro);
 						map_Push(e + 1, OIS_data_Item[i][0] + "[1]_LU", "", OIS_Gyro);
 						map_Push(e + 2, OIS_data_Item[i][0] + "[2]_HL", "", OIS_Gyro);
@@ -5674,25 +6023,25 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 			else if (i > 1 && i < 4) {
 				int d = unstringHex2int(OIS_data_Item[i][2]);
 				if ((selection & 256)>0){
-					Gyro_Gain[i - 2] = short_Out(e, HL);
+					Gyro_Gain[i - 2] = short_Out(e, OIS_HL);
 				}
 				else if ((selection & 8) > 0) {			
 					if (d == 4) {
-						Gyro_Gain[i - 2] = gyro_Out(e, HL);
+						Gyro_Gain[i - 2] = gyro_Out(e, OIS_HL);
 					}
 					else if (d == 2) {
-						Gyro_Gain[i - 2] = Dcm_out2(e, HL);
+						Gyro_Gain[i - 2] = Dcm_out2(e, OIS_HL);
 					}
 				}
 				else  
-					Gyro_Gain[i - 2] = flt_Out(e, HL);
+					Gyro_Gain[i - 2] = flt_Out(e, OIS_HL);
 
-				if (short_Out(e, HL) == -1 || short_Out(e, HL) == 0) {
+				if (short_Out(e, OIS_HL) == -1 || short_Out(e, OIS_HL) == 0) {
 					ret |= 2;
 					string s = OIS_data_Item[i][0] + " Data in 0x" + OIS_data_Item[i][1] + " value NG!" + '\n';
 					ui.log->insertPlainText(s.c_str());
 				}
-				if (HL == 0) {
+				if (OIS_HL == 0) {
 					map_Push(e, OIS_data_Item[i][0] + "[0]_LL", "", OIS_Gyro);
 					map_Push(e + 1, OIS_data_Item[i][0] + "[1]_LU", "", OIS_Gyro);
 					map_Push(e + 2, OIS_data_Item[i][0] + "[2]_HL", "", OIS_Gyro);
@@ -5708,24 +6057,24 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 
 				if (d == 4) {
 					value_Hash[i + 66].item_name = OIS_info_Item[i][0];
-					value_Hash[i + 66].hash[(int_Out(e, HL)+ 0x7FFFFFFF) % 1009]++;
+					value_Hash[i + 66].hash[uint_Out(e, 1) % 1009]++;
 				}
 				else if (d == 2) {
 					value_Hash[i + 66].item_name = OIS_info_Item[i][0];
-					value_Hash[i + 66].hash[(short_Out(e, HL)+ 0x7FFF) % 1009]++;
+					value_Hash[i + 66].hash[ushort_Out(e, 1) % 1009]++;
 				}
 
 			}
 			else {
 				if (ui.sr_hl->isChecked())
-					SR[i - 4] = SR_Out_HL(e, HL);
+					SR[i - 4] = SR_Out_HL(e, OIS_HL);
 				else
-					SR[i - 4] = SR_Out_Hex(e, HL);
+					SR[i - 4] = SR_Out_Hex(e, OIS_HL);
 
-				if (short_Out(e, HL) == -1)
+				if (short_Out(e, OIS_HL) == -1)
 					ret |= 4;
 
-				if (HL == 0) {
+				if (OIS_HL == 0) {
 					map_Push(e, OIS_data_Item[i][0] + "_L", "", OIS_Gyro);
 					map_Push(e + 1, OIS_data_Item[i][0] + "_H", "", OIS_Gyro);
 				}
@@ -5741,7 +6090,7 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 					ret |= 4;
 				}
 				value_Hash[i + 66].item_name = OIS_info_Item[i][0];
-				value_Hash[i + 66].hash[(short_Out(e, HL) + 0x7FFF) % 1009]++;
+				value_Hash[i + 66].hash[ushort_Out(e, 1) % 1009]++;
 			}	
 		}
 	}
@@ -5819,8 +6168,20 @@ int EEPROM_Data_Verifier::info_Data_Parse() {
 			if (DecData[m] > 60)
 				ret |= 1;
 		}
+		m = unstringHex2int(product_Date.item[7]);
+		if (m > 0) {
+			map_Push(m, "Factory", "", info1);
+			s += ", Fac:";
+			s += to_string(DecData[m]);
+		}
+		m = unstringHex2int(product_Date.item[8]);
+		if (m > 0) {
+			map_Push(m, "Line", "", info1);
+			s += ", Line:";
+			s += to_string(DecData[m]);
+		}
 
-		fout << "Manufacture Time:	" << s << endl << endl;
+		fout << "Manufacture Time:	" << s << endl;
 	}
 
 	if ((ret & 1) > 0) {
@@ -5933,7 +6294,7 @@ int EEPROM_Data_Verifier::info_Data_Parse() {
 				fout << infoData[i].item[0] << ":	";
 				unsigned int addr = unstringHex2int(infoData[i].item[1]);
 				unsigned int d = 0;
-				if (HL == 1) {
+				if (HL&1 == 1) {
 					string str = " ";
 					if (infoData[i].item[2].length() >1)
 						str = infoData[i].item[2].substr(0, 2);
@@ -5973,9 +6334,7 @@ int EEPROM_Data_Verifier::info_Data_Parse() {
 						ui.log->insertPlainText(s.c_str());
 						ret |= 4;
 					}
-
 				}
-
 			}
 		}
 	fout << endl;
@@ -5986,29 +6345,34 @@ int EEPROM_Data_Verifier::info_Data_Parse() {
 			string txtout = AF_info_Item[i][0]+": ";
 			fout << txtout.c_str();
 			unsigned int start = unstringHex2int(AF_info_Item[i][1]);
-			unsigned int size = unstringHex2int(AF_info_Item[i][2]);
+			unsigned int size = atoi(AF_info_Item[i][2].c_str());
 			string value;
-			for (int i = start; i < (start + size); i++) {
-				value += D[i][0];
-				value += D[i][1];
+			for (int k = start; k < (start + size); k++) {
+				value += D[k][0];
+				value += D[k][1];
 			}
 			fout << value.c_str() << endl;
-			if(AF_info_Item[i][3].length()>1)
-			if (strcmp(value.c_str(), AF_info_Item[i][3].c_str()) != 0) {
-				string log_out = "Long Info item" + to_string(i + 1);
-				log_out += " Value NG!\n";
-				ui.log->insertPlainText(log_out.c_str());
-				ret |= 16;
-			}
-			bool value_empty = true;
-			for (int k= 0; k < value.length(); k++) {
-				if (value[k] != 'F') {
-					value_empty = false;
-					break;
+
+			string tmp = value.substr(0, AF_info_Item[i][3].length());
+
+			if (AF_info_Item[i][3].length()>1)
+				if (strcmp(tmp.c_str(), AF_info_Item[i][3].c_str()) != 0) {
+					string log_out = AF_info_Item[i][0];
+					log_out += " Value NG!\n";
+					ui.log->insertPlainText(log_out.c_str());
+					ret |= 16;
 				}
-			}
-			if(value_empty)
-				ret |= 32;
+				else {
+					bool value_empty = true;
+					for (int k = 0; k < value.length(); k++) {
+						if (value[k] != 'F') {
+							value_empty = false;
+							break;
+						}
+					}
+					if (value_empty)
+						ret |= 32;
+				}
 		}
 	}
 
@@ -6022,7 +6386,7 @@ int EEPROM_Data_Verifier::value_Data_Parse() {
 	fout << "-------Value Data Spec Check------" << endl;
 	/////////////////////////Value Data check
 	for (int i = 0; i < 18; i++)
-		if (sData_Item[i][1].length()>1&& sData_Item[i][2].length()>2) {
+		if (sData_Item[i][1].length()>1&& sData_Item[i][2].length()>1) {
 			unsigned int addr = unstringHex2int(sData_Item[i][1]);
 
 			value_Hash[i + 20].item_name = sData_Item[i][0];
@@ -6044,46 +6408,61 @@ int EEPROM_Data_Verifier::value_Data_Parse() {
 				d = DecData[addr];
 				break;
 			case 3:
-				d = short_Out(addr, HL);
+				d = short_Out(addr, HL&1);
 				break;
 			case 4:
-				d = short_Out(addr,HL);
+				d = short_Out(addr,HL&1);
 				if (d < 0)
 					d += 65536;
 				break;
 			case 5:
-				d = int_Out(addr,HL);
+				d = int_Out(addr,HL&1);
 				break;
 			case 6:
-				d = int_Out(addr, HL);		
+				d = int_Out(addr, HL&1);		
 				if (d < 0)
 					d += 0x100000000;
 				break;
 			case 7:
-				dd = short_Out(addr, HL);
+				dd = short_Out(addr, HL&1);
 				if (dd < 0)
 					dd += 0x10000;
 				value_Hash[i + 20].hash[((int)dd)% 1009] ++;
 				dd /= 0x8000;
 				break;
 			case 8:
-				dd = int_Out(addr, HL);
+				dd = int_Out(addr, HL&1);
 				if (dd < 0)
 					dd += 0x100000000;
 				dd /= 0x80000000;
 				break;
 			case 9:
-				dd = flt_Out(addr, HL);
+				dd = flt_Out(addr, HL&1);
 				break;
 			case 10:
-				dd = dbl_Out(addr, HL);
+				dd = dbl_Out(addr, HL&1);
 				break;
-
+			case 11:
+				dd = dbl_Out(addr, HL&1);
+				break;
 			default:
 				break;
 			}
-
 			int data_len = 1;
+
+			if (d_type > 100) {
+				int Q_length = d_type - 100;
+				if (Q_length > 15) {
+					dd = uint_Out(addr, HL&1)*1.0 / (1<< Q_length);
+					data_len = 4;
+				}
+				else if(Q_length < 16) {
+					dd = ushort_Out(addr, HL & 1)*1.0 / (1 << Q_length);
+ 					data_len = 2;
+				}
+			}
+
+		
 			if (d_type == 3 || d_type == 4|| d_type == 7) {
 				data_len = 2;
 			}
@@ -6179,6 +6558,13 @@ int EEPROM_Data_Verifier::get_Data_Type(int x) {
 	else if (sData_Item[x][2][0] == 'd'&&sData_Item[x][2][1] == 'o'&&sData_Item[x][2][2] == 'u') {
 		return 10;
 	}
+	else if (sData_Item[x][2][0] == 'Q') {
+		int k = 1,sum=0;
+		while (k < sData_Item[x][2].length()) {
+			sum = sum * 10 + sData_Item[x][2][k++]-'0';
+		}
+		return sum+100;
+	}
 
 	return ret;
 }
@@ -6192,7 +6578,7 @@ int EEPROM_Data_Verifier::AEC_Parse() {
 			if (AEC_Data[i].item[0].length()>1) {
 				if(i==0)
 					fout << "-------AEC Cal Data------" << endl;
-				if (HL == 1) {
+				if (HL&1 == 1) {
 					addr= marking_Hex2int(AEC_Data[i].item[1], AEC_Data[i].item[0] + "_H", "", info1);
 					map_Push(addr + 1, AEC_Data[i].item[0] + "_L", "", info1);
 					fout << AEC_Data[i].item[0] << ":	" << D[addr][0] << D[addr][1] << D[addr + 1][0] << D[addr + 1][1] << endl;
@@ -6200,7 +6586,13 @@ int EEPROM_Data_Verifier::AEC_Parse() {
 				else {
 					addr = marking_Hex2int(AEC_Data[i].item[1], AEC_Data[i].item[0] + "_L", "", info1);
 					map_Push(addr + 1, AEC_Data[i].item[0] + "_H", "", info1);
-					fout << AEC_Data[i].item[0] << ":	" << D[addr+1][0] << D[addr+1][1] << D[addr][0] << D[addr][1] << endl;
+
+					if (ui.sony->isChecked() && i > 1 && i < 4) {
+						fout << AEC_Data[i].item[0] << ":	" << flt_Out(addr,HL) << endl;
+					}
+					else {
+						fout << AEC_Data[i].item[0] << ":	" << D[addr + 1][0] << D[addr + 1][1] << D[addr][0] << D[addr][1] << endl;
+					}
 				} 
 				int x = DecData[addr] * 256 + DecData[addr + 1];
 				if (x == 65535 || x == 0) {
@@ -6217,7 +6609,7 @@ int EEPROM_Data_Verifier::AEC_Parse() {
 	for (int i = 0; i < 6; i++)
 		if (i % 2 == 1) {
 			if (AEC_Data[i].item[0].length()>1) {
-				if (HL == 1) {
+				if (HL&1 == 1) {
 					addr = marking_Hex2int(AEC_Data[i].item[1], AEC_Data[i].item[0] + "_H", "", info1);
 					map_Push(addr + 1, AEC_Data[i].item[0] + "_L", "", info1);
 					fout << AEC_Data[i].item[0] << ":	" << D[addr][0] << D[addr][1] << D[addr + 1][0] << D[addr + 1][1] << endl;
@@ -6247,7 +6639,7 @@ int EEPROM_Data_Verifier::AEC_Parse() {
 			if (AEC_Data[i].item[0].length()>1) {
 				if (i == 0)
 					fout << "-------AEC Cal Data------" << endl;
-				if (HL == 1) {
+				if (HL&1 == 1) {
 					addr = marking_Hex2int(AEC_Data[i].item[1], AEC_Data[i].item[0] + "_H", "", info1);
 					map_Push(addr + 1, AEC_Data[i].item[0] + "_L", "", info1);
 					fout << AEC_Data[i].item[0] << ":	" << D[addr][0] << D[addr][1] << D[addr + 1][0] << D[addr + 1][1] << endl;
@@ -6272,7 +6664,7 @@ int EEPROM_Data_Verifier::AEC_Parse() {
 	for (int i = 6; i < 12; i++)
 		if (i % 2 == 1) {
 			if (AEC_Data[i].item[0].length()>1) {
-				if (HL == 1) {
+				if (HL&1 == 1) {
 					addr = marking_Hex2int(AEC_Data[i].item[1], AEC_Data[i].item[0] + "_H", "", info1);
 					map_Push(addr + 1, AEC_Data[i].item[0] + "_L", "", info1);
 					fout << AEC_Data[i].item[0] << ":	" << D[addr][0] << D[addr][1] << D[addr + 1][0] << D[addr + 1][1] << endl;
@@ -6355,7 +6747,7 @@ int EEPROM_Data_Verifier::XiaoMi_Seg_Check() {
 void EEPROM_Data_Verifier::History_Date_Parser() {
 
 	int addr;
-	for (int i = 0; i < 14; i++) {
+	for (int i = 0; i < 12; i++) {
 		if (History_Data[i].item[1].length()>1) {
 		
 				if (i == 0)
@@ -6486,6 +6878,27 @@ void EEPROM_Data_Verifier::on_pushButton_openBIN_clicked() {
 
 	fin.close();
 	on_pushButton_parser_clicked();
+}
+
+
+int EEPROM_Data_Verifier::read_Spec_Bin() {
+
+	int ret = 1;
+	name = EEPROM_Map.substr(0, EEPROM_Map.length() - 3)+"bin";
+	ifstream fin(name, std::ios::binary);
+
+	if (!fin)
+		return 0;
+
+	//获取文件大小方法一
+	struct _stat info;
+	_stat(name.c_str(), &info);
+	EEP_Size = info.st_size;
+
+	fin.read((char*)&spec_Data, sizeof(char) * EEP_Size);
+	fin.close();
+
+	return ret;
 }
 
 
@@ -6699,6 +7112,7 @@ void EEPROM_Data_Verifier::on_pushButton_parser_clicked()
 	CheckSum_Check();
 	info_Data_Parse();
 	af_Parse();
+
 	if (ui.oppo->isChecked()) {
 		Oppo_AWB_Parse(0);
 		Oppo_AWB_Parse(1);
@@ -6745,13 +7159,21 @@ void EEPROM_Data_Verifier::on_pushButton_parser_clicked()
 		}
 	}
 
+	if (ui.sony->isChecked()) {
+		SONY_AWB_Parse(0);
+		SONY_AWB_Parse(1);
+		if (SONY_AWB_FP_Check(VIVO_AWB_Data) != 0) {
+			ui.log->insertPlainText("SONY AWB Data NG, please check FP_log. \n");
+		}
+	}
+	OIS_Parse();
 	AEC_Parse();
 
 	for (int i = 0; i < 8; i++) {
 		if (QC_LSC_Data[i].item[1].length() > 1) {
 			e = marking_Hex2int(QC_LSC_Data[i].item[1], QC_LSC_Data[i].item[0], "", QC_LSC);
 			fout << QC_LSC_Data[i].item[0] << endl;
-			QC_LSC_Parse(e);
+			LSC_Parse(e,i);
 		}
 	}
 
@@ -6765,12 +7187,12 @@ void EEPROM_Data_Verifier::on_pushButton_parser_clicked()
 
 	drift_Parse();
 	cross_Parse();
-	OIS_Parse();
 	PDAF_Parse();
 	QSC_Parse();
 	History_Date_Parser();
 	bin_Area_Check();
 	value_Data_Parse();
+	fix_Data_Check();
 
 	if(reserved_check==1)
 		Reserved_Check();
@@ -6920,7 +7342,7 @@ void EEPROM_Data_Verifier::dump_Check() {
 	for (int i = 0; i < 8; i++) {
 		if (QC_LSC_Data[i].item[1].length() > 1) {
 			int e = unstringHex2int(QC_LSC_Data[i].item[1]);
-			if (QC_LSC_Parse(e) == 0) {
+			if (LSC_Parse(e,i) == 0) {
 				dump_result << "QC_LSC PASS" << "	";
 			}
 			else {
@@ -7019,13 +7441,22 @@ void EEPROM_Data_Verifier::dump_Check() {
 		ret |= 16384;
 	}
 
+	x = fix_Data_Check();
+	if (x == 0) {
+		dump_result << "Fix_Area PASS" << "	";
+	}
+	else if (x > 0) {
+		dump_result << "Fix_Area NG" << "	";
+		ret |= 32768;
+	}
+
 	x = duplicate_Check();
 	if (x == 0) {
 		dump_result << "duplicate_Check PASS" << "	";
 	}
 	else if (x > 0) {
 		dump_result << "duplicate_Check NG_" << x << "	";
-		ret |= 32768;
+		ret |= 0x10000;
 	}
 
 	dump_Hash.push_back(current_Hash);
@@ -7076,6 +7507,27 @@ int EEPROM_Data_Verifier::value_duplicate_Check()
 }
 
 
+int EEPROM_Data_Verifier::fix_Data_Check()
+{
+	int ret = 0;
+	for (int i = 0; i < 10; i++) {
+		if (Fix_Data_Item[i][1].length()>1) { //各种字节长度一并检查
+			unsigned int start = unstringHex2int(Fix_Data_Item[i][1]);
+			unsigned int end = unstringHex2int(Fix_Data_Item[i][2]);
+			for (int k = start; k <= end; k++) {
+				if (DecData[k] != spec_Data[k]) {
+					ret |= 1 << i;
+					string s = Fix_Data_Item[i][0] + ", Fix Area in 0x" + Fix_Data_Item [i][1] + " NG!\n";
+					ui.log->insertPlainText(s.c_str());
+					break;
+				}
+			}
+		}
+	}
+
+	return ret;
+}
+
 
 void EEPROM_Data_Verifier::on_pushButton_dump_clicked()
 {
@@ -7103,7 +7555,7 @@ void EEPROM_Data_Verifier::on_pushButton_dump_clicked()
 	OK = 0; NG = 0;
 
 	if (ui.full_log->isChecked())
-		mode = 1;
+		mode = 0;
 
 	load_Spec(mode);
 
@@ -7286,38 +7738,38 @@ void EEPROM_Data_Verifier::on_pushButton_dump_value_clicked()
 							d = DecData[addr];
 							break;
 						case 3:
-							d = short_Out(addr, HL);
+							d = short_Out(addr, HL&1);
 							break;
 						case 4:
-							d = short_Out(addr, HL);
+							d = short_Out(addr, HL&1);
 							if (d < 0)
 								d += 65536;
 							break;
 						case 5:
-							d = int_Out(addr, HL);
+							d = int_Out(addr, HL&1);
 							break;
 						case 6:
-							d = int_Out(addr, HL);
+							d = int_Out(addr, HL&1);
 							if (d < 0)
 								d += 0x100000000;
 							break;
 						case 7:
-							dd = short_Out(addr, HL);
+							dd = short_Out(addr, HL&1);
 							if (dd < 0)
 								dd += 0x10000;
 							dd /= 0x8000;
 							break;
 						case 8:
-							dd = int_Out(addr, HL);
+							dd = int_Out(addr, HL&1);
 							if (dd < 0)
 								dd += 0x100000000;
 							dd /= 0x80000000;
 							break;
 						case 9:
-							dd = flt_Out(addr, HL);
+							dd = flt_Out(addr, HL&1);
 							break;
 						case 10:
-							dd = dbl_Out(addr, HL);
+							dd = dbl_Out(addr, HL&1);
 							break;
 
 						default:
@@ -7423,18 +7875,25 @@ void EEPROM_Data_Verifier::on_pushButton_dump_SFR_clicked()
 						int f = unstringHex2int(SFR_Item[i][1]);
 
 						for (int k = 0; k < cnt; k++) {
-							if (ui.SFR_HEX->isChecked()) {
+							if (SFR_Format == 0) {
 								SFR_Data[k] = (int)(D[d + k][0] - '0') * 10 + (D[d + k][1] - '0');
-								fout << D[d + k][0] << D[d + k][1] << "	";
+								fout << "0." << D[d + k][0] << D[d + k][1] << "	";
 							}
-							else {
+							else if (SFR_Format == 1) {
 								SFR_Data[k] = DecData[d + k];
-								fout << (float)SFR_Data[k] / 100 << "	";
+								fout << (float)SFR_Data[k] / 100.0 << "	";
+							}
+							else if (SFR_Format == 2) {
+								SFR_Data[k] = DecData[d + 2 * k] * 256 + DecData[d + 2 * k + 1];
+								fout << (float)SFR_Data[k] / 10000.0 << "	";
+							}
+							else if (SFR_Format == 3) {
+								SFR_Data[k] = DecData[d + 2 * k] * 256 + DecData[d + 2 * k + 1];
+								fout << SFR_Data[k] << "	";
 							}
 						}				
 					}
 				}
-
 				fout << endl;
 				break;
 			}
@@ -7485,7 +7944,7 @@ void EEPROM_Data_Verifier::on_pushButton_folder_clicked() {
 	OK = 0; NG = 0;
 
 	if (ui.full_log->isChecked())
-		mode = 1;
+		mode = 0;
 
 	load_Spec(mode);
 
