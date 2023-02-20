@@ -18,10 +18,10 @@ char D[524288][2] = { 0};
 bool useData[524288], spec_Bin_Ready=false;
 unsigned char DecData[524288], dflt_Data,spec_Data[524288];
 int LSC[15][17][4], MTK_LSC[15][15][4], LSC_LSI1[25][33][4], LSC_LSI2[11][13][4];
-int PDgainLeft[13][17], PDgainRight[13][17],shift_Data[2][21], Cross_DW_before[2][21], Cross_DW_after[2][14];
+int PDgainLeft[30][30], PDgainRight[30][30],shift_Data[2][21], Cross_DW_before[2][21], Cross_DW_after[2][14];
 int GainMostBrightLeft[15][17], GainMostBrightRight[15][17];
-int DCC[15][17], checkSum_addr[30][4],SR_Spec[2][2], Gmap_Item3[12], PD_Item3[14];
-int AF_Data[6][3],SFR_Data[50],LCC_CrossTalk[3],LSC_Item3[10];
+int DCC[15][17], DCC2[15][17], checkSum_addr[30][4],SR_Spec[2][2], Gmap_Item3[12], PD_Item3[14];
+int AF_Data[6][3],SFR_Data[50],LCC_CrossTalk[3],LSC_Item3[10],Gyro_offset_spec[2];
 char chk[2], Fuse_ID[30];  int fuse_ID_Length = 16;
 string global_STR, shift_Item[4], cross_Item[3], akm_cross_Item[3], AF_Item[6][5],AF_info_Item[10][4],SFR_Item[4][4],ZOOM_Item[3][3],Magnification[9];
 string PDAF_info_Item[18][3],Gmap_Item[12][3],PD_Item[14][3], OIS_info_Item[30][4],OIS_data_Item[8][3], AA_Item[18],sData_Item[20][5];
@@ -75,7 +75,7 @@ typedef struct {
 	string item[3] = { "","","" };
 	unsigned int addr = 0,end=0, spec;
 }info_Format;
-info_Format infoData[40],QR_Data,Fuse_Data,Fuse_Data2,QC_LSC_Data[8], MTK_LSC_Data[2],Seg_Data[18],Same_Item[6];
+info_Format infoData[40],QR_Data,Fuse_Data,Fuse_Data2,QC_LSC_Data[8], MTK_LSC_Data[2],Seg_Data[20],Same_Item[6];
 
 typedef struct {
 	string item[2] = { "","" };
@@ -481,12 +481,6 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 	ui.history101->setText(History_Data[9].item[0].c_str());
 	ui.history102->setText(History_Data[9].item[1].c_str());
 
-	ui.history111->setText(History_Data[10].item[0].c_str());
-	ui.history112->setText(History_Data[10].item[1].c_str());
-
-	ui.history121->setText(History_Data[11].item[0].c_str());
-	ui.history122->setText(History_Data[11].item[1].c_str());
-
 	///////////////////AEC_data
 	ui.AEC11->setText(AEC_Data[0].item[0].c_str());
 	ui.AEC12->setText(AEC_Data[0].item[1].c_str());
@@ -601,6 +595,14 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 	ui.seg181->setText(Seg_Data[17].item[0].c_str());
 	ui.seg182->setText(Seg_Data[17].item[1].c_str());
 	ui.seg183->setText(Seg_Data[17].item[2].c_str());
+
+	ui.seg191->setText(Seg_Data[18].item[0].c_str());
+	ui.seg192->setText(Seg_Data[18].item[1].c_str());
+	ui.seg193->setText(Seg_Data[18].item[2].c_str());
+
+	ui.seg201->setText(Seg_Data[19].item[0].c_str());
+	ui.seg202->setText(Seg_Data[19].item[1].c_str());
+	ui.seg203->setText(Seg_Data[19].item[2].c_str());
 
 	///////////////////AA_data
 	ui.AA_data1->setText(AA_Item[0].c_str());
@@ -1454,6 +1456,9 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 	if (HL & 2)ui.OIS_HL->setChecked(true);
 	else ui.OIS_LH->setChecked(true);
 
+	if (HL & 4)ui.SR_LH->setChecked(true);
+	else ui.SR_HL->setChecked(true);
+
 	ui.info11->setText(infoData[0].item[0].c_str());
 	ui.info12->setText(infoData[0].item[1].c_str());
 	ui.info13->setText(infoData[0].item[2].c_str());
@@ -1742,7 +1747,7 @@ void EEPROM_Data_Verifier::load_EEPROM_Address() {
 			}
 		}
 
-	for (int i = 0; i < 12; i++)
+	for (int i = 0; i < 10; i++)
 		for (int k = 0; k < 2; k++) {
 			string item = "History_info" + to_string(i + 1) + to_string(k + 1);
 			GetPrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
@@ -1777,7 +1782,7 @@ void EEPROM_Data_Verifier::load_EEPROM_Address() {
 			sData_Item[i][k] = CT2A(lpTexts);
 		}
 
-	for (int i = 0; i < 18; i++)
+	for (int i = 0; i < 20; i++)
 		for (int k = 0; k < 3; k++) {
 			string item = "Seg_info" + to_string(i + 1) + to_string(k + 1);
 			GetPrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
@@ -1935,6 +1940,9 @@ void EEPROM_Data_Verifier::load_EEPROM_Address() {
 	SR_Spec[1][0] = GetPrivateProfileInt(_T("Spec_Set"), TEXT("SR2_X_Spec"), 18, CA2CT(EEPROM_Map.c_str()));
 	SR_Spec[1][1] = GetPrivateProfileInt(_T("Spec_Set"), TEXT("SR2_Y_Spec"), 18, CA2CT(EEPROM_Map.c_str()));
 
+	Gyro_offset_spec[0] = GetPrivateProfileInt(_T("Spec_Set"), TEXT("Gyro_Offset_Spec_X"), 3000, CA2CT(EEPROM_Map.c_str()));
+	Gyro_offset_spec[1] = GetPrivateProfileInt(_T("Spec_Set"), TEXT("Gyro_Offset_Spec_Y"), 3000, CA2CT(EEPROM_Map.c_str()));
+
 	int save_OnOff = GetPrivateProfileInt(_T("EEPROM_Set"), TEXT("save_OnOff"), 1, CA2CT(EEPROM_Map.c_str()));
 	if (save_OnOff == 0) {
 		ui.pushButton_setsave->setEnabled(false);
@@ -2082,6 +2090,13 @@ void EEPROM_Data_Verifier::load_Panel() {
 		HL &= 0xFFFFFFFF - 2;
 	}
 
+	if (ui.SR_LH->isChecked()) {
+		HL |= 4;
+	}
+	else {
+		HL &= 0xFFFFFFFF - 4;
+	}
+
 	///////////////////Same_Item
 	Same_Item[0].item[0] = string((const char *)ui.same11->document()->toPlainText().toLocal8Bit());
 	Same_Item[0].item[1] = string((const char *)ui.same12->document()->toPlainText().toLocal8Bit());
@@ -2160,11 +2175,6 @@ void EEPROM_Data_Verifier::load_Panel() {
 	History_Data[9].item[0] = string((const char *)ui.history101->document()->toPlainText().toLocal8Bit());
 	History_Data[9].item[1] = string((const char *)ui.history102->document()->toPlainText().toLocal8Bit());
 
-	History_Data[10].item[0] = string((const char *)ui.history111->document()->toPlainText().toLocal8Bit());
-	History_Data[10].item[1] = string((const char *)ui.history112->document()->toPlainText().toLocal8Bit());
-
-	History_Data[11].item[0] = string((const char *)ui.history121->document()->toPlainText().toLocal8Bit());
-	History_Data[11].item[1] = string((const char *)ui.history122->document()->toPlainText().toLocal8Bit());
 
 	///////////////////AEC_data
 
@@ -2280,6 +2290,14 @@ void EEPROM_Data_Verifier::load_Panel() {
 	Seg_Data[17].item[0] = string((const char *)ui.seg181->document()->toPlainText().toLocal8Bit());
 	Seg_Data[17].item[1] = string((const char *)ui.seg182->document()->toPlainText().toLocal8Bit());
 	Seg_Data[17].item[2] = string((const char *)ui.seg183->document()->toPlainText().toLocal8Bit());
+
+	Seg_Data[18].item[0] = string((const char *)ui.seg191->document()->toPlainText().toLocal8Bit());
+	Seg_Data[18].item[1] = string((const char *)ui.seg192->document()->toPlainText().toLocal8Bit());
+	Seg_Data[18].item[2] = string((const char *)ui.seg193->document()->toPlainText().toLocal8Bit());
+
+	Seg_Data[19].item[0] = string((const char *)ui.seg201->document()->toPlainText().toLocal8Bit());
+	Seg_Data[19].item[1] = string((const char *)ui.seg202->document()->toPlainText().toLocal8Bit());
+	Seg_Data[19].item[2] = string((const char *)ui.seg203->document()->toPlainText().toLocal8Bit());
 
 	///////////////////AA_data
 	AA_Item[0] = string((const char *)ui.AA_data1->document()->toPlainText().toLocal8Bit());
@@ -3397,7 +3415,7 @@ void EEPROM_Data_Verifier::save_EEPROM_Address() {
 			}
 		}
 
-	for (int i = 0; i < 12; i++)
+	for (int i = 0; i < 10; i++)
 		for (int k = 0; k < 2; k++) {
 			string item = "History_info" + to_string(i + 1) + to_string(k + 1);
 			WritePrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), CA2CT(History_Data[i].item[k].c_str()), CA2CT(EEPROM_Map.c_str()));
@@ -3427,7 +3445,7 @@ void EEPROM_Data_Verifier::save_EEPROM_Address() {
 		}
 
 
-	for (int i = 0; i < 18; i++)
+	for (int i = 0; i < 20; i++)
 		for (int k = 0; k < 3; k++) {
 			string item = "Seg_info" + to_string(i + 1) + to_string(k + 1);
 			WritePrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), CA2CT(Seg_Data[i].item [k].c_str()), CA2CT(EEPROM_Map.c_str()));
@@ -3901,6 +3919,7 @@ int EEPROM_Data_Verifier::MTK_LSC_Parse(int start) {
 		for (int i = 0; i < 15; i++){
 			for (int j = 0; j < 15; j++) {
 				for (int k = 0; k < 4; k++) {
+
 					MTK_LSC[i][j][k] = 256 * DecData[e + 1] + DecData[e];
 					sumXsum = (sumXsum * 65536 + MTK_LSC[i][j][k]) % 4000000007;
 					useData[e + 1] = useData[e] = 1;
@@ -4715,18 +4734,18 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 	for (int i = 0; i < 18; i++)
 		if (PDAF_info_Item[i][1].length()>1) {
 
-			if (i == 0&&mode==0) {
+			if (i == 0 && mode == 0) {
 				fout << "-------PDAF Info Data Compare------" << endl;
 				fout << "(Item)	(Data)	(Spec)" << endl;
 			}
 			fout << PDAF_info_Item[i][0] << ":	";
 			unsigned int addr = unstringHex2int(PDAF_info_Item[i][1]);
 			unsigned int d = 0;
-			if (HL&1 == 1) {
+			if (HL & 1 == 1) {
 				string str = " ";
 				if (PDAF_info_Item[i][2].length() > 1)
 					str = PDAF_info_Item[i][2].substr(0, 2);
-				map_Push(addr, PDAF_info_Item[i][0] + "_H",str, info1);
+				map_Push(addr, PDAF_info_Item[i][0] + "_H", str, info1);
 				str = " ";
 				if (PDAF_info_Item[i][2].length() >= 4)
 					str = PDAF_info_Item[i][2].substr(2, 2);
@@ -4738,31 +4757,32 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 				string str = " ";
 				if (PDAF_info_Item[i][2].length() >= 4)
 					str = PDAF_info_Item[i][2].substr(2, 2);
-				map_Push(addr, PDAF_info_Item[i][0] + "_L",str, info1);
+				map_Push(addr, PDAF_info_Item[i][0] + "_L", str, info1);
 				str = " ";
 				if (PDAF_info_Item[i][2].length() > 1)
 					str = PDAF_info_Item[i][2].substr(0, 2);
-				map_Push(addr + 1, PDAF_info_Item[i][0] + "_H",str, info1);
+				map_Push(addr + 1, PDAF_info_Item[i][0] + "_H", str, info1);
 				fout << D[addr + 1][0] << D[addr + 1][1] << D[addr][0] << D[addr][1];
 				d = DecData[addr] + DecData[addr + 1] * 256;
 			}
 			fout << "	" << PDAF_info_Item[i][2] << endl;
 			spec = unstringHex2int(PDAF_info_Item[i][2]);
-			if (d != spec&&PDAF_info_Item[i][2].length()>1) {
-				string s = PDAF_info_Item[i][0] + " Data in 0x" + PDAF_info_Item[i][1] + ": " +to_string(d)+ " != " + PDAF_info_Item[i][2] + '\n';
+			if (d != spec&&PDAF_info_Item[i][2].length() > 1) {
+				string s = PDAF_info_Item[i][0] + " Data in 0x" + PDAF_info_Item[i][1] + ": " + to_string(d) + " != " + PDAF_info_Item[i][2] + '\n';
 				ui.log->insertPlainText(s.c_str());
 				ret |= 1;
-			}	
+			}
 		}
 	fout << endl;
 
 	for (int k = 0; k < 10; k++)
 		if (Gmap_Item[k][1].length()>1) {
-			int W = 17, H = 13, offset = 0;
-			if (Gmap_Item3[k] == 1) {
-				W = 16, H = 12, offset= atoi(Gmap_Item[k][2].c_str());
-			}
 			unsigned int e = marking_Hex2int(Gmap_Item[k][1], Gmap_Item[k][0], "", QC_GainMap);
+			int W = 17, H = 13, offset = 0;
+			if (Gmap_Item3[k] == 1 || Gmap_Item3[k] == 3) {
+				W = 16, H = 12, offset = atoi(Gmap_Item[k][2].c_str());
+			}
+
 			/*
 			if (Gmap_Item[k][2].length() > 0) {
 				offset = atoi(Gmap_Item[k][2].c_str());
@@ -4792,133 +4812,398 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 				e += offset;
 			}
 			*/
-			for (int i = 0; i < H; i++)
-				for (int j = 0; j < W; j++) {
-					useData[e] = 1;
-					useData[e + 1] = 1;
-					if (HL&1 == 1)
-						PDgainLeft[i][j] = DecData[e] * 256 + DecData[e + 1];
-					else
+
+			if (Gmap_Item3[k] != 2 && Gmap_Item3[k] != 4) {
+				for (int i = 0; i < H; i++)
+					for (int j = 0; j < W; j++) {
+						useData[e] = 1;
+						useData[e + 1] = 1;
+						if (Gmap_Item3[k] != 3) {
+							if (HL & 1 == 1)
+								PDgainLeft[i][j] = DecData[e] * 256 + DecData[e + 1];
+							else
+								PDgainLeft[i][j] = DecData[e] + DecData[e + 1] * 256;
+							e += 2;
+						}
+						else {
+							PDgainLeft[i][j] = DecData[e];
+							e++;
+						}
+					}
+
+				e += offset;
+				for (int i = 0; i < H; i++)
+					for (int j = 0; j < W; j++) {
+						useData[e] = 1;
+						useData[e + 1] = 1;
+						if (Gmap_Item3[k] != 3) {
+
+							if (HL&1)
+								PDgainRight[i][j] = DecData[e] * 256 + DecData[e + 1];
+							else
+								PDgainRight[i][j] = DecData[e] + DecData[e + 1] * 256;
+							e += 2;
+						}
+						else {
+							PDgainRight[i][j] = DecData[e];
+							e++;
+						}
+					}
+
+				if (mode == 0) {
+					fout << "~~~~~~~~~~~" << Gmap_Item[k][0] << " Left Gain map:" << endl;
+					for (int i = 0; i < H; i++) {
+						for (int j = 0; j < W; j++) {
+							fout << PDgainLeft[i][j] << "	";
+						}
+						fout << endl;
+					}
+
+					fout << "~~~~~~~~~~~" << Gmap_Item[k][0] << " Right Gain map:" << endl;
+					for (int i = 0; i < H; i++) {
+						for (int j = 0; j < W; j++) {
+							fout << PDgainRight[i][j] << "	";
+						}
+						fout << endl;
+					}
+					fout << endl;
+				}
+			}		
+			else if (Gmap_Item3[k] == 2) {
+				W = 20, H = 4;
+				unsigned int eStart = e, e1 = e;
+				e = eStart + 16;
+				e1 = eStart + 176;
+				
+				for (int i = 0; i < H; i++)
+					for (int j = 0; j < W; j++) {
+						useData[e] = useData[e + 1] = 1;
+						useData[e1] = useData[e1 + 1] = 1;
+						PDgainLeft[i][j] = DecData[e]  + DecData[e + 1] * 256;
+						PDgainRight[i][j] = DecData[e1]  + DecData[e1 + 1] * 256;
+						e += 2; e1 += 2;
+					}
+				if (mode == 0) {
+					fout << "~~~~~~~~~~~" << Gmap_Item[k][0] << " MTK Proc1 LR Ratio:" << endl;
+					for (int i = 0; i < H; i++) {
+						for (int j = 0; j < W; j++) {
+							float xx = PDgainLeft[i][j] / 1024.0;
+							if (xx<0.5 || xx>1.5) { ret |= 128; }
+							fout << xx << "	";
+						}
+						fout << endl;
+					}
+
+					fout << "~~~~~~~~~~~" << Gmap_Item[k][0] << " MTK Proc1 UD Ratio:" << endl;
+					for (int i = 0; i < H; i++) {
+						for (int j = 0; j < W; j++) {
+							float xx = PDgainRight[i][j] / 1024.0;
+							if (xx<0.5 || xx>1.5) { ret |= 128; }
+							fout << xx << "	";
+						}
+						fout << endl;
+					}
+					fout << endl;
+				}
+
+				e = eStart + 336;
+				e1 = eStart + 336 + 160;
+
+				for (int i = 0; i < H; i++)
+					for (int j = 0; j < W; j++) {
+						useData[e] = useData[e + 1] = 1;
+						useData[e1] = useData[e1 + 1] = 1;
 						PDgainLeft[i][j] = DecData[e] + DecData[e + 1] * 256;
-					e += 2;
-				}
+						PDgainRight[i][j] = DecData[e1] + DecData[e1 + 1] * 256;
+						e += 2; e1 += 2;
+					}
+				if (mode == 0) {
+					fout << "~~~~~~~~~~~" << Gmap_Item[k][0] << " MTK Proc1 Left:" << endl;
+					for (int i = 0; i < H; i++) {
+						for (int j = 0; j < W; j++) {
+							fout << PDgainLeft[i][j] << "	";
+						}
+						fout << endl;
+					}
 
-			e += offset;
-
-			for (int i = 0; i < H; i++)
-				for (int j = 0; j < W; j++) {
-					useData[e] = 1;
-					useData[e + 1] = 1;
-					if (HL&1 == 1)
-						PDgainRight[i][j] = DecData[e] * 256 + DecData[e + 1];
-					else
-						PDgainRight[i][j] = DecData[e] + DecData[e + 1] * 256;
-					e += 2;
-				}
-
-			if (mode == 0){
-				fout << "~~~~~~~~~~~" << Gmap_Item[k][0] << " Left Gain map:" << endl;
-				for (int i = 0; i < H; i++) {
-					for (int j = 0; j < W; j++) {
-						fout << PDgainLeft[i][j] << "	";
+					fout << "~~~~~~~~~~~" << Gmap_Item[k][0] << " MTK Proc1 Right:" << endl;
+					for (int i = 0; i < H; i++) {
+						for (int j = 0; j < W; j++) {
+							fout << PDgainRight[i][j] << "	";
+						}
+						fout << endl;
 					}
 					fout << endl;
 				}
 
-				fout << "~~~~~~~~~~~" << Gmap_Item[k][0] << " Right Gain map:" << endl;
-				for (int i = 0; i < H; i++) {
-					for (int j = 0; j < W; j++) {
-						fout << PDgainRight[i][j] << "	";
+				if (GainMap_FP_Check(PDgainLeft, PDgainRight, Gmap_Item3[k]) > 0) {
+					string s = Gmap_Item[k][0] + " GainMap in 0x" + Gmap_Item[k][1] + " is NG!\n ";
+					ui.log->insertPlainText(s.c_str());
+					ret |= 4;
+				}
+
+				e = eStart + 336 +320;
+				e1 = eStart + 336 + 480;
+				for (int j = 0; j < W; j++)
+					for (int i = 0; i < H; i++) {
+						useData[e] = useData[e + 1] = 1;
+						useData[e1] = useData[e1 + 1] = 1;
+						PDgainLeft[i][j] = DecData[e] + DecData[e + 1] * 256;
+						PDgainRight[i][j] = DecData[e1] + DecData[e1 + 1] * 256;
+						e += 2; e1 += 2;
+					}
+				if (mode == 0) {
+					fout << "~~~~~~~~~~~" << Gmap_Item[k][0] << " MTK Proc1 UP:" << endl;
+					for (int i = 0; i < H; i++) {
+						for (int j = 0; j < W; j++) {
+							fout << PDgainLeft[i][j] << "	";
+						}
+						fout << endl;
+					}
+
+					fout << "~~~~~~~~~~~" << Gmap_Item[k][0] << " MTK Proc1 Down:" << endl;
+					for (int i = 0; i < H; i++) {
+						for (int j = 0; j < W; j++) {			
+							fout << PDgainRight[i][j] << "	";
+						}
+						fout << endl;
 					}
 					fout << endl;
 				}
-				fout << endl;
+				if (GainMap_FP_Check(PDgainLeft, PDgainRight, Gmap_Item3[k]) > 0) {
+					string s = Gmap_Item[k][0] + " GainMap in 0x" + Gmap_Item[k][1] + " is NG!\n ";
+					ui.log->insertPlainText(s.c_str());
+					ret |= 4;
+				}
 			}
+			else if (Gmap_Item3[k] == 4) {
+				W = 20, H = 4;
+				unsigned int eStart = e;
+				e = eStart + 16;
 
-			if (GainMap_FP_Check(PDgainLeft, PDgainRight, Gmap_Item3[k]) > 0) {
-				string s = Gmap_Item[k][0] + " GainMap in 0x" + Gmap_Item[k][1] + " is NG!\n ";
-				ui.log->insertPlainText(s.c_str());
-				ret |= 4;
+				for (int i = 0; i < H; i++)
+					for (int j = 0; j < W; j++) {
+						useData[e] = 1;
+						useData[e + 1] = 1;
+						PDgainLeft[i][j] = DecData[e] + DecData[e + 1] * 256;
+					
+						e += 2; 
+					}
+				if (mode == 0) {
+					fout << "~~~~~~~~~~~" << Gmap_Item[k][0] << " MTK Proc1 LR Ratio:" << endl;
+					for (int i = 0; i < H; i++) {
+						for (int j = 0; j < W; j++) {
+							float xx = PDgainLeft[i][j] / 1024.0;
+							if (xx<0.5 || xx>1.5) {ret |= 128;} 
+							fout << xx << "	";
+						}
+						fout << endl;
+					}
+					fout << endl;
+				}
+				int e1 = e + 160;
+				for (int i = 0; i < H; i++)
+					for (int j = 0; j < W; j++) {
+						useData[e] = useData[e + 1] = 1;
+						useData[e1] = useData[e1 + 1] = 1;
+						PDgainLeft[i][j] = DecData[e] + DecData[e + 1] * 256;
+						PDgainRight[i][j] = DecData[e1] + DecData[e1 + 1] * 256;
+						e += 2; e1 += 2;
+					}
+
+				if (mode == 0) {
+					fout << "~~~~~~~~~~~" << Gmap_Item[k][0] << " MTK Proc1 Left:" << endl;
+					for (int i = 0; i < H; i++) {
+						for (int j = 0; j < W; j++) {
+							fout << PDgainLeft[i][j] << "	";
+						}
+						fout << endl;
+					}
+
+					fout << "~~~~~~~~~~~" << Gmap_Item[k][0] << " MTK Proc1 Right:" << endl;
+					for (int i = 0; i < H; i++) {
+						for (int j = 0; j < W; j++) {
+							fout << PDgainRight[i][j] << "	";
+						}
+						fout << endl;
+					}
+					fout << endl;
+				}
+				if (GainMap_FP_Check(PDgainLeft, PDgainRight, Gmap_Item3[k]) > 0) {
+					string s = Gmap_Item[k][0] + " GainMap in 0x" + Gmap_Item[k][1] + " is NG!\n ";
+					ui.log->insertPlainText(s.c_str());
+					ret |= 4;
+				}
 			}
 		}
 	
 	for (int k = 0; k < 12; k++)
 		if (PD_Item[k][1].length()>1) {
 			unsigned int e = marking_Hex2int(PD_Item[k][1], PD_Item[k][0], "", QC_DCC);
-			if (mode == 0)
-				fout << "~~~~~~~~~~~" << PD_Item[k][0] << " Map:" << endl;
-
 			int W = 8, H = 6, offset = 0;
-			if (Gmap_Item3[k] == 1) {
+			if (PD_Item3[k] == 1) {
 				W = 16, H = 12;
 			}
-			//if (PD_Item[k][2].length() > 0) 
-			//	offset = atoi(Gmap_Item[k][2].c_str());
 
 			if (k < 10) {
-				/*
-				for (int i = 0; i < offset; i += 2) {
-					int d = 0;
-					string str = " ";
-					if (PDAF_info_Item[i + 1][2].length() >= 4)
-						str = PDAF_info_Item[i + 1][2].substr(2, 2);
-					map_Push(e + i, PDAF_info_Item[i + 1][0] + "_L", str, info1);
-					str = " ";
-					if (PDAF_info_Item[i + 1][2].length() > 1)
-						str = PDAF_info_Item[i + 1][2].substr(0, 2);
-					map_Push(e + i + 1, PDAF_info_Item[i + 1][0] + "_H", str, info1);
-					fout << PDAF_info_Item[i + 1][0] << ":	";
-					fout << D[e + i + 1][0] << D[e + i + 1][1] << D[e + i][0] << D[e + i][1];
-					d = DecData[e + i] + DecData[e + i + 1] * 256;
-					fout << "	" << PDAF_info_Item[i + 1][2] << endl;
-					spec = unstringHex2int(PDAF_info_Item[i + 1][2]);
-					if (d != spec&&PDAF_info_Item[i + 1][2].length() > 1) {
-						string s = PDAF_info_Item[i + 1][0] + " Data in 0x" + PDAF_info_Item[i + 1][1] + ": " + to_string(d) + " != " + PDAF_info_Item[i + 1][2] + '\n';
-						ui.log->insertPlainText(s.c_str());
-						ret |= 8;
-					}
-				}
-				*/
-				e += offset;
-
-				for (int i = 0; i < H; i++)
-					for (int j = 0; j < W; j++) {
-						useData[e] = 1;
-						useData[e + 1] = 1;
-						if (HL&1 == 0)
-							DCC[i][j] = 256 * DecData[e + 1] + DecData[e];
-						else
-							DCC[i][j] = 256 * DecData[e] + DecData[e + 1];
-
-						e += 2;
-					}
-
-				if (mode == 0) {
-					for (int i = 0; i < H; i++) {
+				if (PD_Item3[k] < 2) {
+					if (mode == 0)
+						fout << "~~~~~~~~~~~" << PD_Item[k][0] << " Map:" << endl;
+					e += offset;
+					for (int i = 0; i < H; i++)
 						for (int j = 0; j < W; j++) {
-							fout << DCC[i][j] << "	";
+							useData[e] = 1;
+							useData[e + 1] = 1;
+							if (HL&1)
+								DCC[i][j] = 256 * DecData[e] + DecData[e + 1];
+							else						
+								DCC[i][j] = 256 * DecData[e + 1] + DecData[e];
+
+							e += 2;
+						}
+
+					if (mode == 0) {
+						for (int i = 0; i < H; i++) {
+							for (int j = 0; j < W; j++) {
+								fout << DCC[i][j] << "	";
+							}
+							fout << endl;
 						}
 						fout << endl;
 					}
-					fout << endl;
+
+					if (DCC_FP_Check(DCC, PD_Item3[k]) > 0) {
+						string s = PD_Item[k][0] + " in 0x" + PD_Item[k][1] + " is NG!\n ";
+						ui.log->insertPlainText(s.c_str());
+						ret |= 16;
+					}
 				}
-	
-				if (DCC_FP_Check(DCC, PD_Item3[k]) > 0) {
-					string s = PD_Item[k][0] + " in 0x" + PD_Item[k][1] + " is NG!\n ";
-					ui.log->insertPlainText(s.c_str());
-					ret |= 16;
+
+				if (PD_Item3[k] == 2) {
+					W = 8, H = 8; 
+					e += 16;
+					int MTK_PD_Data[64][10] = { 0 }, MTK_PD_Data2[64][10] = { 0 }, e2 = e+=128;
+					for (int i = 0; i <H; i++)
+						for (int j = 0; j < W; j++) {
+							useData[e] = useData[e+1] =1;
+							useData[e2] = useData[e2 + 1] = 1;
+							DCC[i][j] = 256 * DecData[e + 1] + DecData[e];
+							DCC2[i][j] = 256 * DecData[e2 + 1] + DecData[e2];
+							e += 2; e2 += 2;
+						}
+
+					e += 24; e2 = e + 640;
+					for (int i = 0; i <64; i++)
+						for (int j = 0; j < 10; j++) {
+							useData[e] = useData[e2] = 1;
+							MTK_PD_Data[i][j] = DecData[e];
+							MTK_PD_Data2[i][j] = DecData[e2];
+							e ++; e2 ++;
+						}
+
+					if (DCC_FP_Check(DCC, PD_Item3[k]) > 0) {
+						string s = PD_Item[k][0] + " in 0x" + PD_Item[k][1] + " is NG!\n ";
+						ui.log->insertPlainText(s.c_str());
+						ret |= 16;
+					}
+
+					if (DCC_FP_Check(DCC2, PD_Item3[k]) > 0) {
+						string s = PD_Item[k][0] + " in 0x" + PD_Item[k][1] + " is NG!\n ";
+						ui.log->insertPlainText(s.c_str());
+						ret |= 16;
+					}
+
+					if (mode == 0) {
+						fout << "~~~~~~~~~~~" << PD_Item[k][0] << " MTK Proc2 LR DCC:" << endl;
+						for (int i = 0; i < H; i++) {
+							for (int j = 0; j < W; j++) {
+								fout << DCC[i][j] << "	";
+							}
+							fout << endl;
+						}
+
+						fout << "~~~~~~~~~~~" << PD_Item[k][0] << " MTK Proc2 UD DCC:" << endl;
+						for (int i = 0; i < H; i++) {
+							for (int j = 0; j < W; j++) {
+								fout << DCC2[i][j] << "	";
+							}
+							fout << endl;
+						}
+						fout << endl;
+
+						fout << "~~~~~~~~~~~" << PD_Item[k][0] << " MTK LR PD_Data:" << endl;
+						for (int i = 0; i < 64; i++) {
+							for (int j = 0; j < 10; j++) {
+								fout << MTK_PD_Data[i][j] << "	";
+							}
+							fout << endl;
+						}
+
+						fout << "~~~~~~~~~~~" << PD_Item[k][0] << " MTK UD PD_Data::" << endl;
+						for (int i = 0; i < 64; i++) {
+							for (int j = 0; j < 10; j++) {
+								fout << MTK_PD_Data2[i][j] << "	";
+							}
+							fout << endl;
+						}
+						fout << endl;
+					}		
+				}
+
+				if (PD_Item3[k] == 3) {
+					W = 8, H = 8;
+					e += 16;
+					int MTK_PD_Data[64][10] = { 0 };
+					for (int i = 0; i <H; i++)
+						for (int j = 0; j < W; j++) {
+							useData[e] = useData[e + 1] = 1;
+							DCC[i][j] = 256 * DecData[e + 1] + DecData[e];
+							e += 2; 
+						}
+
+					if (DCC_FP_Check(DCC, PD_Item3[k]) > 0) {
+						string s = PD_Item[k][0] + " in 0x" + PD_Item[k][1] + " is NG!\n ";
+						ui.log->insertPlainText(s.c_str());
+						ret |= 16;
+					}
+
+					e += 22; 
+					for (int i = 0; i <64; i++)
+						for (int j = 0; j < 10; j++) {
+							useData[e] = 1;
+							MTK_PD_Data[i][j] = DecData[e];				
+							e++; 
+						}
+
+					if (mode == 0) {
+						fout << "~~~~~~~~~~~" << PD_Item[k][0] << " MTK Proc2 LR DCC:" << endl;
+						for (int i = 0; i < H; i++) {
+							for (int j = 0; j < W; j++) {
+								fout << DCC[i][j] << "	";
+							}
+							fout << endl;
+						}
+						fout << "~~~~~~~~~~~" << PD_Item[k][0] << " MTK LR PD_Data:" << endl;
+						for (int i = 0; i < 64; i++) {
+							for (int j = 0; j < 10; j++) {
+								fout << MTK_PD_Data[i][j] << "	";
+							}
+							fout << endl;
+						}
+					}
 				}
 			}
-			else {
-				float F_DCC[6][8] = { 0 };
 
+			/////// QC PD offset
+			if (PD_Item3[k] == 4 || k>10) {
+				float F_DCC[6][8] = { 0 };
 				for (int i = 0; i <H; i++)
 					for (int j = 0; j < W; j++) {
 
 						for (int a = 0; a < 4; a++)
 							useData[e + a] = 1;
 
-						F_DCC[i][j] = flt_Out(e, HL&1);
+						F_DCC[i][j] = flt_Out(e, HL);
 						if (F_DCC[i][j]>5|| F_DCC[i][j] < -5) {
 							ret |= 32;
 						}
@@ -5056,11 +5341,11 @@ int EEPROM_Data_Verifier::af_Parse() {
 			value_Hash[i].item_name = AF_Item[i][0];
 
 			int e = EEPMap_Data_add(2,AF_Item[i][1], AF_Item[i][0]," ", AF_Code);
-			if (HL&1 == 0) {
-				AF_Data[i][0] = DecData[e + 1] * 256 + DecData[e];
+			if (HL&1) {
+				AF_Data[i][0] = DecData[e] * 256 + DecData[e+1];
 			}
 			else {
-				AF_Data[i][0] = DecData[e] * 256 + DecData[e + 1];
+				AF_Data[i][0] = DecData[e+1] * 256 + DecData[e ];
 			}
 			value_Hash[i].hash[AF_Data[i][0]%1009]++;
 			fout << AF_Item[i][0] << ":	" << AF_Data[i][0] << endl;
@@ -5117,52 +5402,60 @@ int EEPROM_Data_Verifier::af_Parse() {
 		}
 	}
 
-	if (mode == 0) {
-		int SFR_ret = 0;
-		///////////////////// SFR data check
-		fout << "-------SFR Test Data------" << endl;
-		for (int i = 0; i < 4; i++) {
 
-			if (SFR_Item[i][2].length()>1) {
+	int SFR_ret = 0;
+	///////////////////// SFR data check
+	fout << "-------SFR Test Data------" << endl;
+	for (int i = 0; i < 4; i++) {
 
-				fout << SFR_Item[i][0];
-				if (SFR_Item[i][1].length()>1) {
-					int d = unstringHex2int(SFR_Item[i][1]);
-					fout << " Grade:	" << D[d][0] << D[d][1];
-				}
-				fout << endl;
-				int d = unstringHex2int(SFR_Item[i][2]);
-				int cnt = atoi(SFR_Item[i][3].c_str());
-				int f = unstringHex2int(SFR_Item[i][1]);
+		if (SFR_Item[i][2].length()>1) {
 
-				for (int k = 0; k < cnt; k++) {
-					if (SFR_Format==0) {
-						SFR_Data[k] = (int)(D[d + k][0] - '0') * 10 + (D[d + k][1] - '0');
-						fout <<"0."<< D[d + k][0] << D[d + k][1] << "	";
-					}
-					else if (SFR_Format == 1) {
-						SFR_Data[k] = DecData[d + k];
-						fout << (float)SFR_Data[k] / 100.0 << "	";
-					}
-					else if (SFR_Format == 2) {
-						SFR_Data[k] = DecData[d + 2 * k] * 256 + DecData[d + 2 * k + 1];
-						fout << (float)SFR_Data[k] / 10000.0 << "	";
-						SFR_Data[k] = SFR_Data[k]/100;
-					}
-					else if (SFR_Format == 3) {
-						SFR_Data[k] = DecData[d + 2 * k] * 256 + DecData[d + 2 * k + 1];
-						fout << SFR_Data[k]<< "	";
-					}
-				}
-				SFR_ret += SFR_FP_Check(SFR_Data, cnt, i + 1, SFR_Format);
-				fout << endl;
+			fout << SFR_Item[i][0];
+			if (SFR_Item[i][1].length()>1) {
+				int d = unstringHex2int(SFR_Item[i][1]);
+				fout << " Grade:	" << D[d][0] << D[d][1];
 			}
+			if (mode == 0)
+				fout << endl;
+			int d = unstringHex2int(SFR_Item[i][2]);
+			int cnt = atoi(SFR_Item[i][3].c_str());
+			int f = unstringHex2int(SFR_Item[i][1]);
+
+			for (int k = 0; k < cnt; k++) {
+				if (SFR_Format == 0) {
+					SFR_Data[k] = (int)(D[d + k][0] - '0') * 10 + (D[d + k][1] - '0');
+					if (mode == 0)
+						fout << "0." << D[d + k][0] << D[d + k][1] << "	";
+				}
+				else if (SFR_Format == 1) {
+					SFR_Data[k] = DecData[d + k];
+					if (mode == 0)
+						fout << (float)SFR_Data[k] / 100.0 << "	";
+				}
+				else if (SFR_Format == 2) {
+					SFR_Data[k] = DecData[d + 2 * k] * 256 + DecData[d + 2 * k + 1];
+					if (mode == 0)
+						fout << (float)SFR_Data[k] / 10000.0 << "	";
+					SFR_Data[k] = SFR_Data[k] / 100;
+				}
+				else if (SFR_Format == 3) {
+					SFR_Data[k] = DecData[d + 2 * k] * 256 + DecData[d + 2 * k + 1];
+					if (mode == 0)
+						fout << SFR_Data[k] << "	";
+				}
+			}
+			SFR_ret += SFR_FP_Check(SFR_Data, cnt, i + 1, SFR_Format);
+			if (mode == 0)
+				fout << endl;
 		}
-		if (SFR_ret > 0)
-			ui.log->insertPlainText("SFR Spec Check NG!\n");
+	}
+	if (SFR_ret > 0)
+		ui.log->insertPlainText("SFR Spec Check NG!\n");
 
-		fout << endl;
+	ret |= SFR_ret;
+	fout << endl;
 
+	if (mode == 0)
 		for (int i = 0; i < 12; i++) {
 
 			int e = unstringHex2int(AA_Item[i]);
@@ -5241,7 +5534,7 @@ int EEPROM_Data_Verifier::af_Parse() {
 				}
 			}
 		}
-	}
+	
 	fout << endl;
 	return ret;
 }
@@ -5249,8 +5542,8 @@ int EEPROM_Data_Verifier::af_Parse() {
 
 void EEPROM_Data_Verifier::Oppo_AWB_Parse(int group) {
 
-	TCHAR lpTexts[10]; int temp = 0,L,H; 
-	string s, color ="5100K",item;
+	TCHAR lpTexts[10]; int temp = 0, L, H;
+	string s, color = "5100K", item;
 
 	if (group == 0)
 		color = "5100K";
@@ -5261,17 +5554,21 @@ void EEPROM_Data_Verifier::Oppo_AWB_Parse(int group) {
 
 	fout << "-------" << color << " AWB Data------" << endl;
 	// AWB 
-	item = "AWB R_avg_L_"+color;
+	item = "AWB R_avg_L_" + color;
 	GetPrivateProfileString(TEXT("OPPO"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
 	s = CT2A(lpTexts);
-	L = marking_Hex2int(s , item, "", QC_AWB);
+	L = marking_Hex2int(s, item, "", QC_AWB);
 	item = "AWB R_avg_H_" + color;
 	GetPrivateProfileString(TEXT("OPPO"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
 	s = CT2A(lpTexts);
 	H = marking_Hex2int(s, item, "", QC_AWB);
 	OPPO_AWB[group].AWB[0] = DecData[H] * 256 + DecData[L];
-	fout << "AWB R_avg_"<<color<<" :	" << OPPO_AWB[group].AWB[0] << endl;
-
+	if (H == 0 || L == 0){
+		OPPO_AWB[group].AWB[0] = 0;
+	}
+	else {
+		fout << "AWB R_avg_" << color << " :	" << OPPO_AWB[group].AWB[0] << endl;
+	}
 	item = "AWB Gr_avg_L_" + color;
 	GetPrivateProfileString(TEXT("OPPO"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
 	s = CT2A(lpTexts);
@@ -5281,8 +5578,14 @@ void EEPROM_Data_Verifier::Oppo_AWB_Parse(int group) {
 	s = CT2A(lpTexts);
 	H = marking_Hex2int(s, item, "", QC_AWB);
 	OPPO_AWB[group].AWB[1] = DecData[H] * 256 + DecData[L];
-	fout << "AWB Gr_avg_" << color << " :	" << OPPO_AWB[group].AWB[1] << endl;
 
+	if (H == 0 || L == 0) {
+		OPPO_AWB[group].AWB[1] = 0;
+	}
+	else {
+		fout << "AWB Gr_avg_" << color << " :	" << OPPO_AWB[group].AWB[1] << endl;
+	}
+	
 	item = "AWB Gb_avg_L_" + color;
 	GetPrivateProfileString(TEXT("OPPO"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
 	s = CT2A(lpTexts);
@@ -5292,7 +5595,13 @@ void EEPROM_Data_Verifier::Oppo_AWB_Parse(int group) {
 	s = CT2A(lpTexts);
 	H = marking_Hex2int(s, item, "", QC_AWB);
 	OPPO_AWB[group].AWB[2] = DecData[H] * 256 + DecData[L];
-	fout << "AWB Gb_avg_" << color << " :	" << OPPO_AWB[group].AWB[2] << endl;
+	
+	if (H == 0 || L == 0) {
+		OPPO_AWB[group].AWB[2] = 0;
+	}
+	else {
+		fout << "AWB Gb_avg_" << color << " :	" << OPPO_AWB[group].AWB[2] << endl;
+	}
 
 	item = "AWB B_avg_L_" + color;
 	GetPrivateProfileString(TEXT("OPPO"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
@@ -5303,7 +5612,13 @@ void EEPROM_Data_Verifier::Oppo_AWB_Parse(int group) {
 	s = CT2A(lpTexts);
 	H = marking_Hex2int(s, item, "", QC_AWB);
 	OPPO_AWB[group].AWB[3] = DecData[H] * 256 + DecData[L];
-	fout << "AWB B_avg_" << color << " :	" << OPPO_AWB[group].AWB[3] << endl;
+	
+	if (H == 0 || L == 0) {
+		OPPO_AWB[group].AWB[3] = 0;
+	}
+	else {
+		fout << "AWB B_avg_" << color << " :	" << OPPO_AWB[group].AWB[3] << endl;
+	}
 
 	////////////////////////////////////////////////////////////////////// Golden
 	item = "Golden R_avg_L_" + color;
@@ -5315,7 +5630,13 @@ void EEPROM_Data_Verifier::Oppo_AWB_Parse(int group) {
 	s = CT2A(lpTexts);
 	H = marking_Hex2int(s, item, "", QC_AWB);
 	OPPO_AWB[group].Golden [0] = DecData[H] * 256 + DecData[L];
-	fout << "Golden R_avg " << color << " :	" << OPPO_AWB[group].Golden[0] << endl;
+	
+	if (H == 0 || L == 0) {
+		OPPO_AWB[group].Golden[0] = 0;
+	}
+	else {
+		fout << "Golden R_avg " << color << " :	" << OPPO_AWB[group].Golden[0] << endl;
+	}
 
 	item = "Golden Gr_avg_L_" + color;
 	GetPrivateProfileString(TEXT("OPPO"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
@@ -5326,7 +5647,13 @@ void EEPROM_Data_Verifier::Oppo_AWB_Parse(int group) {
 	s = CT2A(lpTexts);
 	H = marking_Hex2int(s, item, "", QC_AWB);
 	OPPO_AWB[group].Golden[1] = DecData[H] * 256 + DecData[L];
-	fout << "Golden Gr_avg " << color << " :	" << OPPO_AWB[group].Golden[1] << endl;
+	
+	if (H == 0 || L == 0) {
+		OPPO_AWB[group].Golden[1] = 0;
+	}
+	else {
+		fout << "Golden Gr_avg " << color << " :	" << OPPO_AWB[group].Golden[1] << endl;
+	}
 
 	item = "Golden Gb_avg_L_" + color;
 	GetPrivateProfileString(TEXT("OPPO"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
@@ -5337,7 +5664,13 @@ void EEPROM_Data_Verifier::Oppo_AWB_Parse(int group) {
 	s = CT2A(lpTexts);
 	H = marking_Hex2int(s, item, "", QC_AWB);
 	OPPO_AWB[group].Golden[2] = DecData[H] * 256 + DecData[L];
-	fout << "Golden Gb_avg " << color << " :	" << OPPO_AWB[group].Golden[2] << endl;
+	
+	if (H == 0 || L == 0) {
+		OPPO_AWB[group].Golden[2] = 0;
+	}
+	else {
+		fout << "Golden Gb_avg " << color << " :	" << OPPO_AWB[group].Golden[2] << endl;
+	}
 
 	item = "Golden B_avg_L_" + color;
 	GetPrivateProfileString(TEXT("OPPO"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
@@ -5348,7 +5681,13 @@ void EEPROM_Data_Verifier::Oppo_AWB_Parse(int group) {
 	s = CT2A(lpTexts);
 	H = marking_Hex2int(s, item, "", QC_AWB);
 	OPPO_AWB[group].Golden[3] = DecData[H] * 256 + DecData[L];
-	fout << "Golden B_avg " << color << " :	" << OPPO_AWB[group].Golden[3] << endl;
+
+	if (H == 0 || L == 0) {
+		OPPO_AWB[group].Golden[3] = 0;
+	}
+	else {
+		fout << "Golden B_avg " << color << " :	" << OPPO_AWB[group].Golden[3] << endl;
+	}
 
 	/////////////////////////////////////////////////////////////////////////////// light coef
 	item = color+" light source RG calibration_L";
@@ -5360,7 +5699,13 @@ void EEPROM_Data_Verifier::Oppo_AWB_Parse(int group) {
 	s = CT2A(lpTexts);
 	H = marking_Hex2int(s, item, "", QC_AWB);
 	OPPO_AWB[group].Light[0] = DecData[H] * 256 + DecData[L];
-	fout << color << " light source RG calibration" << " :	" << OPPO_AWB[group].Light[0] << endl;
+	
+	if (H == 0 || L == 0) {
+		OPPO_AWB[group].Light[0] = 0;
+	}
+	else {
+		fout << color << " light source RG calibration" << " :	" << OPPO_AWB[group].Light[0] << endl;
+	}
 
 	item = color + " light source BG calibration_L";
 	GetPrivateProfileString(TEXT("OPPO"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
@@ -5371,7 +5716,13 @@ void EEPROM_Data_Verifier::Oppo_AWB_Parse(int group) {
 	s = CT2A(lpTexts);
 	H = marking_Hex2int(s, item, "", QC_AWB);
 	OPPO_AWB[group].Light[1] = DecData[H] * 256 + DecData[L];
-	fout << color << " light source BG calibration" << " :	" << OPPO_AWB[group].Light[1] << endl;
+	
+	if (H == 0 || L == 0) {
+		OPPO_AWB[group].Light[1] = 0;
+	}
+	else {
+		fout << color << " light source BG calibration" << " :	" << OPPO_AWB[group].Light[1] << endl;
+	}
 
 	fout << endl;
 
@@ -6012,20 +6363,23 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 				value_Hash[i + 66].item_name = OIS_info_Item[i][0];
 				value_Hash[i + 66].hash[(0x7FFFFFFF+c) % 1009]++;
 
-				if (c < -3000 || c>3000) {
+				if (c < -1*Gyro_offset_spec[i] || c>Gyro_offset_spec[i]) {
 					string s = OIS_data_Item[i][0] + " Data in 0x" + OIS_data_Item[i][1] + " value NG!" + '\n';
 					ui.log->insertPlainText(s.c_str());
 					ret |= 1;
 				}
-				
-
 			}
 			else if (i > 1 && i < 4) {
 				int d = unstringHex2int(OIS_data_Item[i][2]);
 				if ((selection & 256)>0){
 					Gyro_Gain[i - 2] = short_Out(e, OIS_HL);
+					if (short_Out(e, OIS_HL) == -1 || short_Out(e, OIS_HL) == 0) {
+						ret |= 2;
+						string s = OIS_data_Item[i][0] + " Data in 0x" + OIS_data_Item[i][1] + " value NG!" + '\n';
+						ui.log->insertPlainText(s.c_str());
+					}
 				}
-				else if ((selection & 8) > 0) {			
+				else if ((selection & 8) > 0) {
 					if (d == 4) {
 						Gyro_Gain[i - 2] = gyro_Out(e, OIS_HL);
 					}
@@ -6033,14 +6387,16 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 						Gyro_Gain[i - 2] = Dcm_out2(e, OIS_HL);
 					}
 				}
-				else  
+				else {
 					Gyro_Gain[i - 2] = flt_Out(e, OIS_HL);
+					if (int_Out(e, OIS_HL) == -1 || int_Out(e, OIS_HL) == 0) {
+						ret |= 2;
+						string s = OIS_data_Item[i][0] + " Data in 0x" + OIS_data_Item[i][1] + " value NG!" + '\n';
+						ui.log->insertPlainText(s.c_str());
+					}
+				}				
+				
 
-				if (short_Out(e, OIS_HL) == -1 || short_Out(e, OIS_HL) == 0) {
-					ret |= 2;
-					string s = OIS_data_Item[i][0] + " Data in 0x" + OIS_data_Item[i][1] + " value NG!" + '\n';
-					ui.log->insertPlainText(s.c_str());
-				}
 				if (OIS_HL == 0) {
 					map_Push(e, OIS_data_Item[i][0] + "[0]_LL", "", OIS_Gyro);
 					map_Push(e + 1, OIS_data_Item[i][0] + "[1]_LU", "", OIS_Gyro);
@@ -6066,10 +6422,11 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 
 			}
 			else {
+				bool SR_HL = HL & 4;
 				if (ui.sr_hl->isChecked())
-					SR[i - 4] = SR_Out_HL(e, OIS_HL);
+					SR[i - 4] = SR_Out_HL(e, !SR_HL);
 				else
-					SR[i - 4] = SR_Out_Hex(e, OIS_HL);
+					SR[i - 4] = SR_Out_Hex(e, !SR_HL);
 
 				if (short_Out(e, OIS_HL) == -1)
 					ret |= 4;
@@ -6693,21 +7050,26 @@ int EEPROM_Data_Verifier::AEC_Parse() {
 int EEPROM_Data_Verifier::XiaoMi_Seg_Check() {
 
 	int addr, ret = 0;;
-	for (int i = 0; i < 18; i++) {
+	for (int i = 0; i < 20; i++) {
 		if (Seg_Data[i].item[0].length()>1) {
 			
 			int index_addr = 0, seg_Num=0;
 			if (Seg_Data[i].item[2].length() > 2) {
 
 				string s = "Segment_" + Seg_Data[i].item[0] + "_H";
-				index_addr=addr = marking_Hex2int(Seg_Data[i].item[2], s, "", info1);
+				index_addr = addr = marking_Hex2int(Seg_Data[i].item[2], s, "", info1);
 				if (addr > 0xE000)
 					index_addr = addr = addr - 0xE000;
 				s = "Segment_" + Seg_Data[i].item[0] + "_L";
 				map_Push(addr + 1, s, "", info1);
 				seg_Num = DecData[addr] * 256 + DecData[addr + 1];
 				int spec = i + 1;
-				if (i == 17) spec = 0x8000;
+				if (i == 19) {
+					spec = 0x8000;
+				}
+				if (i ==17&& Seg_Data[19].item[0].length()<2) {
+					spec = 0x8000;
+				}
 				if (seg_Num != spec) {
 					s = "Segment_" + Seg_Data[i].item[0] + " value NG!\n";
 					ui.log->insertPlainText(s.c_str());
@@ -6716,7 +7078,7 @@ int EEPROM_Data_Verifier::XiaoMi_Seg_Check() {
 			}
 
 			if (Seg_Data[i].item[1].length() > 2) {		
-				if (i < 17) {
+				if (i < 19) {
 					string s = "Segment_" + to_string(i+1)+ "_H";
 					addr = marking_Hex2int(Seg_Data[i].item[1], s, "", info1);				
 					s = "Segment_" + to_string(i + 1) + "_L";
@@ -6747,7 +7109,7 @@ int EEPROM_Data_Verifier::XiaoMi_Seg_Check() {
 void EEPROM_Data_Verifier::History_Date_Parser() {
 
 	int addr;
-	for (int i = 0; i < 12; i++) {
+	for (int i = 0; i < 10; i++) {
 		if (History_Data[i].item[1].length()>1) {
 		
 				if (i == 0)
@@ -7242,7 +7604,6 @@ void EEPROM_Data_Verifier::dump_Check() {
 
 	int x = 0, ret = 0;
 
-
 	if (CheckSum_Check() == 0) {
 		dump_result << "Flag&Checksum PASS" << "	";
 	}
@@ -7258,7 +7619,6 @@ void EEPROM_Data_Verifier::dump_Check() {
 		dump_result << "info_Data NG" << "	";
 		ret |= 4;
 	}
-
 
 	if (ui.oppo->isChecked()) {
 		Oppo_AWB_Parse(0);
@@ -8012,4 +8372,84 @@ void EEPROM_Data_Verifier::on_pushButton_folder_clicked() {
 }
 
 
+void EEPROM_Data_Verifier::on_pushButton_folder_sorting_clicked() {
 
+	mode = 1;
+	selectModel();
+	load_EEPROM_Address();
+
+	dump_result.open(".\\dump_result.txt");
+	fout.open(".\\MemoryParseData.txt");
+
+	OK = 0; NG = 0;
+
+	if (ui.full_log->isChecked())
+		mode = 0;
+
+	load_Spec(mode);
+
+	vector<string> files1 = getFiles(".\\bin_data\\*");
+	vector<string> ::iterator iVector = files1.begin();
+	bool ok = false;
+	while (iVector != files1.end())
+	{
+		dump_result << (*iVector) << "	";
+		fout << (*iVector) << endl;
+		fuse_ID_output(*iVector);
+
+		string fuse = "", time_fuse = (*iVector);
+		int x = 0;
+
+		if (time_fuse[0] == '2'&&time_fuse[1] == '0'&&time_fuse[2] == '2') {
+			while (time_fuse[x] != ' '&&time_fuse[x] != '_'&&x < (*iVector).length()) {
+				x++;
+			}
+			x++;
+			while (time_fuse[x] != ' '&&time_fuse[x] != '_'&&x < (*iVector).length()) {
+				fuse += time_fuse[x++];
+			}
+		}
+		else {
+			while (time_fuse[x] != ' '&&time_fuse[x] != '_'&&x < (*iVector).length()) {
+				fuse += time_fuse[x++];
+			}
+		}
+		current_Hash.fuse_ID = fuse;
+		memset(DecData, 0, sizeof(DecData));
+		memset(useData, 0, sizeof(useData));
+		name = ".\\bin_data\\" + *iVector;
+
+		ifstream fin(name, std::ios::binary);
+
+		//获取文件大小方法一
+		struct _stat info;
+		_stat(name.c_str(), &info);
+		EEP_Size = info.st_size;
+
+		unsigned char szBuf[262128] = { 0 };
+		fin.read((char*)&szBuf, sizeof(char) * EEP_Size);
+
+		for (int i = 0; i < EEP_Size; i++) {
+			DecData[i] = (unsigned char)szBuf[i];
+			getHex(DecData[i]);
+		}
+
+		dump_Check();
+
+
+
+
+
+		fin.close();
+		++iVector;
+		fuse_ID_output("\n");
+	}
+
+	value_duplicate_Check();
+	dump_Hash.clear();
+	FP_logFile_Close();
+	fout.close();
+	dump_result.close();
+	ui.log->insertPlainText("Dump Data Read finished\n");
+
+}

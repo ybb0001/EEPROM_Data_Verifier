@@ -26,7 +26,7 @@ int XiaoMi_QC_AWB_FP_Check(vivo_AWB_Format AWB);
 int drift_FP_Check(int shift_Data[2][21],int cnt, int step);
 int SFR_FP_Check(int SFR_Data[50], int cnt ,int group,int SFR_Format);
 int AF_FP_Check(int AF_Data[6][3]);
-int GainMap_FP_Check(int PDgainLeft[15][17],int PDgainRight[15][17], int type);
+int GainMap_FP_Check(int PDgainLeft[30][30],int PDgainRight[30][30], int type);
 int DCC_FP_Check(int DCC[15][17], int type);
 int QSC_Check(float QSC_Data[4][4][12][16]);
 

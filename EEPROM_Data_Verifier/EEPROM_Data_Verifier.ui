@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>EEPROM_Verifier_20220921</string>
+   <string>EEPROM_Verifier_20230215</string>
   </property>
   <widget class="QTextEdit" name="input">
    <property name="geometry">
@@ -9264,7 +9264,7 @@ p, li { white-space: pre-wrap; }
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>135</y>
+        <y>145</y>
         <width>51</width>
         <height>16</height>
        </rect>
@@ -9283,7 +9283,7 @@ p, li { white-space: pre-wrap; }
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>150</y>
+        <y>160</y>
         <width>51</width>
         <height>16</height>
        </rect>
@@ -9396,6 +9396,41 @@ p, li { white-space: pre-wrap; }
       <property name="text">
        <string>Byte</string>
       </property>
+     </widget>
+     <widget class="QRadioButton" name="SR_HL">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>130</y>
+        <width>31</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>H</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+      <attribute name="buttonGroup">
+       <string notr="true">buttonGroup_5</string>
+      </attribute>
+     </widget>
+     <widget class="QRadioButton" name="SR_LH">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>130</y>
+        <width>31</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>L</string>
+      </property>
+      <attribute name="buttonGroup">
+       <string notr="true">buttonGroup_5</string>
+      </attribute>
      </widget>
     </widget>
     <widget class="QGroupBox" name="groupBox_14">
@@ -10336,7 +10371,7 @@ p, li { white-space: pre-wrap; }
       </rect>
      </property>
      <property name="title">
-      <string>Gain Map/LRC</string>
+      <string>QC Gain Map/SONY LRC/MTK Proc1</string>
      </property>
      <widget class="QTextEdit" name="Gmap21">
       <property name="geometry">
@@ -10637,7 +10672,17 @@ p, li { white-space: pre-wrap; }
       </item>
       <item>
        <property name="text">
-        <string>15x15,2byte,MTK</string>
+        <string>20x4,976byte,MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>16x12,1byte,SONY</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>20x4,496byte,MTK</string>
        </property>
       </item>
      </widget>
@@ -10662,7 +10707,17 @@ p, li { white-space: pre-wrap; }
       </item>
       <item>
        <property name="text">
-        <string>15x15,2byte,MTK</string>
+        <string>20x4,976byte,MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>16x12,1byte,SONY</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>20x4,496byte,MTK</string>
        </property>
       </item>
      </widget>
@@ -10687,7 +10742,17 @@ p, li { white-space: pre-wrap; }
       </item>
       <item>
        <property name="text">
-        <string>15x15,2byte,MTK</string>
+        <string>20x4,976byte,MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>16x12,1byte,SONY</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>20x4,496byte,MTK</string>
        </property>
       </item>
      </widget>
@@ -10712,7 +10777,17 @@ p, li { white-space: pre-wrap; }
       </item>
       <item>
        <property name="text">
-        <string>15x15,2byte,MTK</string>
+        <string>20x4,976byte,MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>16x12,1byte,SONY</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>20x4,496byte,MTK</string>
        </property>
       </item>
      </widget>
@@ -10737,7 +10812,17 @@ p, li { white-space: pre-wrap; }
       </item>
       <item>
        <property name="text">
-        <string>15x15,2byte,MTK</string>
+        <string>20x4,976byte,MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>16x12,1byte,SONY</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>20x4,496byte,MTK</string>
        </property>
       </item>
      </widget>
@@ -10762,7 +10847,17 @@ p, li { white-space: pre-wrap; }
       </item>
       <item>
        <property name="text">
-        <string>15x15,2byte,MTK</string>
+        <string>20x4,976byte,MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>16x12,1byte,SONY</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>20x4,496byte,MTK</string>
        </property>
       </item>
      </widget>
@@ -10787,7 +10882,17 @@ p, li { white-space: pre-wrap; }
       </item>
       <item>
        <property name="text">
-        <string>15x15,2byte,MTK</string>
+        <string>20x4,976byte,MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>16x12,1byte,SONY</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>20x4,496byte,MTK</string>
        </property>
       </item>
      </widget>
@@ -10812,7 +10917,17 @@ p, li { white-space: pre-wrap; }
       </item>
       <item>
        <property name="text">
-        <string>15x15,2byte,MTK</string>
+        <string>20x4,976byte,MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>16x12,1byte,SONY</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>20x4,496byte,MTK</string>
        </property>
       </item>
      </widget>
@@ -10837,7 +10952,17 @@ p, li { white-space: pre-wrap; }
       </item>
       <item>
        <property name="text">
-        <string>15x15,2byte,MTK</string>
+        <string>20x4,976byte,MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>16x12,1byte,SONY</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>20x4,496byte,MTK</string>
        </property>
       </item>
      </widget>
@@ -10862,7 +10987,17 @@ p, li { white-space: pre-wrap; }
       </item>
       <item>
        <property name="text">
-        <string>15x15,2byte,MTK</string>
+        <string>20x4,976byte,MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>16x12,1byte,SONY</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>20x4,496byte,MTK</string>
        </property>
       </item>
      </widget>
@@ -11051,7 +11186,7 @@ p, li { white-space: pre-wrap; }
       </rect>
      </property>
      <property name="title">
-      <string>DCC/PD/FV/Focus Map</string>
+      <string>DCC/PD/FV/Focus Map/MTK Proc2</string>
      </property>
      <widget class="QTextEdit" name="DCC12">
       <property name="geometry">
@@ -11327,7 +11462,17 @@ p, li { white-space: pre-wrap; }
       </item>
       <item>
        <property name="text">
-        <string>15x15,2b, MTK</string>
+        <string>8x8,1576, MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>8x8,1004, MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>PD Offset,  QC</string>
        </property>
       </item>
      </widget>
@@ -11352,7 +11497,17 @@ p, li { white-space: pre-wrap; }
       </item>
       <item>
        <property name="text">
-        <string>15x15,2b, MTK</string>
+        <string>8x8,1576, MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>8x8,1004, MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>PD Offset,  QC</string>
        </property>
       </item>
      </widget>
@@ -11377,7 +11532,17 @@ p, li { white-space: pre-wrap; }
       </item>
       <item>
        <property name="text">
-        <string>15x15,2b, MTK</string>
+        <string>8x8,1576, MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>8x8,1004, MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>PD Offset,  QC</string>
        </property>
       </item>
      </widget>
@@ -11402,7 +11567,17 @@ p, li { white-space: pre-wrap; }
       </item>
       <item>
        <property name="text">
-        <string>15x15,2b, MTK</string>
+        <string>8x8,1576, MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>8x8,1004, MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>PD Offset,  QC</string>
        </property>
       </item>
      </widget>
@@ -11427,7 +11602,17 @@ p, li { white-space: pre-wrap; }
       </item>
       <item>
        <property name="text">
-        <string>15x15,2b, MTK</string>
+        <string>8x8,1576, MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>8x8,1004, MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>PD Offset,  QC</string>
        </property>
       </item>
      </widget>
@@ -11442,17 +11627,7 @@ p, li { white-space: pre-wrap; }
       </property>
       <item>
        <property name="text">
-        <string>8x6, 2byte,  QC</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>16x12,2b,SONY</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>15x15,2b, MTK</string>
+        <string>PD Offset,  QC</string>
        </property>
       </item>
      </widget>
@@ -11477,7 +11652,17 @@ p, li { white-space: pre-wrap; }
       </item>
       <item>
        <property name="text">
-        <string>15x15,2b, MTK</string>
+        <string>8x8,1576, MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>8x8,1004, MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>PD Offset,  QC</string>
        </property>
       </item>
      </widget>
@@ -11502,7 +11687,17 @@ p, li { white-space: pre-wrap; }
       </item>
       <item>
        <property name="text">
-        <string>15x15,2b, MTK</string>
+        <string>8x8,1576, MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>8x8,1004, MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>PD Offset,  QC</string>
        </property>
       </item>
      </widget>
@@ -11527,7 +11722,17 @@ p, li { white-space: pre-wrap; }
       </item>
       <item>
        <property name="text">
-        <string>15x15,2b, MTK</string>
+        <string>8x8,1576, MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>8x8,1004, MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>PD Offset,  QC</string>
        </property>
       </item>
      </widget>
@@ -11542,17 +11747,7 @@ p, li { white-space: pre-wrap; }
       </property>
       <item>
        <property name="text">
-        <string>8x6, 2byte,  QC</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>16x12,2b,SONY</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>15x15,2b, MTK</string>
+        <string>PD Offset,  QC</string>
        </property>
       </item>
      </widget>
@@ -11577,7 +11772,17 @@ p, li { white-space: pre-wrap; }
       </item>
       <item>
        <property name="text">
-        <string>15x15,2b, MTK</string>
+        <string>8x8,1576, MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>8x8,1004, MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>PD Offset,  QC</string>
        </property>
       </item>
      </widget>
@@ -11602,7 +11807,17 @@ p, li { white-space: pre-wrap; }
       </item>
       <item>
        <property name="text">
-        <string>15x15,2b, MTK</string>
+        <string>8x8,1576, MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>8x8,1004, MTK</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>PD Offset,  QC</string>
        </property>
       </item>
      </widget>
@@ -11649,6 +11864,22 @@ p, li { white-space: pre-wrap; }
     <attribute name="title">
      <string>Dual</string>
     </attribute>
+    <widget class="QPushButton" name="pushButton_folder_sorting">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>10</y>
+       <width>75</width>
+       <height>30</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Sorting</string>
+     </property>
+     <property name="checkable">
+      <bool>false</bool>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="tab_9">
     <attribute name="title">
@@ -11660,7 +11891,7 @@ p, li { white-space: pre-wrap; }
        <x>0</x>
        <y>0</y>
        <width>441</width>
-       <height>301</height>
+       <height>341</height>
       </rect>
      </property>
      <property name="title">
@@ -12284,14 +12515,74 @@ p, li { white-space: pre-wrap; }
        </rect>
       </property>
      </widget>
+     <widget class="QTextEdit" name="seg201">
+      <property name="geometry">
+       <rect>
+        <x>220</x>
+        <y>300</y>
+        <width>135</width>
+        <height>30</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="seg203">
+      <property name="geometry">
+       <rect>
+        <x>395</x>
+        <y>300</y>
+        <width>40</width>
+        <height>30</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="seg202">
+      <property name="geometry">
+       <rect>
+        <x>355</x>
+        <y>300</y>
+        <width>40</width>
+        <height>30</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="seg191">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>300</y>
+        <width>140</width>
+        <height>30</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="seg192">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>300</y>
+        <width>40</width>
+        <height>30</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="seg193">
+      <property name="geometry">
+       <rect>
+        <x>180</x>
+        <y>300</y>
+        <width>40</width>
+        <height>30</height>
+       </rect>
+      </property>
+     </widget>
     </widget>
     <widget class="QGroupBox" name="groupBox_18">
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>310</y>
+       <y>340</y>
        <width>441</width>
-       <height>211</height>
+       <height>181</height>
       </rect>
      </property>
      <property name="title">
@@ -12544,46 +12835,6 @@ p, li { white-space: pre-wrap; }
        <rect>
         <x>0</x>
         <y>150</y>
-        <width>171</width>
-        <height>30</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QTextEdit" name="history112">
-      <property name="geometry">
-       <rect>
-        <x>170</x>
-        <y>180</y>
-        <width>45</width>
-        <height>30</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QTextEdit" name="history121">
-      <property name="geometry">
-       <rect>
-        <x>220</x>
-        <y>180</y>
-        <width>175</width>
-        <height>30</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QTextEdit" name="history122">
-      <property name="geometry">
-       <rect>
-        <x>395</x>
-        <y>180</y>
-        <width>45</width>
-        <height>30</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QTextEdit" name="history111">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>180</y>
         <width>171</width>
         <height>30</height>
        </rect>
@@ -13231,7 +13482,7 @@ p, li { white-space: pre-wrap; }
       </rect>
      </property>
      <property name="title">
-      <string>Duplicate Data Check</string>
+      <string>Bin Data 8EA 0xFF,16EA 0x00 check,and Duplicate Data Check</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_158">
@@ -14664,14 +14915,15 @@ p, li { white-space: pre-wrap; }
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup_18"/>
-  <buttongroup name="buttonGroup_12"/>
-  <buttongroup name="buttonGroup_3"/>
   <buttongroup name="buttonGroup"/>
   <buttongroup name="buttonGroup_16"/>
   <buttongroup name="buttonGroup_2"/>
-  <buttongroup name="buttonGroup_4"/>
-  <buttongroup name="buttonGroup_13"/>
   <buttongroup name="buttonGroup_15"/>
+  <buttongroup name="buttonGroup_4"/>
+  <buttongroup name="buttonGroup_5"/>
+  <buttongroup name="buttonGroup_13"/>
+  <buttongroup name="buttonGroup_18"/>
+  <buttongroup name="buttonGroup_3"/>
+  <buttongroup name="buttonGroup_12"/>
  </buttongroups>
 </ui>

@@ -61,6 +61,7 @@ private:
 	void on_pushButton_parser_clicked();
 	void on_pushButton_dump_clicked();
 	void on_pushButton_folder_clicked();
+	void on_pushButton_folder_sorting_clicked();
 	void on_pushButton_clear_clicked();
 	void on_pushButton_dump_value_clicked();
 	void on_pushButton_dump_SFR_clicked();
