@@ -912,7 +912,7 @@ int VIVO_QC_AWB_FP_Check(vivo_AWB_Format VIVO_AWB[2]) {
 	}
 
 	for (int i = 0; i < 2; i++)
-		for (int j = 0; j < 3; j++) {
+		for (int j = 0; j < 2; j++) {
 			if (VIVO_AWB[i].Light[j]>2000){
 				if (VIVO_AWB[i].Light[j] < 8000 || VIVO_AWB[i].Light[j]>12000) {
 					ret = ret | 8;

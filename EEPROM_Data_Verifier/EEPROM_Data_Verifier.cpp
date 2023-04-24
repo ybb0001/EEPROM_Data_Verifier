@@ -24,7 +24,7 @@ int DCC[15][17], DCC2[15][17], checkSum_addr[30][4],SR_Spec[2][2], Gmap_Item3[12
 int AF_Data[6][3],SFR_Data[50],LCC_CrossTalk[3],LSC_Item3[10],Gyro_offset_spec[2];
 char chk[2], Fuse_ID[30];  int fuse_ID_Length = 16;
 string global_STR, shift_Item[4], cross_Item[3], akm_cross_Item[3], AF_Item[6][5],AF_info_Item[10][4],SFR_Item[4][4],ZOOM_Item[3][3],Magnification[9];
-string PDAF_info_Item[18][3],Gmap_Item[12][3],PD_Item[14][3], OIS_info_Item[30][4],OIS_data_Item[8][3], AA_Item[18],sData_Item[20][5];
+string PDAF_info_Item[18][3],Gmap_Item[12][3],PD_Item[18][3], OIS_info_Item[30][4],OIS_data_Item[8][3], AA_Item[18],sData_Item[20][6];
 string Fix_Data_Item[10][3];
 int HL = 0, checkDivisor = 0, customer_Data_END = 0, customer_end = 0, first_Pixel = 0, mode = 0, OK=0, NG=0;
 float QSC_Data[4][4][12][16] = { 0 };
@@ -292,6 +292,7 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 	else {
 		ui.sr_hex->setChecked(true);
 	}
+
 	if ((selection & 32) >0) {
 		ui.shift_HL->setChecked(true);
 	}
@@ -347,6 +348,13 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 	else {
 		ui.info_fuse_2->setChecked(false);
 	}
+	if ((selection & 0x4000) >0) {
+		ui.sr100->setChecked(true);
+	}
+	else {
+		
+	}
+
 
 	//////////////////////////////////first_Pixel
 	if (first_Pixel == 0) {
@@ -624,108 +632,126 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 	ui.sData_item13->setText(sData_Item[0][2].c_str());
 	ui.sData_item14->setText(sData_Item[0][3].c_str());
 	ui.sData_item15->setText(sData_Item[0][4].c_str());
+	ui.sData_item16->setText(sData_Item[0][5].c_str());
 
 	ui.sData_item21->setText(sData_Item[1][0].c_str());
 	ui.sData_item22->setText(sData_Item[1][1].c_str());
 	ui.sData_item23->setText(sData_Item[1][2].c_str());
 	ui.sData_item24->setText(sData_Item[1][3].c_str());
 	ui.sData_item25->setText(sData_Item[1][4].c_str());
+	ui.sData_item26->setText(sData_Item[1][5].c_str());
 
 	ui.sData_item31->setText(sData_Item[2][0].c_str());
 	ui.sData_item32->setText(sData_Item[2][1].c_str());
 	ui.sData_item33->setText(sData_Item[2][2].c_str());
 	ui.sData_item34->setText(sData_Item[2][3].c_str());
 	ui.sData_item35->setText(sData_Item[2][4].c_str());
+	ui.sData_item36->setText(sData_Item[2][5].c_str());
 
 	ui.sData_item41->setText(sData_Item[3][0].c_str());
 	ui.sData_item42->setText(sData_Item[3][1].c_str());
 	ui.sData_item43->setText(sData_Item[3][2].c_str());
 	ui.sData_item44->setText(sData_Item[3][3].c_str());
 	ui.sData_item45->setText(sData_Item[3][4].c_str());
+	ui.sData_item46->setText(sData_Item[3][5].c_str());
 
 	ui.sData_item51->setText(sData_Item[4][0].c_str());
 	ui.sData_item52->setText(sData_Item[4][1].c_str());
 	ui.sData_item53->setText(sData_Item[4][2].c_str());
 	ui.sData_item54->setText(sData_Item[4][3].c_str());
 	ui.sData_item55->setText(sData_Item[4][4].c_str());
+	ui.sData_item56->setText(sData_Item[4][5].c_str());
 
 	ui.sData_item61->setText(sData_Item[5][0].c_str());
 	ui.sData_item62->setText(sData_Item[5][1].c_str());
 	ui.sData_item63->setText(sData_Item[5][2].c_str());
 	ui.sData_item64->setText(sData_Item[5][3].c_str());
 	ui.sData_item65->setText(sData_Item[5][4].c_str());
+	ui.sData_item66->setText(sData_Item[5][5].c_str());
 
 	ui.sData_item71->setText(sData_Item[6][0].c_str());
 	ui.sData_item72->setText(sData_Item[6][1].c_str());
 	ui.sData_item73->setText(sData_Item[6][2].c_str());
 	ui.sData_item74->setText(sData_Item[6][3].c_str());
 	ui.sData_item75->setText(sData_Item[6][4].c_str());
+	ui.sData_item76->setText(sData_Item[6][5].c_str());
 
 	ui.sData_item81->setText(sData_Item[7][0].c_str());
 	ui.sData_item82->setText(sData_Item[7][1].c_str());
 	ui.sData_item83->setText(sData_Item[7][2].c_str());
 	ui.sData_item84->setText(sData_Item[7][3].c_str());
 	ui.sData_item85->setText(sData_Item[7][4].c_str());
+	ui.sData_item86->setText(sData_Item[7][5].c_str());
 
 	ui.sData_item91->setText(sData_Item[8][0].c_str());
 	ui.sData_item92->setText(sData_Item[8][1].c_str());
 	ui.sData_item93->setText(sData_Item[8][2].c_str());
 	ui.sData_item94->setText(sData_Item[8][3].c_str());
 	ui.sData_item95->setText(sData_Item[8][4].c_str());
+	ui.sData_item96->setText(sData_Item[8][5].c_str());
 
 	ui.sData_item101->setText(sData_Item[9][0].c_str());
 	ui.sData_item102->setText(sData_Item[9][1].c_str());
 	ui.sData_item103->setText(sData_Item[9][2].c_str());
 	ui.sData_item104->setText(sData_Item[9][3].c_str());
 	ui.sData_item105->setText(sData_Item[9][4].c_str());
+	ui.sData_item106->setText(sData_Item[9][5].c_str());
 
 	ui.sData_item111->setText(sData_Item[10][0].c_str());
 	ui.sData_item112->setText(sData_Item[10][1].c_str());
 	ui.sData_item113->setText(sData_Item[10][2].c_str());
 	ui.sData_item114->setText(sData_Item[10][3].c_str());
 	ui.sData_item115->setText(sData_Item[10][4].c_str());
+	ui.sData_item116->setText(sData_Item[10][5].c_str());
 
 	ui.sData_item121->setText(sData_Item[11][0].c_str());
 	ui.sData_item122->setText(sData_Item[11][1].c_str());
 	ui.sData_item123->setText(sData_Item[11][2].c_str());
 	ui.sData_item124->setText(sData_Item[11][3].c_str());
 	ui.sData_item125->setText(sData_Item[11][4].c_str());
+	ui.sData_item126->setText(sData_Item[11][5].c_str());
 
 	ui.sData_item131->setText(sData_Item[12][0].c_str());
 	ui.sData_item132->setText(sData_Item[12][1].c_str());
 	ui.sData_item133->setText(sData_Item[12][2].c_str());
 	ui.sData_item134->setText(sData_Item[12][3].c_str());
 	ui.sData_item135->setText(sData_Item[12][4].c_str());
+	ui.sData_item136->setText(sData_Item[12][5].c_str());
 
 	ui.sData_item141->setText(sData_Item[13][0].c_str());
 	ui.sData_item142->setText(sData_Item[13][1].c_str());
 	ui.sData_item143->setText(sData_Item[13][2].c_str());
 	ui.sData_item144->setText(sData_Item[13][3].c_str());
 	ui.sData_item145->setText(sData_Item[13][4].c_str());
+	ui.sData_item146->setText(sData_Item[13][5].c_str());
 
 	ui.sData_item151->setText(sData_Item[14][0].c_str());
 	ui.sData_item152->setText(sData_Item[14][1].c_str());
 	ui.sData_item153->setText(sData_Item[14][2].c_str());
 	ui.sData_item154->setText(sData_Item[14][3].c_str());
 	ui.sData_item155->setText(sData_Item[14][4].c_str());
+	ui.sData_item156->setText(sData_Item[14][5].c_str());
 
 	ui.sData_item161->setText(sData_Item[15][0].c_str());
 	ui.sData_item162->setText(sData_Item[15][1].c_str());
 	ui.sData_item163->setText(sData_Item[15][2].c_str());
 	ui.sData_item164->setText(sData_Item[15][3].c_str());
 	ui.sData_item165->setText(sData_Item[15][4].c_str());
+	ui.sData_item166->setText(sData_Item[15][5].c_str());
 
 	ui.sData_item171->setText(sData_Item[16][0].c_str());
 	ui.sData_item172->setText(sData_Item[16][1].c_str());
 	ui.sData_item173->setText(sData_Item[16][2].c_str());
 	ui.sData_item174->setText(sData_Item[16][3].c_str());
 	ui.sData_item175->setText(sData_Item[16][4].c_str());
+	ui.sData_item176->setText(sData_Item[16][5].c_str());
 
 	ui.sData_item181->setText(sData_Item[17][0].c_str());
 	ui.sData_item182->setText(sData_Item[17][1].c_str());
 	ui.sData_item183->setText(sData_Item[17][2].c_str());
 	ui.sData_item184->setText(sData_Item[17][3].c_str());
 	ui.sData_item185->setText(sData_Item[17][4].c_str());
+	ui.sData_item186->setText(sData_Item[17][5].c_str());
 
 	///////////////////OIS_data
 	ui.OIS_data11->setText(OIS_data_Item[0][0].c_str());
@@ -896,14 +922,13 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 	ui.DCC122->setText(PD_Item[11][1].c_str());
 	ui.DCC123->setCurrentIndex(PD_Item3[11]);
 
-	//ui.DCC131->setText(PD_Item[12][0].c_str());
-	//ui.DCC132->setText(PD_Item[12][1].c_str());
-	//ui.DCC133->setText(PD_Item[12][2].c_str());
+	ui.DCC131->setText(PD_Item[12][0].c_str());
+	ui.DCC132->setText(PD_Item[12][1].c_str());
+	ui.DCC133->setCurrentIndex(PD_Item3[12]);
 
-	//ui.DCC141->setText(PD_Item[13][0].c_str());
-	//ui.DCC142->setText(PD_Item[13][1].c_str());
-	//ui.DCC143->setText(PD_Item[13][2].c_str());
-
+	ui.DCC141->setText(PD_Item[13][0].c_str());
+	ui.DCC142->setText(PD_Item[13][1].c_str());
+	ui.DCC143->setCurrentIndex(PD_Item3[13]);
 
 	////////Gmap addr setting
 	ui.Gmap11->setText(Gmap_Item[0][0].c_str());
@@ -1020,14 +1045,6 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 	ui.PDAF_info161->setText(PDAF_info_Item[15][0].c_str());
 	ui.PDAF_info162->setText(PDAF_info_Item[15][1].c_str());
 	ui.PDAF_info163->setText(PDAF_info_Item[15][2].c_str());
-
-	ui.PDAF_info171->setText(PDAF_info_Item[16][0].c_str());
-	ui.PDAF_info172->setText(PDAF_info_Item[16][1].c_str());
-	ui.PDAF_info173->setText(PDAF_info_Item[16][2].c_str());
-
-	ui.PDAF_info181->setText(PDAF_info_Item[17][0].c_str());
-	ui.PDAF_info182->setText(PDAF_info_Item[17][1].c_str());
-	ui.PDAF_info183->setText(PDAF_info_Item[17][2].c_str());
 
 	//////////////////////////////////////////////////////////
 	ui.QR_start->setText(QR_Data.item[0].c_str());
@@ -1709,7 +1726,7 @@ void EEPROM_Data_Verifier::load_EEPROM_Address() {
 		SFR_Item[i][3] = CT2A(lpTexts);
 	}
 
-	for (int i = 0; i < 18; i++) 
+	for (int i = 0; i < 16; i++) 
 		for (int k = 0; k < 3; k++) {
 			string item = "PDAF_info" + to_string(i + 1) + to_string(k + 1);
 			GetPrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
@@ -1735,7 +1752,7 @@ void EEPROM_Data_Verifier::load_EEPROM_Address() {
 			}
 		}
 	
-	for (int i = 0; i < 12; i++)
+	for (int i = 0; i < 14; i++)
 		for (int k = 0; k < 3; k++) {
 			string item = "PD_Item" + to_string(i + 1) + to_string(k + 1);
 			if (k < 2) {
@@ -1776,7 +1793,7 @@ void EEPROM_Data_Verifier::load_EEPROM_Address() {
 	}
 
 	for (int i = 0; i < 18; i++)
-		for (int k = 0; k < 5; k++) {
+		for (int k = 0; k < 6; k++) {
 			string item = "Value_data" + to_string(i + 1) + to_string(k + 1);
 			GetPrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
 			sData_Item[i][k] = CT2A(lpTexts);
@@ -1895,6 +1912,13 @@ void EEPROM_Data_Verifier::load_EEPROM_Address() {
 	shift_Item[2] = CT2A(lpTexts);
 	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("shift_start_2"), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
 	shift_Item[3] = CT2A(lpTexts);
+
+	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("cross1"), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
+	cross_Item[0] = CT2A(lpTexts);
+	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("cross2"), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
+	cross_Item[1] = CT2A(lpTexts);
+	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("cross3"), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
+	cross_Item[2] = CT2A(lpTexts);
 
 	GetPrivateProfileString(TEXT("EEPROM_Address"), TEXT("akm_cross1"), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
 	akm_cross_Item[0] = CT2A(lpTexts);
@@ -2042,6 +2066,12 @@ void EEPROM_Data_Verifier::load_Panel() {
 	}
 	else {
 		selection &= 0xFFFFFFFF - 8192;
+	}
+	if (ui.sr100->isChecked()) {
+		selection |= 0x4000;
+	}
+	else {
+		selection &= 0xFFFFFFFF - 0x4000;
 	}
 
 	///////////////////////////////////DataFormat
@@ -2319,109 +2349,126 @@ void EEPROM_Data_Verifier::load_Panel() {
 	sData_Item[0][2] = string((const char *)ui.sData_item13->document()->toPlainText().toLocal8Bit());
 	sData_Item[0][3] = string((const char *)ui.sData_item14->document()->toPlainText().toLocal8Bit());
 	sData_Item[0][4] = string((const char *)ui.sData_item15->document()->toPlainText().toLocal8Bit());
+	sData_Item[0][5] = string((const char *)ui.sData_item16->document()->toPlainText().toLocal8Bit());
 
 	sData_Item[1][0] = string((const char *)ui.sData_item21->document()->toPlainText().toLocal8Bit());
 	sData_Item[1][1] = string((const char *)ui.sData_item22->document()->toPlainText().toLocal8Bit());
 	sData_Item[1][2] = string((const char *)ui.sData_item23->document()->toPlainText().toLocal8Bit());
 	sData_Item[1][3] = string((const char *)ui.sData_item24->document()->toPlainText().toLocal8Bit());
 	sData_Item[1][4] = string((const char *)ui.sData_item25->document()->toPlainText().toLocal8Bit());
+	sData_Item[1][5] = string((const char *)ui.sData_item26->document()->toPlainText().toLocal8Bit());
 
 	sData_Item[2][0] = string((const char *)ui.sData_item31->document()->toPlainText().toLocal8Bit());
 	sData_Item[2][1] = string((const char *)ui.sData_item32->document()->toPlainText().toLocal8Bit());
 	sData_Item[2][2] = string((const char *)ui.sData_item33->document()->toPlainText().toLocal8Bit());
 	sData_Item[2][3] = string((const char *)ui.sData_item34->document()->toPlainText().toLocal8Bit());
 	sData_Item[2][4] = string((const char *)ui.sData_item35->document()->toPlainText().toLocal8Bit());
+	sData_Item[2][5] = string((const char *)ui.sData_item36->document()->toPlainText().toLocal8Bit());
 
 	sData_Item[3][0] = string((const char *)ui.sData_item41->document()->toPlainText().toLocal8Bit());
 	sData_Item[3][1] = string((const char *)ui.sData_item42->document()->toPlainText().toLocal8Bit());
 	sData_Item[3][2] = string((const char *)ui.sData_item43->document()->toPlainText().toLocal8Bit());
 	sData_Item[3][3] = string((const char *)ui.sData_item44->document()->toPlainText().toLocal8Bit());
 	sData_Item[3][4] = string((const char *)ui.sData_item45->document()->toPlainText().toLocal8Bit());
+	sData_Item[3][5] = string((const char *)ui.sData_item46->document()->toPlainText().toLocal8Bit());
 
 	sData_Item[4][0] = string((const char *)ui.sData_item51->document()->toPlainText().toLocal8Bit());
 	sData_Item[4][1] = string((const char *)ui.sData_item52->document()->toPlainText().toLocal8Bit());
 	sData_Item[4][2] = string((const char *)ui.sData_item53->document()->toPlainText().toLocal8Bit());
 	sData_Item[4][3] = string((const char *)ui.sData_item54->document()->toPlainText().toLocal8Bit());
 	sData_Item[4][4] = string((const char *)ui.sData_item55->document()->toPlainText().toLocal8Bit());
+	sData_Item[4][5] = string((const char *)ui.sData_item56->document()->toPlainText().toLocal8Bit());
 
 	sData_Item[5][0] = string((const char *)ui.sData_item61->document()->toPlainText().toLocal8Bit());
 	sData_Item[5][1] = string((const char *)ui.sData_item62->document()->toPlainText().toLocal8Bit());
 	sData_Item[5][2] = string((const char *)ui.sData_item63->document()->toPlainText().toLocal8Bit());
 	sData_Item[5][3] = string((const char *)ui.sData_item64->document()->toPlainText().toLocal8Bit());
 	sData_Item[5][4] = string((const char *)ui.sData_item65->document()->toPlainText().toLocal8Bit());
+	sData_Item[5][5] = string((const char *)ui.sData_item66->document()->toPlainText().toLocal8Bit());
 
 	sData_Item[6][0] = string((const char *)ui.sData_item71->document()->toPlainText().toLocal8Bit());
 	sData_Item[6][1] = string((const char *)ui.sData_item72->document()->toPlainText().toLocal8Bit());
 	sData_Item[6][2] = string((const char *)ui.sData_item73->document()->toPlainText().toLocal8Bit());
 	sData_Item[6][3] = string((const char *)ui.sData_item74->document()->toPlainText().toLocal8Bit());
 	sData_Item[6][4] = string((const char *)ui.sData_item75->document()->toPlainText().toLocal8Bit());
+	sData_Item[6][5] = string((const char *)ui.sData_item76->document()->toPlainText().toLocal8Bit());
 
 	sData_Item[7][0] = string((const char *)ui.sData_item81->document()->toPlainText().toLocal8Bit());
 	sData_Item[7][1] = string((const char *)ui.sData_item82->document()->toPlainText().toLocal8Bit());
 	sData_Item[7][2] = string((const char *)ui.sData_item83->document()->toPlainText().toLocal8Bit());
 	sData_Item[7][3] = string((const char *)ui.sData_item84->document()->toPlainText().toLocal8Bit());
 	sData_Item[7][4] = string((const char *)ui.sData_item85->document()->toPlainText().toLocal8Bit());
+	sData_Item[7][5] = string((const char *)ui.sData_item86->document()->toPlainText().toLocal8Bit());
 
 	sData_Item[8][0] = string((const char *)ui.sData_item91->document()->toPlainText().toLocal8Bit());
 	sData_Item[8][1] = string((const char *)ui.sData_item92->document()->toPlainText().toLocal8Bit());
 	sData_Item[8][2] = string((const char *)ui.sData_item93->document()->toPlainText().toLocal8Bit());
 	sData_Item[8][3] = string((const char *)ui.sData_item94->document()->toPlainText().toLocal8Bit());
 	sData_Item[8][4] = string((const char *)ui.sData_item95->document()->toPlainText().toLocal8Bit());
+	sData_Item[8][5] = string((const char *)ui.sData_item96->document()->toPlainText().toLocal8Bit());
 
 	sData_Item[9][0] = string((const char *)ui.sData_item101->document()->toPlainText().toLocal8Bit());
 	sData_Item[9][1] = string((const char *)ui.sData_item102->document()->toPlainText().toLocal8Bit());
 	sData_Item[9][2] = string((const char *)ui.sData_item103->document()->toPlainText().toLocal8Bit());
 	sData_Item[9][3] = string((const char *)ui.sData_item104->document()->toPlainText().toLocal8Bit());
 	sData_Item[9][4] = string((const char *)ui.sData_item105->document()->toPlainText().toLocal8Bit());
+	sData_Item[9][5] = string((const char *)ui.sData_item106->document()->toPlainText().toLocal8Bit());
 
 	sData_Item[10][0] = string((const char *)ui.sData_item111->document()->toPlainText().toLocal8Bit());
 	sData_Item[10][1] = string((const char *)ui.sData_item112->document()->toPlainText().toLocal8Bit());
 	sData_Item[10][2] = string((const char *)ui.sData_item113->document()->toPlainText().toLocal8Bit());
 	sData_Item[10][3] = string((const char *)ui.sData_item114->document()->toPlainText().toLocal8Bit());
 	sData_Item[10][4] = string((const char *)ui.sData_item115->document()->toPlainText().toLocal8Bit());
+	sData_Item[10][5] = string((const char *)ui.sData_item116->document()->toPlainText().toLocal8Bit());
 
 	sData_Item[11][0] = string((const char *)ui.sData_item121->document()->toPlainText().toLocal8Bit());
 	sData_Item[11][1] = string((const char *)ui.sData_item122->document()->toPlainText().toLocal8Bit());
 	sData_Item[11][2] = string((const char *)ui.sData_item123->document()->toPlainText().toLocal8Bit());
 	sData_Item[11][3] = string((const char *)ui.sData_item124->document()->toPlainText().toLocal8Bit());
 	sData_Item[11][4] = string((const char *)ui.sData_item125->document()->toPlainText().toLocal8Bit());
+	sData_Item[11][5] = string((const char *)ui.sData_item126->document()->toPlainText().toLocal8Bit());
 
 	sData_Item[12][0] = string((const char *)ui.sData_item131->document()->toPlainText().toLocal8Bit());
 	sData_Item[12][1] = string((const char *)ui.sData_item132->document()->toPlainText().toLocal8Bit());
 	sData_Item[12][2] = string((const char *)ui.sData_item133->document()->toPlainText().toLocal8Bit());
 	sData_Item[12][3] = string((const char *)ui.sData_item134->document()->toPlainText().toLocal8Bit());
 	sData_Item[12][4] = string((const char *)ui.sData_item135->document()->toPlainText().toLocal8Bit());
+	sData_Item[12][5] = string((const char *)ui.sData_item136->document()->toPlainText().toLocal8Bit());
 
 	sData_Item[13][0] = string((const char *)ui.sData_item141->document()->toPlainText().toLocal8Bit());
 	sData_Item[13][1] = string((const char *)ui.sData_item142->document()->toPlainText().toLocal8Bit());
 	sData_Item[13][2] = string((const char *)ui.sData_item143->document()->toPlainText().toLocal8Bit());
 	sData_Item[13][3] = string((const char *)ui.sData_item144->document()->toPlainText().toLocal8Bit());
 	sData_Item[13][4] = string((const char *)ui.sData_item145->document()->toPlainText().toLocal8Bit());
+	sData_Item[13][5] = string((const char *)ui.sData_item146->document()->toPlainText().toLocal8Bit());
 
 	sData_Item[14][0] = string((const char *)ui.sData_item151->document()->toPlainText().toLocal8Bit());
 	sData_Item[14][1] = string((const char *)ui.sData_item152->document()->toPlainText().toLocal8Bit());
 	sData_Item[14][2] = string((const char *)ui.sData_item153->document()->toPlainText().toLocal8Bit());
 	sData_Item[14][3] = string((const char *)ui.sData_item154->document()->toPlainText().toLocal8Bit());
 	sData_Item[14][4] = string((const char *)ui.sData_item155->document()->toPlainText().toLocal8Bit());
+	sData_Item[14][5] = string((const char *)ui.sData_item156->document()->toPlainText().toLocal8Bit());
 
 	sData_Item[15][0] = string((const char *)ui.sData_item161->document()->toPlainText().toLocal8Bit());
 	sData_Item[15][1] = string((const char *)ui.sData_item162->document()->toPlainText().toLocal8Bit());
 	sData_Item[15][2] = string((const char *)ui.sData_item163->document()->toPlainText().toLocal8Bit());
 	sData_Item[15][3] = string((const char *)ui.sData_item164->document()->toPlainText().toLocal8Bit());
 	sData_Item[15][4] = string((const char *)ui.sData_item165->document()->toPlainText().toLocal8Bit());
+	sData_Item[15][5] = string((const char *)ui.sData_item166->document()->toPlainText().toLocal8Bit());
 
 	sData_Item[16][0] = string((const char *)ui.sData_item171->document()->toPlainText().toLocal8Bit());
 	sData_Item[16][1] = string((const char *)ui.sData_item172->document()->toPlainText().toLocal8Bit());
 	sData_Item[16][2] = string((const char *)ui.sData_item173->document()->toPlainText().toLocal8Bit());
 	sData_Item[16][3] = string((const char *)ui.sData_item174->document()->toPlainText().toLocal8Bit());
 	sData_Item[16][4] = string((const char *)ui.sData_item175->document()->toPlainText().toLocal8Bit());
+	sData_Item[16][5] = string((const char *)ui.sData_item176->document()->toPlainText().toLocal8Bit());
 
 	sData_Item[17][0] = string((const char *)ui.sData_item181->document()->toPlainText().toLocal8Bit());
 	sData_Item[17][1] = string((const char *)ui.sData_item182->document()->toPlainText().toLocal8Bit());
 	sData_Item[17][2] = string((const char *)ui.sData_item183->document()->toPlainText().toLocal8Bit());
 	sData_Item[17][3] = string((const char *)ui.sData_item184->document()->toPlainText().toLocal8Bit());
 	sData_Item[17][4] = string((const char *)ui.sData_item185->document()->toPlainText().toLocal8Bit());
-
+	sData_Item[17][5] = string((const char *)ui.sData_item186->document()->toPlainText().toLocal8Bit());
 
 	///////////////////OIS_data
 	OIS_data_Item[0][0] = string((const char *)ui.OIS_data11->document()->toPlainText().toLocal8Bit());
@@ -2647,12 +2694,14 @@ void EEPROM_Data_Verifier::load_Panel() {
 	PD_Item[11][1] = string((const char *)ui.DCC122->document()->toPlainText().toLocal8Bit());
 //	PD_Item[11][2] = string((const char *)ui.DCC123->document()->toPlainText().toLocal8Bit());
 	PD_Item3[11] = ui.DCC123->currentIndex();
-	//PD_Item[12][0] = string((const char *)ui.DCC131->document()->toPlainText().toLocal8Bit());
-	//PD_Item[12][1] = string((const char *)ui.DCC132->document()->toPlainText().toLocal8Bit());
-	//PD_Item[12][2] = string((const char *)ui.DCC133->document()->toPlainText().toLocal8Bit());
-	//PD_Item[13][0] = string((const char *)ui.DCC141->document()->toPlainText().toLocal8Bit());
-	//PD_Item[13][1] = string((const char *)ui.DCC142->document()->toPlainText().toLocal8Bit());
-	//PD_Item[13][2] = string((const char *)ui.DCC143->document()->toPlainText().toLocal8Bit());
+	PD_Item[12][0] = string((const char *)ui.DCC131->document()->toPlainText().toLocal8Bit());
+	PD_Item[12][1] = string((const char *)ui.DCC132->document()->toPlainText().toLocal8Bit());
+//	PD_Item[12][2] = string((const char *)ui.DCC133->document()->toPlainText().toLocal8Bit());
+	PD_Item3[12] = ui.DCC133->currentIndex();
+	PD_Item[13][0] = string((const char *)ui.DCC141->document()->toPlainText().toLocal8Bit());
+	PD_Item[13][1] = string((const char *)ui.DCC142->document()->toPlainText().toLocal8Bit());
+//	PD_Item[13][2] = string((const char *)ui.DCC143->document()->toPlainText().toLocal8Bit());
+	PD_Item3[13] = ui.DCC143->currentIndex();
 
 	///////////////////GMap_data
 	Gmap_Item[0][0] = string((const char *)ui.Gmap11->document()->toPlainText().toLocal8Bit());
@@ -2770,14 +2819,6 @@ void EEPROM_Data_Verifier::load_Panel() {
 	PDAF_info_Item[15][1] = string((const char *)ui.PDAF_info162->document()->toPlainText().toLocal8Bit());
 	PDAF_info_Item[15][2] = string((const char *)ui.PDAF_info163->document()->toPlainText().toLocal8Bit());
 
-	PDAF_info_Item[16][0] = string((const char *)ui.PDAF_info171->document()->toPlainText().toLocal8Bit());
-	PDAF_info_Item[16][1] = string((const char *)ui.PDAF_info172->document()->toPlainText().toLocal8Bit());
-	PDAF_info_Item[16][2] = string((const char *)ui.PDAF_info173->document()->toPlainText().toLocal8Bit());
-
-	PDAF_info_Item[17][0] = string((const char *)ui.PDAF_info181->document()->toPlainText().toLocal8Bit());
-	PDAF_info_Item[17][1] = string((const char *)ui.PDAF_info182->document()->toPlainText().toLocal8Bit());
-	PDAF_info_Item[17][2] = string((const char *)ui.PDAF_info183->document()->toPlainText().toLocal8Bit());
-
 	///////////////////  INFO data
 	QR_Data.item[0] = string((const char *)ui.QR_start->document()->toPlainText().toLocal8Bit());
 	QR_Data.item[1] = string((const char *)ui.QR_end->document()->toPlainText().toLocal8Bit());
@@ -2841,6 +2882,10 @@ void EEPROM_Data_Verifier::load_Panel() {
 	shift_Item[1] = string((const char *)ui.shift_byte->document()->toPlainText().toLocal8Bit());
 	shift_Item[2] = string((const char *)ui.shift_point->document()->toPlainText().toLocal8Bit());
 	shift_Item[3] = string((const char *)ui.shift_start_2->document()->toPlainText().toLocal8Bit());
+
+	cross_Item[0] = string((const char *)ui.cross1->document()->toPlainText().toLocal8Bit());
+	cross_Item[1] = string((const char *)ui.cross2->document()->toPlainText().toLocal8Bit());
+	cross_Item[2] = string((const char *)ui.cross3->document()->toPlainText().toLocal8Bit());
 
 	akm_cross_Item[0] = string((const char *)ui.akm_cross1->document()->toPlainText().toLocal8Bit());
 	akm_cross_Item[1] = string((const char *)ui.akm_cross2->document()->toPlainText().toLocal8Bit());
@@ -3383,7 +3428,7 @@ void EEPROM_Data_Verifier::save_EEPROM_Address() {
 		SFR_Item[i][2] = CT2A(lpTexts);
 	}
 
-	for (int i = 0; i < 18; i++)
+	for (int i = 0; i < 16; i++)
 		for (int k = 0; k < 3; k++) {
 			string item = "PDAF_info" + to_string(i + 1) + to_string(k + 1);
 			WritePrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), CA2CT(PDAF_info_Item[i][k].c_str()), CA2CT(EEPROM_Map.c_str()));
@@ -3405,7 +3450,7 @@ void EEPROM_Data_Verifier::save_EEPROM_Address() {
 			}
 		}
 
-	for (int i = 0; i < 12; i++)
+	for (int i = 0; i < 14; i++)
 		for (int k = 0; k < 3; k++) {
 			string item = "PD_Item" + to_string(i + 1) + to_string(k + 1);
 			if (k < 2) {
@@ -3439,11 +3484,10 @@ void EEPROM_Data_Verifier::save_EEPROM_Address() {
 	}
 
 	for (int i = 0; i < 18; i++)
-		for (int k = 0; k < 5; k++) {
+		for (int k = 0; k < 6; k++) {
 			string item = "Value_data" + to_string(i + 1) + to_string(k + 1);
 			WritePrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), CA2CT(sData_Item[i][k].c_str()), CA2CT(EEPROM_Map.c_str()));
 		}
-
 
 	for (int i = 0; i < 20; i++)
 		for (int k = 0; k < 3; k++) {
@@ -3680,6 +3724,17 @@ float SR_Out_Hex(int e, bool H_L) {
 	return tmp;
 }
 
+float SR_Out100(int e, bool H_L) {
+
+	float tmp = 0;
+	if (H_L) {
+		tmp = (DecData[e] * 256 + DecData[e + 1]) / 100.0;
+	}
+	else {
+		tmp = (DecData[e + 1] * 256 + DecData[e]) / 100.0;
+	}
+	return tmp;
+}
 
 int int_Out(int e, bool H_L) {
 
@@ -4408,6 +4463,7 @@ int EEPROM_Data_Verifier::cross_Parse() {
 
 	int e = unstringHex2int(cross_Item[0]);
 	int e1 = unstringHex2int(cross_Item[1]),ret=0;
+	int Point = unstringHex2int(cross_Item[2]);
 	string str;
 
 	if (e > 0) {
@@ -4415,281 +4471,311 @@ int EEPROM_Data_Verifier::cross_Parse() {
 		if (mode == 0)
 			fout << "--------OIS Corss talk Data-------" << endl;
 
-		int X = unstringHex2int(cross_Item[0]);
-		int Y = unstringHex2int(cross_Item[1]);
-		if (HL&1 == 0) {
-			for (int i = 0; i < 7; i++) {
+		if (ui.Cross_AW->isChecked()) {
+			for (int i = 0; i < Point; i++) {			
+				float cData = flt_Out(e, 0);
+				e += 4;
+				if (mode == 0)
+					fout << "Linearity_X_K" << i <<":	"<< cData << endl;
 
-				Cross_DW_before[0][i] = short_Out(e, 0);
-				if (mode == 0) {
-					fout << "Crosstalk position_XX" << to_string(i) << ":	";
-					fout << Cross_DW_before[0][i] << endl;
-					str = "XonXmove" + to_string(i);
-					map_Push(e, str + " _L", " ", info1);
-					map_Push(e + 1, str + " _H", " ", info1);
-				}
-				e += 2;
 			}
-			if (mode == 0)
-				fout << endl;
-			for (int i = 0; i < 7; i++) {
-				if (mode == 0) {
-					Cross_DW_before[1][i] = short_Out(e, 0);
-					fout << "Crosstalk position_YX" << to_string(i) << ":	";
-					fout << Cross_DW_before[1][i] << endl;
-					str = "YonXmove" + to_string(i);
-					map_Push(e, str + " _L", " ", info1);
-					map_Push(e + 1, str + " _H", " ", info1);
-				}
-				e += 2;
+			for (int i = 0; i < Point; i++) {
+				float cData = flt_Out(e, 0);
+				e += 4;
+				if (mode == 0)
+					fout << "Linearity_X_B" << i << ":	" << cData << endl;
 			}
-			if (mode == 0)
-				fout << endl;
-			for (int i = 7; i < 14; i++) {
-				Cross_DW_before[0][i] = short_Out(e, 0);
-				if (mode == 0) {
-					fout << "Crosstalk position_XY" << to_string(i) << ":	";
-					fout << Cross_DW_before[0][i] << endl;
-					str = "XonYmove" + to_string(i);
-					map_Push(e, str + " _L", " ", info1);
-					map_Push(e + 1, str + " _H", " ", info1);
-				}
-				e += 2;
-			}
-			if (mode == 0)
-				fout << endl;
-			for (int i = 0; i < 7; i++) {
-				Cross_DW_before[1][i] = short_Out(e, 0);
-				if (mode == 0) {
-					fout << "Crosstalk position_YY" << to_string(i) << ":	";
-					fout << Cross_DW_before[1][i] << endl;
-					str = "YonYmove" + to_string(i);
-					map_Push(e, str + " _L", " ", info1);
-					map_Push(e + 1, str + " _H", " ", info1);
-				}
-				e += 2;
-			}
-			if (mode == 0)
-				fout << endl;
-			for (int i = 0; i < 7; i++) {
-				Cross_DW_after[0][i] = short_Out(e1, 0);
-				if (mode == 0) {
-					fout << "Crosstalk position_XX" << to_string(i) << ":	";
-					fout << Cross_DW_after[0][i] << endl;
-					str = "XonXmove" + to_string(i);
-					map_Push(e1, str + " _L", " ", info1);
-					map_Push(e1 + 1, str + " _H", " ", info1);
-				}
-				e1 += 2;
-			}
-			if (mode == 0)
-				fout << endl;
-			for (int i = 0; i < 7; i++) {
-				Cross_DW_after[1][i] = short_Out(e1, 0);
-				if (mode == 0) {
-					fout << "Crosstalk position_YX" << to_string(i) << ":	";
-					fout << Cross_DW_after[1][i] << endl;
-					str = "XonXmove" + to_string(i);
-					map_Push(e1, str + " _L", " ", info1);
-					map_Push(e1 + 1, str + " _H", " ", info1);
-				}
-				e1 += 2;
-			}
-			if (mode == 0)
-				fout << endl;
-			for (int i = 7; i < 14; i++) {
-				Cross_DW_after[0][i] = short_Out(e1, 0);
-				if (mode == 0) {
-					fout << "Crosstalk position_XY" << to_string(i) << ":	";
-					fout << Cross_DW_after[0][i] << endl;
-					str = "XonXmove" + to_string(i);
-					map_Push(e1, str + " _L", " ", info1);
-					map_Push(e1 + 1, str + " _H", " ", info1);
-				}
-				e1 += 2;
-			}
-			if (mode == 0)
-				fout << endl;
-			for (int i = 7; i < 14; i++) {
-				Cross_DW_after[1][i] = short_Out(e1, 0);
-				if (mode == 0) {
-					fout << "Crosstalk position_YY" << to_string(i) << ":	";
-					fout << Cross_DW_after[1][i] << endl;
-					str = "XonXmove" + to_string(i);
-					map_Push(e1, str + " _L", " ", info1);
-					map_Push(e1 + 1, str + " _H", " ", info1);
-				}
-				e1 += 2;
-			}
-			if (mode == 0)
-				fout << endl;
+			for (int i = 0; i < Point; i++) {
+				float cData = flt_Out(e1, 0);
+				e1 += 4;
+				if (mode == 0)
+					fout << "Linearity_Y_K" << i << ":	" << cData << endl;
 
+			}
+			for (int i = 0; i < Point; i++) {
+				float cData = flt_Out(e1, 0);
+				e1 += 4;
+				if (mode == 0)
+					fout << "Linearity_Y_B" << i << ":	" << cData << endl;
+			}
 		}
 		else {
-			for (int i = 0; i < 7; i++) {
-				Cross_DW_before[0][i] = short_Out(e, 1);
-				if (mode == 0) {
-					fout << "Crosstalk position_XX" << to_string(i) << ":	";
-					fout << Cross_DW_before[0][i] << endl;
-					str = "XonXmove" + to_string(i);
-					map_Push(e, str + " _H", " ", info1);
-					map_Push(e + 1, str + " _L", " ", info1);
-				}
-				e += 2;
-			}
-			if (mode == 0)
-				fout << endl;
-			for (int i = 0; i < 7; i++) {
-				Cross_DW_before[1][i] = short_Out(e, 1);
-				if (mode == 0) {
-					fout << "Crosstalk position_YX" << to_string(i) << ":	";
-					fout << Cross_DW_before[1][i] << endl;
-					str = "YonXmove" + to_string(i);
-					map_Push(e, str + " _H", " ", info1);
-					map_Push(e + 1, str + " _L", " ", info1);
-				}
-				e += 2;
-			}
+			//int X = unstringHex2int(cross_Item[0]);
+			//int Y = unstringHex2int(cross_Item[1]);
+			if (HL & 1 == 0) {
+				for (int i = 0; i < Point; i++) {
 
-			if (mode == 0)
-				fout << endl;
-			for (int i = 7; i < 14; i++) {
-				Cross_DW_before[0][i] = short_Out(e, 1);
-				if (mode == 0) {
-					fout << "Crosstalk position_XY" << to_string(i) << ":	";
-					fout << Cross_DW_before[0][i] << endl;
-					str = "XonYmove" + to_string(i);
-					map_Push(e, str + " _H", " ", info1);
-					map_Push(e + 1, str + " _L", " ", info1);
+					Cross_DW_before[0][i] = short_Out(e, 0);
+					if (mode == 0) {
+						fout << "Crosstalk position_XX" << to_string(i) << ":	";
+						fout << Cross_DW_before[0][i] << endl;
+						str = "XonXmove" + to_string(i);
+						map_Push(e, str + " _L", " ", info1);
+						map_Push(e + 1, str + " _H", " ", info1);
+					}
+					e += 2;
 				}
-				e += 2;
-			}
-			if (mode == 0)
-				fout << endl;
-			for (int i = 7; i < 14; i++) {
-				Cross_DW_before[1][i] = short_Out(e, 1);
-				if (mode == 0) {
-					fout << "Crosstalk position_YY" << to_string(i) << ":	";
-					fout << Cross_DW_before[1][i] << endl;
-					str = "Cross_DW_before" + to_string(i);
-					map_Push(e, str + " _H", " ", info1);
-					map_Push(e + 1, str + " _L", " ", info1);
+				if (mode == 0)
+					fout << endl;
+				for (int i = 0; i < Point; i++) {
+					if (mode == 0) {
+						Cross_DW_before[1][i] = short_Out(e, 0);
+						fout << "Crosstalk position_YX" << to_string(i) << ":	";
+						fout << Cross_DW_before[1][i] << endl;
+						str = "YonXmove" + to_string(i);
+						map_Push(e, str + " _L", " ", info1);
+						map_Push(e + 1, str + " _H", " ", info1);
+					}
+					e += 2;
 				}
-				e += 2;
-			}
-			if (mode == 0)
-				fout << endl;
+				if (mode == 0)
+					fout << endl;
+				for (int i = 7; i < Point * 2; i++) {
+					Cross_DW_before[0][i] = short_Out(e, 0);
+					if (mode == 0) {
+						fout << "Crosstalk position_XY" << to_string(i) << ":	";
+						fout << Cross_DW_before[0][i] << endl;
+						str = "XonYmove" + to_string(i);
+						map_Push(e, str + " _L", " ", info1);
+						map_Push(e + 1, str + " _H", " ", info1);
+					}
+					e += 2;
+				}
+				if (mode == 0)
+					fout << endl;
+				for (int i = 0; i < Point; i++) {
+					Cross_DW_before[1][i] = short_Out(e, 0);
+					if (mode == 0) {
+						fout << "Crosstalk position_YY" << to_string(i) << ":	";
+						fout << Cross_DW_before[1][i] << endl;
+						str = "YonYmove" + to_string(i);
+						map_Push(e, str + " _L", " ", info1);
+						map_Push(e + 1, str + " _H", " ", info1);
+					}
+					e += 2;
+				}
+				if (mode == 0)
+					fout << endl;
+				for (int i = 0; i < Point; i++) {
+					Cross_DW_after[0][i] = short_Out(e1, 0);
+					if (mode == 0) {
+						fout << "Crosstalk position_XX" << to_string(i) << ":	";
+						fout << Cross_DW_after[0][i] << endl;
+						str = "XonXmove" + to_string(i);
+						map_Push(e1, str + " _L", " ", info1);
+						map_Push(e1 + 1, str + " _H", " ", info1);
+					}
+					e1 += 2;
+				}
+				if (mode == 0)
+					fout << endl;
+				for (int i = 0; i < Point; i++) {
+					Cross_DW_after[1][i] = short_Out(e1, 0);
+					if (mode == 0) {
+						fout << "Crosstalk position_YX" << to_string(i) << ":	";
+						fout << Cross_DW_after[1][i] << endl;
+						str = "XonXmove" + to_string(i);
+						map_Push(e1, str + " _L", " ", info1);
+						map_Push(e1 + 1, str + " _H", " ", info1);
+					}
+					e1 += 2;
+				}
+				if (mode == 0)
+					fout << endl;
+				for (int i = 7; i < Point * 2; i++) {
+					Cross_DW_after[0][i] = short_Out(e1, 0);
+					if (mode == 0) {
+						fout << "Crosstalk position_XY" << to_string(i) << ":	";
+						fout << Cross_DW_after[0][i] << endl;
+						str = "XonXmove" + to_string(i);
+						map_Push(e1, str + " _L", " ", info1);
+						map_Push(e1 + 1, str + " _H", " ", info1);
+					}
+					e1 += 2;
+				}
+				if (mode == 0)
+					fout << endl;
+				for (int i = 7; i < Point * 2; i++) {
+					Cross_DW_after[1][i] = short_Out(e1, 0);
+					if (mode == 0) {
+						fout << "Crosstalk position_YY" << to_string(i) << ":	";
+						fout << Cross_DW_after[1][i] << endl;
+						str = "XonXmove" + to_string(i);
+						map_Push(e1, str + " _L", " ", info1);
+						map_Push(e1 + 1, str + " _H", " ", info1);
+					}
+					e1 += 2;
+				}
+				if (mode == 0)
+					fout << endl;
 
-			for (int i = 0; i < 7; i++) {
-				Cross_DW_after[0][i] = short_Out(e1, 1);
-				if (mode == 0) {
-					fout << "Crosstalk position_XX" << to_string(i) << ":	";
-					fout << Cross_DW_after[0][i] << endl;
-					str = "XonXmove" + to_string(i);
-					map_Push(e1, str + " _H", " ", info1);
-					map_Push(e1 + 1, str + " _L", " ", info1);
-				}
-				e1 += 2;
-			}
-			if (mode == 0)
-				fout << endl;
-			for (int i = 0; i < 7; i++) {
-				Cross_DW_after[1][i] = short_Out(e1, 1);
-				if (mode == 0) {
-					fout << "Crosstalk position_YX" << to_string(i) << ":	";
-					fout << Cross_DW_after[1][i] << endl;
-					str = "XonXmove" + to_string(i);
-					map_Push(e1, str + " _H", " ", info1);
-					map_Push(e1 + 1, str + " _L", " ", info1);
-				}
-				e1 += 2;
-			}
-			if (mode == 0)
-				fout << endl;
-			for (int i = 7; i < 14; i++) {
-				Cross_DW_after[0][i] = short_Out(e1, 1);
-				if (mode == 0) {
-					fout << "Crosstalk position_XY" << to_string(i) << ":	";
-					fout << Cross_DW_after[0][i] << endl;
-					str = "XonXmove" + to_string(i);
-					map_Push(e1, str + " _H", " ", info1);
-					map_Push(e1 + 1, str + " _L", " ", info1);
-				}
-				e1 += 2;
-			}
-			if (mode == 0)
-				fout << endl;
-			for (int i = 7; i < 14; i++) {
-				Cross_DW_after[1][i] = short_Out(e1, 1);
-				if (mode == 0) {
-					fout << "Crosstalk position_YY" << to_string(i) << ":	";
-					fout << Cross_DW_after[1][i] << endl;
-					str = "XonXmove" + to_string(i);
-					map_Push(e1, str + " _H", " ", info1);
-					map_Push(e1 + 1, str + " _L", " ", info1);
-				}
-				e1 += 2;
-			}
-			if (mode == 0)
-				fout << endl;
-		}
-		if (mode == 0)
-			fout << endl;
-
-		for (int i = 0; i < 13; i++) {
-
-			if (i < 6) {
-				int x_diff = abs(Cross_DW_after[0][i] - Cross_DW_after[0][i + 1]);
-				if (x_diff < LCC_CrossTalk[1] || x_diff>LCC_CrossTalk[2]) {
-					ret |= 1;
-				}
-				int y_diff = abs(Cross_DW_after[1][i] - Cross_DW_after[1][i + 1]);
-				if (y_diff > LCC_CrossTalk[0]) {
-					ret |= 1;
-				}
-				x_diff = abs(Cross_DW_before[0][i] - Cross_DW_before[0][i + 1]);
-				if (x_diff < LCC_CrossTalk[1] || x_diff>LCC_CrossTalk[2]) {
-					ret |= 2;
-				}
-				y_diff = abs(Cross_DW_before[1][i] - Cross_DW_before[1][i + 1]);
-				if (y_diff > LCC_CrossTalk[0]) {
-					ret |= 2;
-				}
-			}
-			else if (i > 6) {
-
-				int x_diff = abs(Cross_DW_after[0][i] - Cross_DW_after[0][i + 1]);
-				if (x_diff > LCC_CrossTalk[0]) {
-					ret |= 1;
-				}
-				int y_diff = abs(Cross_DW_after[1][i] - Cross_DW_after[1][i + 1]);
-				if (y_diff < LCC_CrossTalk[1] || y_diff>LCC_CrossTalk[2]) {
-					ret |= 1;
-				}
-				x_diff = abs(Cross_DW_before[0][i] - Cross_DW_before[0][i + 1]);
-				if (x_diff > LCC_CrossTalk[0]) {
-					ret |= 2;
-				}
-				y_diff = abs(Cross_DW_before[1][i] - Cross_DW_before[1][i + 1]);
-				if (y_diff<LCC_CrossTalk[1] || y_diff>LCC_CrossTalk[2]) {
-					ret |= 2;
-				}
-			}
-		}
-
-		if (ret > 0) {
-			if (mode == 0) {
-				ui.log->insertPlainText("Crosstalk Data FP NG!\n");
 			}
 			else {
-				for (int i = 0; i < 13; i++) {
-					fout << "Crosstalk Cal Point_" << i << " X, Y=	" << Cross_DW_before[0][i] << "	,	" << Cross_DW_before[1][i] << endl;
+				for (int i = 0; i < Point; i++) {
+					Cross_DW_before[0][i] = short_Out(e, 1);
+					if (mode == 0) {
+						fout << "Crosstalk position_XX" << to_string(i) << ":	";
+						fout << Cross_DW_before[0][i] << endl;
+						str = "XonXmove" + to_string(i);
+						map_Push(e, str + " _H", " ", info1);
+						map_Push(e + 1, str + " _L", " ", info1);
+					}
+					e += 2;
 				}
-				fout << endl;
-				for (int i = 0; i < 13; i++) {
-					fout << "Crosstalk verify Point_" << i << " X, Y=	" << Cross_DW_after[0][i] << "	,	" << Cross_DW_before[1][i] << endl;
+				if (mode == 0)
+					fout << endl;
+				for (int i = 0; i < Point; i++) {
+					Cross_DW_before[1][i] = short_Out(e, 1);
+					if (mode == 0) {
+						fout << "Crosstalk position_YX" << to_string(i) << ":	";
+						fout << Cross_DW_before[1][i] << endl;
+						str = "YonXmove" + to_string(i);
+						map_Push(e, str + " _H", " ", info1);
+						map_Push(e + 1, str + " _L", " ", info1);
+					}
+					e += 2;
 				}
 
+				if (mode == 0)
+					fout << endl;
+				for (int i = 7; i < Point * 2; i++) {
+					Cross_DW_before[0][i] = short_Out(e, 1);
+					if (mode == 0) {
+						fout << "Crosstalk position_XY" << to_string(i) << ":	";
+						fout << Cross_DW_before[0][i] << endl;
+						str = "XonYmove" + to_string(i);
+						map_Push(e, str + " _H", " ", info1);
+						map_Push(e + 1, str + " _L", " ", info1);
+					}
+					e += 2;
+				}
+				if (mode == 0)
+					fout << endl;
+				for (int i = 7; i < Point * 2; i++) {
+					Cross_DW_before[1][i] = short_Out(e, 1);
+					if (mode == 0) {
+						fout << "Crosstalk position_YY" << to_string(i) << ":	";
+						fout << Cross_DW_before[1][i] << endl;
+						str = "Cross_DW_before" + to_string(i);
+						map_Push(e, str + " _H", " ", info1);
+						map_Push(e + 1, str + " _L", " ", info1);
+					}
+					e += 2;
+				}
+				if (mode == 0)
+					fout << endl;
+
+				for (int i = 0; i < Point * 2; i++) {
+					Cross_DW_after[0][i] = short_Out(e1, 1);
+					if (mode == 0) {
+						fout << "Crosstalk position_XX" << to_string(i) << ":	";
+						fout << Cross_DW_after[0][i] << endl;
+						str = "XonXmove" + to_string(i);
+						map_Push(e1, str + " _H", " ", info1);
+						map_Push(e1 + 1, str + " _L", " ", info1);
+					}
+					e1 += 2;
+				}
+				if (mode == 0)
+					fout << endl;
+				for (int i = 0; i < Point; i++) {
+					Cross_DW_after[1][i] = short_Out(e1, 1);
+					if (mode == 0) {
+						fout << "Crosstalk position_YX" << to_string(i) << ":	";
+						fout << Cross_DW_after[1][i] << endl;
+						str = "XonXmove" + to_string(i);
+						map_Push(e1, str + " _H", " ", info1);
+						map_Push(e1 + 1, str + " _L", " ", info1);
+					}
+					e1 += 2;
+				}
+				if (mode == 0)
+					fout << endl;
+				for (int i = 7; i < Point * 2; i++) {
+					Cross_DW_after[0][i] = short_Out(e1, 1);
+					if (mode == 0) {
+						fout << "Crosstalk position_XY" << to_string(i) << ":	";
+						fout << Cross_DW_after[0][i] << endl;
+						str = "XonXmove" + to_string(i);
+						map_Push(e1, str + " _H", " ", info1);
+						map_Push(e1 + 1, str + " _L", " ", info1);
+					}
+					e1 += 2;
+				}
+				if (mode == 0)
+					fout << endl;
+				for (int i = 7; i < Point * 2; i++) {
+					Cross_DW_after[1][i] = short_Out(e1, 1);
+					if (mode == 0) {
+						fout << "Crosstalk position_YY" << to_string(i) << ":	";
+						fout << Cross_DW_after[1][i] << endl;
+						str = "XonXmove" + to_string(i);
+						map_Push(e1, str + " _H", " ", info1);
+						map_Push(e1 + 1, str + " _L", " ", info1);
+					}
+					e1 += 2;
+				}
+				if (mode == 0)
+					fout << endl;
+			}
+			if (mode == 0)
+				fout << endl;
+
+			for (int i = 0; i < 13; i++) {
+
+				if (i < 6) {
+					int x_diff = abs(Cross_DW_after[0][i] - Cross_DW_after[0][i + 1]);
+					if (x_diff < LCC_CrossTalk[1] || x_diff>LCC_CrossTalk[2]) {
+						ret |= 1;
+					}
+					int y_diff = abs(Cross_DW_after[1][i] - Cross_DW_after[1][i + 1]);
+					if (y_diff > LCC_CrossTalk[0]) {
+						ret |= 1;
+					}
+					x_diff = abs(Cross_DW_before[0][i] - Cross_DW_before[0][i + 1]);
+					if (x_diff < LCC_CrossTalk[1] || x_diff>LCC_CrossTalk[2]) {
+						ret |= 2;
+					}
+					y_diff = abs(Cross_DW_before[1][i] - Cross_DW_before[1][i + 1]);
+					if (y_diff > LCC_CrossTalk[0]) {
+						ret |= 2;
+					}
+				}
+				else if (i > 6) {
+
+					int x_diff = abs(Cross_DW_after[0][i] - Cross_DW_after[0][i + 1]);
+					if (x_diff > LCC_CrossTalk[0]) {
+						ret |= 1;
+					}
+					int y_diff = abs(Cross_DW_after[1][i] - Cross_DW_after[1][i + 1]);
+					if (y_diff < LCC_CrossTalk[1] || y_diff>LCC_CrossTalk[2]) {
+						ret |= 1;
+					}
+					x_diff = abs(Cross_DW_before[0][i] - Cross_DW_before[0][i + 1]);
+					if (x_diff > LCC_CrossTalk[0]) {
+						ret |= 2;
+					}
+					y_diff = abs(Cross_DW_before[1][i] - Cross_DW_before[1][i + 1]);
+					if (y_diff<LCC_CrossTalk[1] || y_diff>LCC_CrossTalk[2]) {
+						ret |= 2;
+					}
+				}
+			}
+
+			if (ret > 0) {
+				if (mode == 0) {
+					ui.log->insertPlainText("Crosstalk Data FP NG!\n");
+				}
+				else {
+					for (int i = 0; i < 13; i++) {
+						fout << "Crosstalk Cal Point_" << i << " X, Y=	" << Cross_DW_before[0][i] << "	,	" << Cross_DW_before[1][i] << endl;
+					}
+					fout << endl;
+					for (int i = 0; i < 13; i++) {
+						fout << "Crosstalk verify Point_" << i << " X, Y=	" << Cross_DW_after[0][i] << "	,	" << Cross_DW_before[1][i] << endl;
+					}
+
+				}
 			}
 		}
 	}else {
@@ -4731,7 +4817,7 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 
 	int ret = 0;
 	unsigned int spec;
-	for (int i = 0; i < 18; i++)
+	for (int i = 0; i < 16; i++)
 		if (PDAF_info_Item[i][1].length()>1) {
 
 			if (i == 0 && mode == 0) {
@@ -5037,7 +5123,7 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 			}
 		}
 	
-	for (int k = 0; k < 12; k++)
+	for (int k = 0; k < 14; k++)
 		if (PD_Item[k][1].length()>1) {
 			unsigned int e = marking_Hex2int(PD_Item[k][1], PD_Item[k][0], "", QC_DCC);
 			int W = 8, H = 6, offset = 0;
@@ -5195,7 +5281,7 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 			}
 
 			/////// QC PD offset
-			if (PD_Item3[k] == 4 || k>10) {
+			if (PD_Item3[k] == 4 || k>9) {
 				float F_DCC[6][8] = { 0 };
 				for (int i = 0; i <H; i++)
 					for (int j = 0; j < W; j++) {
@@ -5807,13 +5893,13 @@ void EEPROM_Data_Verifier::VIVO_AWB_Parse(int group) {
 	VIVO_AWB_Data[group].Light[1] = DecData[H] * 256 + DecData[H + 1];
 	fout << item << " :	" << VIVO_AWB_Data[group].Light[1] << endl;
 
-	item = color + "Light Source Gr/Gb";
-	GetPrivateProfileString(TEXT("VIVO"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
-	s = CT2A(lpTexts);
-	H = marking_Hex2int(s, item + " Calibration H", "", VIVO_AWB);
-	map_Push(H + 1, item + "Calibration L", "", VIVO_AWB);
-	VIVO_AWB_Data[group].Light[2] = DecData[H] * 256 + DecData[H + 1];
-	fout << item << " :	" << VIVO_AWB_Data[group].Light[2] << endl;
+	//item = color + "Light Source Gr/Gb";
+	//GetPrivateProfileString(TEXT("VIVO"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	//s = CT2A(lpTexts);
+	//H = marking_Hex2int(s, item + " Calibration H", "", VIVO_AWB);
+	//map_Push(H + 1, item + "Calibration L", "", VIVO_AWB);
+	//VIVO_AWB_Data[group].Light[2] = DecData[H] * 256 + DecData[H + 1];
+	//fout << item << " :	" << VIVO_AWB_Data[group].Light[2] << endl;
 
 	fout << endl;
 
@@ -6291,7 +6377,7 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 						map_Push(e + 2, OIS_info_Item[i][0] + "[1]_L", "", OIS_Hall);
 						map_Push(e + 3, OIS_info_Item[i][0] + "[0]_L", "", OIS_Hall);
 					}
-					if (c == 0||c==-1) {
+					if (c== 0xFFFFFFFFFF) {
 						ret |= 1;
 						string s = OIS_info_Item[i][0] + " Data in 0x" + OIS_info_Item[i][1] + " value NG!" + '\n';
 						ui.log->insertPlainText(s.c_str());
@@ -6428,6 +6514,9 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 				else
 					SR[i - 4] = SR_Out_Hex(e, !SR_HL);
 
+				if (ui.sr100->isChecked())
+					SR[i - 4] = SR_Out100(e, !SR_HL);
+
 				if (short_Out(e, OIS_HL) == -1)
 					ret |= 4;
 
@@ -6450,12 +6539,6 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 				value_Hash[i + 66].hash[ushort_Out(e, 1) % 1009]++;
 			}	
 		}
-	}
-
-	if (OIS_data_Item[0][1].length()>1&& OIS_data_Item[1][1].length()>1 &&offset[0]==0&& offset[1] == 0) {
-		string s = OIS_data_Item[0][0] + OIS_data_Item[1][0] + " both=0 NG!" + '\n';
-		ui.log->insertPlainText(s.c_str());
-		ret |= 1;
 	}
 
 	fout << endl;
@@ -6726,9 +6809,13 @@ int EEPROM_Data_Verifier::info_Data_Parse() {
 							value_empty = false;
 							break;
 						}
-					}
-					if (value_empty)
+					} 
+					if (value_empty) {
 						ret |= 32;
+						string log_out = AF_info_Item[i][0];
+						log_out += " Value NG!\n";
+						ui.log->insertPlainText(log_out.c_str());
+					}
 				}
 		}
 	}
@@ -6739,13 +6826,13 @@ int EEPROM_Data_Verifier::info_Data_Parse() {
 
 int EEPROM_Data_Verifier::value_Data_Parse() {
 
-	int tret = 0;
+	int tret = 0,mHL=0;
 	fout << "-------Value Data Spec Check------" << endl;
 	/////////////////////////Value Data check
 	for (int i = 0; i < 18; i++)
 		if (sData_Item[i][1].length()>1&& sData_Item[i][2].length()>1) {
 			unsigned int addr = unstringHex2int(sData_Item[i][1]);
-
+			mHL = unstringHex2int(sData_Item[i][5]);
 			value_Hash[i + 20].item_name = sData_Item[i][0];
 
 			int d_type = get_Data_Type(i),s=0;
@@ -6765,42 +6852,42 @@ int EEPROM_Data_Verifier::value_Data_Parse() {
 				d = DecData[addr];
 				break;
 			case 3:
-				d = short_Out(addr, HL&1);
+				d = short_Out(addr, mHL&1);
 				break;
 			case 4:
-				d = short_Out(addr,HL&1);
+				d = short_Out(addr,mHL&1);
 				if (d < 0)
 					d += 65536;
 				break;
 			case 5:
-				d = int_Out(addr,HL&1);
+				d = int_Out(addr,mHL&1);
 				break;
 			case 6:
-				d = int_Out(addr, HL&1);		
+				d = int_Out(addr, mHL&1);		
 				if (d < 0)
 					d += 0x100000000;
 				break;
 			case 7:
-				dd = short_Out(addr, HL&1);
+				dd = short_Out(addr, mHL&1);
 				if (dd < 0)
 					dd += 0x10000;
 				value_Hash[i + 20].hash[((int)dd)% 1009] ++;
 				dd /= 0x8000;
 				break;
 			case 8:
-				dd = int_Out(addr, HL&1);
+				dd = int_Out(addr, mHL&1);
 				if (dd < 0)
 					dd += 0x100000000;
 				dd /= 0x80000000;
 				break;
 			case 9:
-				dd = flt_Out(addr, HL&1);
+				dd = flt_Out(addr, mHL&1);
 				break;
 			case 10:
-				dd = dbl_Out(addr, HL&1);
+				dd = dbl_Out(addr, mHL&1);
 				break;
 			case 11:
-				dd = dbl_Out(addr, HL&1);
+				dd = dbl_Out(addr, mHL&1);
 				break;
 			default:
 				break;
@@ -6810,11 +6897,11 @@ int EEPROM_Data_Verifier::value_Data_Parse() {
 			if (d_type > 100) {
 				int Q_length = d_type - 100;
 				if (Q_length > 15) {
-					dd = uint_Out(addr, HL&1)*1.0 / (1<< Q_length);
+					dd = uint_Out(addr, mHL&1)*1.0 / (1<< Q_length);
 					data_len = 4;
 				}
 				else if(Q_length < 16) {
-					dd = ushort_Out(addr, HL & 1)*1.0 / (1 << Q_length);
+					dd = ushort_Out(addr, mHL & 1)*1.0 / (1 << Q_length);
  					data_len = 2;
 				}
 			}
@@ -8164,7 +8251,6 @@ void EEPROM_Data_Verifier::on_pushButton_dump_SFR_clicked()
 	QString filename = QFileDialog::getOpenFileName(this, tr("Open TXT"), "", tr("EEPROM File(*.txt)"));
 	QTextCodec *code = QTextCodec::codecForName("gb18030");
 	std::string name = code->fromUnicode(filename).data();
-
 	ifstream in(name);
 
 	if (!in.is_open())
@@ -8175,8 +8261,10 @@ void EEPROM_Data_Verifier::on_pushButton_dump_SFR_clicked()
 		return;
 	}
 
-	fout.open(".\\MemoryParseData.txt");
+	int mac = unstringHex2int(AF_Item[0][1]);
+	int inf = unstringHex2int(AF_Item[1][1]);
 
+	fout.open(".\\MemoryParseData.txt");
 	while (getline(in, src))
 	{
 		int now = 0, e = 0;
@@ -8227,7 +8315,6 @@ void EEPROM_Data_Verifier::on_pushButton_dump_SFR_clicked()
 				}
 
 				fout << time_fuse;
-
 				for (int i = 0; i < 4; i++) {
 					if (SFR_Item[i][2].length()>1) {
 						int d = unstringHex2int(SFR_Item[i][2]);
@@ -8254,6 +8341,7 @@ void EEPROM_Data_Verifier::on_pushButton_dump_SFR_clicked()
 						}				
 					}
 				}
+				fout << DecData[inf] * 256 + DecData[inf + 1]<< "	"<<DecData[mac] * 256 + DecData[mac + 1] << "	";
 				fout << endl;
 				break;
 			}
@@ -8435,10 +8523,6 @@ void EEPROM_Data_Verifier::on_pushButton_folder_sorting_clicked() {
 		}
 
 		dump_Check();
-
-
-
-
 
 		fin.close();
 		++iVector;
