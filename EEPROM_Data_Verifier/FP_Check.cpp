@@ -185,7 +185,7 @@ void load_Spec(int x) {
 }
 
 
-int QC_LSC_FP_Check(int LSC[15][17][4],int type) {
+int QC_LSC_FP_Check(int LSC[25][33][4],int type) {
 	int ret = 0;
 	string color[4] = { "LSC Table1 ","LSC Table2 ","LSC Table3 ","LSC Table4 " };
 
@@ -283,10 +283,18 @@ int QC_LSC_FP_Check(int LSC[15][17][4],int type) {
 			FP_log << "LSC Gb/Gr Diff check NG!" << endl;
 		}
 	}
+	else if (type == 4) {
+		W = 33, H = 25, C = 4095;
+
+	}
+	else if (type == 5) {
+		C = 4095;
+
+	}
 
 
 	///////////////  LSC balance Check
-	float LSC_AVG[15][17][4] = { 0 };
+	float LSC_AVG[25][33][4] = { 0 };
 	for (int k = 0; k < T; k++)
 		for (int i = 1; i < H-1; i++)
 			for (int j = 1; j < W-1; j++) {
@@ -338,7 +346,6 @@ int QC_LSC_FP_Check(int LSC[15][17][4],int type) {
 					if(cnt>1)
 						ret = ret | 8;
 				}
-
 			}
 
 	if ((ret & 8) > 0 || log_type == 0) {
@@ -858,7 +865,9 @@ int VIVO_QC_AWB_FP_Check(vivo_AWB_Format VIVO_AWB[2]) {
 
 	/////////////awb_distance check
 	for (int i = 0; i < 2; i++) {
-		float d = sqrt(pow(AWB_diff[i][0], 2) + pow(AWB_diff[i][1], 2));
+		//float d = sqrt(pow(AWB_diff[i][0], 2) + pow(AWB_diff[i][1], 2));
+		float d = sqrt(pow(VIVO_AWB[i].AWB[0] / 1024.0 - golden_Spec[i][0] / 1000.0, 2) + pow(VIVO_AWB[i].AWB[1] / 1024.0 - golden_Spec[i][1] / 1000.0, 2));
+
 		if (d > awb_distance[i] / 100.0) {
 			FP_log << color[i] << " awb_distance=: " << d << endl;
 			ret = ret | 1;
@@ -952,7 +961,9 @@ int SONY_AWB_FP_Check(vivo_AWB_Format VIVO_AWB[2]) {
 
 	/////////////awb_distance check
 	for (int i = 0; i < 2; i++) {
-		float d = sqrt(pow(AWB_diff[i][0], 2) + pow(AWB_diff[i][1], 2));
+	//	float d = sqrt(pow(AWB_diff[i][0], 2) + pow(AWB_diff[i][1], 2));
+		float d = sqrt(pow(VIVO_AWB[i].AWB[0] / 1024.0 - golden_Spec[i][0] / 1000.0, 2) + pow(VIVO_AWB[i].AWB[1] / 1024.0 - golden_Spec[i][1] / 1000.0, 2));
+
 		if (d > awb_distance[i] / 100.0) {
 			FP_log << color[i] << " SONY awb_distance=: " << d << endl;
 			ret = ret | 1;
@@ -1008,7 +1019,7 @@ int XiaoMi_QC_AWB_FP_Check(vivo_AWB_Format AWB) {
 			return 4096;
 	}
 	/////////////awb_distance check
-	float d = sqrt(pow(AWB_diff[0], 2) + pow(AWB_diff[1], 2));
+	float d = sqrt(pow(AWB.AWB[0]/1024.0 - golden_Spec[0]/1000.0, 2) + pow(AWB.AWB[1] / 1024.0 - golden_Spec[1] / 1000.0, 2));
 	if (d > awb_distance[0] / 100.0) {
 		FP_log << "QC 5100K awb_distance=: " << d << endl;
 		ret = ret | 1;
@@ -1155,10 +1166,10 @@ int GainMap_FP_Check(int PDgainLeft[30][30], int PDgainRight[30][30], int type) 
 		LR_diff_spec = MTK_Proc1_LR_Diff;
 		TB_diff_spec = MTK_Proc1_TB_Diff;
 	}
-	if (PDgainLeft[H/2][W/2] == 0xFFFF || PDgainLeft[6][8] == 0) {
+	if (PDgainLeft[H/2][W/2] == 0xFFFF || PDgainLeft[H / 2][W / 2] == 0) {
 		ret |= 8;
 	}
-	if (PDgainRight[H/2][W/2] == 0xFFFF || PDgainRight[6][8] == 0) {
+	if (PDgainRight[H/2][W/2] == 0xFFFF || PDgainRight[H / 2][W / 2] == 0) {
 		ret |= 8;
 	}
 
@@ -1195,7 +1206,6 @@ int GainMap_FP_Check(int PDgainLeft[30][30], int PDgainRight[30][30], int type) 
 			int x = max(PDgainLeft[i + 1][j], PDgainLeft[i][j]);
 			float y = abs(PDgainLeft[i + 1][j] - PDgainLeft[i][j]);
 			if (y / x > diff_spec) {
-				ret |= 1;
 				ret |= 1;
 				FP_log << "Left_Gainmap [" << i << "," << j << "]= " << y / x << " V_Diff Check NG!" << endl;
 			}
@@ -1305,7 +1315,7 @@ int QSC_Check(float QSC_Data[4][4][12][16]) {
 			for (int i = 0; i < 12; i++) {
 				for (int j = 0; j < 16; j++)
 				{
-					if (QSC_Data[a][k][i][j]> QSC_Max || QSC_Min < QSC_Min){
+					if (QSC_Data[a][k][i][j]> QSC_Max || QSC_Data[a][k][i][j] < QSC_Min){
 						ret |= 1;
 						FP_log << "QSC CH" << a << "_" << k << "Tablep [" << i << "," << j << "]=	" << QSC_Data[a][k][i][j] << "	NG!" << endl;
 					}

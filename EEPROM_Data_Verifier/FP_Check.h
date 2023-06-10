@@ -12,7 +12,7 @@ typedef struct {
 	bool HL = true;
 }vivo_AWB_Format;
 
-int QC_LSC_FP_Check(int LSC[15][17][4],int type);
+int QC_LSC_FP_Check(int LSC[25][33][4],int type);
 int MTK_LSC_FP_Check(int LSC[15][15][4],int first_pixel);
 void set_ini_Path(const std::string& str);
 int OPPO_QC_AWB_FP_Check(oppo_AWB_Format OPPO_AWB[3]);

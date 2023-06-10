@@ -170,6 +170,8 @@ public:
     QRadioButton *sony;
     QRadioButton *SAMSUNG;
     QRadioButton *CS_other;
+    QRadioButton *radioButton_CRC32;
+    QRadioButton *radioButton_FFFF;
     QTextEdit *checksum213;
     QTextEdit *checksum335;
     QTextEdit *checksum231;
@@ -275,7 +277,6 @@ public:
     QLabel *label_130;
     QLabel *label_142;
     QLabel *label_143;
-    QCheckBox *checkBox_ZOOM;
     QLabel *label_69;
     QLabel *label_173;
     QLabel *label_174;
@@ -609,6 +610,7 @@ public:
     QLabel *label_107;
     QLabel *label_108;
     QLabel *label_109;
+    QCheckBox *checkBox_ZOOM;
     QGroupBox *groupBox_8;
     QTextEdit *SFR_name1;
     QTextEdit *SFR_start1;
@@ -1005,6 +1007,9 @@ public:
     QTextEdit *DCC131;
     QTextEdit *DCC132;
     QTextEdit *DCC141;
+    QRadioButton *PD_Offset_HL;
+    QRadioButton *PD_Offset_LH;
+    QCheckBox *PD_offet_new;
     QWidget *tab_8;
     QPushButton *pushButton_folder_sorting;
     QWidget *tab_9;
@@ -1294,16 +1299,17 @@ public:
     QCheckBox *full_log;
     QLabel *label_8;
     QPushButton *pushButton_folder;
-    QButtonGroup *buttonGroup_2;
-    QButtonGroup *buttonGroup_15;
-    QButtonGroup *buttonGroup_16;
-    QButtonGroup *buttonGroup_4;
-    QButtonGroup *buttonGroup_6;
-    QButtonGroup *buttonGroup;
-    QButtonGroup *buttonGroup_12;
-    QButtonGroup *buttonGroup_13;
-    QButtonGroup *buttonGroup_18;
     QButtonGroup *buttonGroup_5;
+    QButtonGroup *buttonGroup_6;
+    QButtonGroup *buttonGroup_4;
+    QButtonGroup *buttonGroup_2;
+    QButtonGroup *buttonGroup_18;
+    QButtonGroup *buttonGroup_12;
+    QButtonGroup *buttonGroup;
+    QButtonGroup *buttonGroup_16;
+    QButtonGroup *buttonGroup_15;
+    QButtonGroup *buttonGroup_7;
+    QButtonGroup *buttonGroup_13;
     QButtonGroup *buttonGroup_3;
 
     void setupUi(QWidget *EEPROM_Data_VerifierClass)
@@ -1587,12 +1593,12 @@ public:
         buttonGroup_12->setObjectName(QStringLiteral("buttonGroup_12"));
         buttonGroup_12->addButton(radioButton_255);
         radioButton_255->setObjectName(QStringLiteral("radioButton_255"));
-        radioButton_255->setGeometry(QRect(10, 25, 60, 16));
+        radioButton_255->setGeometry(QRect(10, 25, 41, 16));
         radioButton_255->setChecked(true);
         radioButton_255_1 = new QRadioButton(tab_2);
         buttonGroup_12->addButton(radioButton_255_1);
         radioButton_255_1->setObjectName(QStringLiteral("radioButton_255_1"));
-        radioButton_255_1->setGeometry(QRect(10, 45, 60, 16));
+        radioButton_255_1->setGeometry(QRect(10, 45, 51, 16));
         radioButton_256 = new QRadioButton(tab_2);
         buttonGroup_12->addButton(radioButton_256);
         radioButton_256->setObjectName(QStringLiteral("radioButton_256"));
@@ -1602,10 +1608,10 @@ public:
         flag_valid->setGeometry(QRect(405, 15, 30, 25));
         label_2 = new QLabel(tab_2);
         label_2->setObjectName(QStringLiteral("label_2"));
-        label_2->setGeometry(QRect(342, 19, 60, 20));
+        label_2->setGeometry(QRect(360, 19, 41, 20));
         label_5 = new QLabel(tab_2);
         label_5->setObjectName(QStringLiteral("label_5"));
-        label_5->setGeometry(QRect(342, 39, 60, 20));
+        label_5->setGeometry(QRect(360, 39, 41, 20));
         flag_invalid = new QTextEdit(tab_2);
         flag_invalid->setObjectName(QStringLiteral("flag_invalid"));
         flag_invalid->setGeometry(QRect(405, 35, 30, 25));
@@ -1689,79 +1695,87 @@ public:
         buttonGroup_13->setObjectName(QStringLiteral("buttonGroup_13"));
         buttonGroup_13->addButton(radioButton_HL);
         radioButton_HL->setObjectName(QStringLiteral("radioButton_HL"));
-        radioButton_HL->setGeometry(QRect(80, 25, 41, 16));
+        radioButton_HL->setGeometry(QRect(125, 45, 41, 16));
         radioButton_HL->setChecked(true);
         radioButton_LH = new QRadioButton(tab_2);
         buttonGroup_13->addButton(radioButton_LH);
         radioButton_LH->setObjectName(QStringLiteral("radioButton_LH"));
-        radioButton_LH->setGeometry(QRect(80, 45, 41, 16));
+        radioButton_LH->setGeometry(QRect(125, 65, 41, 16));
         label_23 = new QLabel(tab_2);
         label_23->setObjectName(QStringLiteral("label_23"));
-        label_23->setGeometry(QRect(342, 62, 60, 16));
+        label_23->setGeometry(QRect(360, 62, 41, 16));
         noData = new QTextEdit(tab_2);
         noData->setObjectName(QStringLiteral("noData"));
         noData->setGeometry(QRect(405, 55, 30, 25));
         groupBox_2 = new QGroupBox(tab_2);
         groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
-        groupBox_2->setGeometry(QRect(0, 5, 331, 81));
+        groupBox_2->setGeometry(QRect(0, 5, 361, 81));
         oppo = new QRadioButton(groupBox_2);
         buttonGroup_3 = new QButtonGroup(EEPROM_Data_VerifierClass);
         buttonGroup_3->setObjectName(QStringLiteral("buttonGroup_3"));
         buttonGroup_3->addButton(oppo);
         oppo->setObjectName(QStringLiteral("oppo"));
-        oppo->setGeometry(QRect(120, 20, 45, 16));
+        oppo->setGeometry(QRect(165, 20, 45, 16));
         oppo->setChecked(true);
         vivo = new QRadioButton(groupBox_2);
         buttonGroup_3->addButton(vivo);
         vivo->setObjectName(QStringLiteral("vivo"));
-        vivo->setGeometry(QRect(120, 40, 45, 16));
+        vivo->setGeometry(QRect(165, 40, 45, 16));
         xiaomi = new QRadioButton(groupBox_2);
         buttonGroup_3->addButton(xiaomi);
         xiaomi->setObjectName(QStringLiteral("xiaomi"));
-        xiaomi->setGeometry(QRect(120, 60, 45, 16));
+        xiaomi->setGeometry(QRect(165, 60, 45, 16));
         R = new QRadioButton(groupBox_2);
         buttonGroup = new QButtonGroup(EEPROM_Data_VerifierClass);
         buttonGroup->setObjectName(QStringLiteral("buttonGroup"));
         buttonGroup->addButton(R);
         R->setObjectName(QStringLiteral("R"));
-        R->setGeometry(QRect(290, 15, 35, 16));
+        R->setGeometry(QRect(320, 15, 35, 16));
         Gr = new QRadioButton(groupBox_2);
         buttonGroup->addButton(Gr);
         Gr->setObjectName(QStringLiteral("Gr"));
-        Gr->setGeometry(QRect(290, 30, 35, 16));
+        Gr->setGeometry(QRect(320, 30, 35, 16));
         Gr->setChecked(true);
         Gb = new QRadioButton(groupBox_2);
         buttonGroup->addButton(Gb);
         Gb->setObjectName(QStringLiteral("Gb"));
-        Gb->setGeometry(QRect(290, 45, 35, 16));
+        Gb->setGeometry(QRect(320, 45, 35, 16));
         B = new QRadioButton(groupBox_2);
         buttonGroup->addButton(B);
         B->setObjectName(QStringLiteral("B"));
-        B->setGeometry(QRect(290, 60, 35, 16));
+        B->setGeometry(QRect(320, 60, 35, 16));
         QC = new QCheckBox(groupBox_2);
         QC->setObjectName(QStringLiteral("QC"));
-        QC->setGeometry(QRect(245, 20, 31, 16));
+        QC->setGeometry(QRect(280, 20, 31, 16));
         MTK = new QCheckBox(groupBox_2);
         MTK->setObjectName(QStringLiteral("MTK"));
-        MTK->setGeometry(QRect(245, 40, 38, 16));
+        MTK->setGeometry(QRect(280, 40, 38, 16));
         LSI = new QCheckBox(groupBox_2);
         LSI->setObjectName(QStringLiteral("LSI"));
-        LSI->setGeometry(QRect(245, 60, 36, 16));
+        LSI->setGeometry(QRect(280, 60, 36, 16));
         sony = new QRadioButton(groupBox_2);
         buttonGroup_3->addButton(sony);
         sony->setObjectName(QStringLiteral("sony"));
-        sony->setGeometry(QRect(170, 20, 45, 16));
+        sony->setGeometry(QRect(215, 20, 45, 16));
         sony->setChecked(false);
         SAMSUNG = new QRadioButton(groupBox_2);
         buttonGroup_3->addButton(SAMSUNG);
         SAMSUNG->setObjectName(QStringLiteral("SAMSUNG"));
-        SAMSUNG->setGeometry(QRect(170, 40, 61, 16));
+        SAMSUNG->setGeometry(QRect(215, 40, 61, 16));
         SAMSUNG->setChecked(false);
         CS_other = new QRadioButton(groupBox_2);
         buttonGroup_3->addButton(CS_other);
         CS_other->setObjectName(QStringLiteral("CS_other"));
-        CS_other->setGeometry(QRect(170, 60, 61, 16));
+        CS_other->setGeometry(QRect(215, 60, 61, 16));
         CS_other->setChecked(false);
+        radioButton_CRC32 = new QRadioButton(groupBox_2);
+        buttonGroup_12->addButton(radioButton_CRC32);
+        radioButton_CRC32->setObjectName(QStringLiteral("radioButton_CRC32"));
+        radioButton_CRC32->setGeometry(QRect(60, 40, 51, 16));
+        radioButton_FFFF = new QRadioButton(groupBox_2);
+        buttonGroup_12->addButton(radioButton_FFFF);
+        radioButton_FFFF->setObjectName(QStringLiteral("radioButton_FFFF"));
+        radioButton_FFFF->setGeometry(QRect(60, 20, 61, 16));
         checksum213 = new QTextEdit(tab_2);
         checksum213->setObjectName(QStringLiteral("checksum213"));
         checksum213->setGeometry(QRect(320, 105, 40, 28));
@@ -2077,9 +2091,6 @@ public:
         label_143 = new QLabel(tab_2);
         label_143->setObjectName(QStringLiteral("label_143"));
         label_143->setGeometry(QRect(370, 85, 31, 16));
-        checkBox_ZOOM = new QCheckBox(tab_2);
-        checkBox_ZOOM->setObjectName(QStringLiteral("checkBox_ZOOM"));
-        checkBox_ZOOM->setGeometry(QRect(70, 65, 51, 16));
         label_69 = new QLabel(tab_2);
         label_69->setObjectName(QStringLiteral("label_69"));
         label_69->setGeometry(QRect(70, 660, 31, 16));
@@ -2327,7 +2338,6 @@ public:
         label_130->raise();
         label_142->raise();
         label_143->raise();
-        checkBox_ZOOM->raise();
         label_69->raise();
         label_173->raise();
         label_174->raise();
@@ -3537,6 +3547,9 @@ public:
         label_109 = new QLabel(groupBox_7);
         label_109->setObjectName(QStringLiteral("label_109"));
         label_109->setGeometry(QRect(10, 125, 31, 21));
+        checkBox_ZOOM = new QCheckBox(groupBox_7);
+        checkBox_ZOOM->setObjectName(QStringLiteral("checkBox_ZOOM"));
+        checkBox_ZOOM->setGeometry(QRect(270, 10, 51, 16));
         groupBox_8 = new QGroupBox(tab_5);
         groupBox_8->setObjectName(QStringLiteral("groupBox_8"));
         groupBox_8->setGeometry(QRect(0, 550, 441, 161));
@@ -4744,7 +4757,7 @@ public:
         DCC111->setGeometry(QRect(0, 190, 130, 30));
         label_45 = new QLabel(groupBox_11);
         label_45->setObjectName(QStringLiteral("label_45"));
-        label_45->setGeometry(QRect(10, 170, 181, 16));
+        label_45->setGeometry(QRect(10, 170, 141, 16));
         DCC13 = new QComboBox(groupBox_11);
         DCC13->setObjectName(QStringLiteral("DCC13"));
         DCC13->setGeometry(QRect(105, 20, 115, 30));
@@ -4799,6 +4812,20 @@ public:
         DCC141 = new QTextEdit(groupBox_11);
         DCC141->setObjectName(QStringLiteral("DCC141"));
         DCC141->setGeometry(QRect(220, 220, 130, 30));
+        PD_Offset_HL = new QRadioButton(groupBox_11);
+        buttonGroup_7 = new QButtonGroup(EEPROM_Data_VerifierClass);
+        buttonGroup_7->setObjectName(QStringLiteral("buttonGroup_7"));
+        buttonGroup_7->addButton(PD_Offset_HL);
+        PD_Offset_HL->setObjectName(QStringLiteral("PD_Offset_HL"));
+        PD_Offset_HL->setGeometry(QRect(170, 172, 41, 16));
+        PD_Offset_HL->setChecked(true);
+        PD_Offset_LH = new QRadioButton(groupBox_11);
+        buttonGroup_7->addButton(PD_Offset_LH);
+        PD_Offset_LH->setObjectName(QStringLiteral("PD_Offset_LH"));
+        PD_Offset_LH->setGeometry(QRect(210, 172, 41, 16));
+        PD_offet_new = new QCheckBox(groupBox_11);
+        PD_offet_new->setObjectName(QStringLiteral("PD_offet_new"));
+        PD_offet_new->setGeometry(QRect(290, 173, 61, 16));
         DCC143->raise();
         DCC43->raise();
         DCC103->raise();
@@ -4842,6 +4869,9 @@ public:
         DCC131->raise();
         DCC132->raise();
         DCC141->raise();
+        PD_Offset_HL->raise();
+        PD_Offset_LH->raise();
+        PD_offet_new->raise();
         tabWidget->addTab(tab_7, QString());
         tab_8 = new QWidget();
         tab_8->setObjectName(QStringLiteral("tab_8"));
@@ -5893,7 +5923,7 @@ public:
 
     void retranslateUi(QWidget *EEPROM_Data_VerifierClass)
     {
-        EEPROM_Data_VerifierClass->setWindowTitle(QApplication::translate("EEPROM_Data_VerifierClass", "EEPROM_Verifier_20230414", Q_NULLPTR));
+        EEPROM_Data_VerifierClass->setWindowTitle(QApplication::translate("EEPROM_Data_VerifierClass", "EEPROM_Verifier_20230610", Q_NULLPTR));
         label->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Input Memory Data", Q_NULLPTR));
         label_3->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Result & logs", Q_NULLPTR));
         pushButton_golden->setText(QApplication::translate("EEPROM_Data_VerifierClass", "AWB Golden", Q_NULLPTR));
@@ -5907,8 +5937,8 @@ public:
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:'SimSun'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">01</p></body></html>", Q_NULLPTR));
-        label_2->setText(QApplication::translate("EEPROM_Data_VerifierClass", "OK Flag:0x", Q_NULLPTR));
-        label_5->setText(QApplication::translate("EEPROM_Data_VerifierClass", "NG Flag:0x", Q_NULLPTR));
+        label_2->setText(QApplication::translate("EEPROM_Data_VerifierClass", "OK Flag", Q_NULLPTR));
+        label_5->setText(QApplication::translate("EEPROM_Data_VerifierClass", "NG Flag", Q_NULLPTR));
         flag_invalid->setHtml(QApplication::translate("EEPROM_Data_VerifierClass", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -5921,7 +5951,7 @@ public:
         label_22->setText(QApplication::translate("EEPROM_Data_VerifierClass", "ChkSum", Q_NULLPTR));
         radioButton_HL->setText(QApplication::translate("EEPROM_Data_VerifierClass", "HL", Q_NULLPTR));
         radioButton_LH->setText(QApplication::translate("EEPROM_Data_VerifierClass", "LH", Q_NULLPTR));
-        label_23->setText(QApplication::translate("EEPROM_Data_VerifierClass", "No Data 0x", Q_NULLPTR));
+        label_23->setText(QApplication::translate("EEPROM_Data_VerifierClass", "No Data", Q_NULLPTR));
         noData->setHtml(QApplication::translate("EEPROM_Data_VerifierClass", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -5941,12 +5971,13 @@ public:
         sony->setText(QApplication::translate("EEPROM_Data_VerifierClass", "SONY", Q_NULLPTR));
         SAMSUNG->setText(QApplication::translate("EEPROM_Data_VerifierClass", "SAMSUNG", Q_NULLPTR));
         CS_other->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Other", Q_NULLPTR));
+        radioButton_CRC32->setText(QApplication::translate("EEPROM_Data_VerifierClass", "CRC32", Q_NULLPTR));
+        radioButton_FFFF->setText(QApplication::translate("EEPROM_Data_VerifierClass", "%FFFF+1", Q_NULLPTR));
         label_91->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Flag", Q_NULLPTR));
         label_129->setText(QApplication::translate("EEPROM_Data_VerifierClass", "ChkSum", Q_NULLPTR));
         label_130->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Item", Q_NULLPTR));
         label_142->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Start", Q_NULLPTR));
         label_143->setText(QApplication::translate("EEPROM_Data_VerifierClass", "End", Q_NULLPTR));
-        checkBox_ZOOM->setText(QApplication::translate("EEPROM_Data_VerifierClass", "ZOOM", Q_NULLPTR));
         label_69->setText(QApplication::translate("EEPROM_Data_VerifierClass", "End", Q_NULLPTR));
         label_173->setText(QApplication::translate("EEPROM_Data_VerifierClass", "ChkSum", Q_NULLPTR));
         label_174->setText(QApplication::translate("EEPROM_Data_VerifierClass", "TotalStart", Q_NULLPTR));
@@ -6001,6 +6032,8 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,1.25b,QC", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "13x9, Q7, SONY", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "15x15, 2b, MTK", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "33x25, 2b, LSI", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b, 221x4", Q_NULLPTR)
         );
         lsc34->clear();
         lsc34->insertItems(0, QStringList()
@@ -6008,6 +6041,8 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,1.25b,QC", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "13x9, Q7, SONY", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "15x15, 2b, MTK", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "33x25, 2b, LSI", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b, 221x4", Q_NULLPTR)
         );
         lsc54->clear();
         lsc54->insertItems(0, QStringList()
@@ -6015,6 +6050,8 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,1.25b,QC", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "13x9, Q7, SONY", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "15x15, 2b, MTK", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "33x25, 2b, LSI", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b, 221x4", Q_NULLPTR)
         );
         lsc74->clear();
         lsc74->insertItems(0, QStringList()
@@ -6022,6 +6059,8 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,1.25b,QC", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "13x9, Q7, SONY", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "15x15, 2b, MTK", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "33x25, 2b, LSI", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b, 221x4", Q_NULLPTR)
         );
         lsc64->clear();
         lsc64->insertItems(0, QStringList()
@@ -6029,6 +6068,8 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,1.25b,QC", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "13x9, Q7, SONY", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "15x15, 2b, MTK", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "33x25, 2b, LSI", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b, 221x4", Q_NULLPTR)
         );
         lsc44->clear();
         lsc44->insertItems(0, QStringList()
@@ -6036,6 +6077,8 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,1.25b,QC", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "13x9, Q7, SONY", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "15x15, 2b, MTK", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "33x25, 2b, LSI", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b, 221x4", Q_NULLPTR)
         );
         lsc24->clear();
         lsc24->insertItems(0, QStringList()
@@ -6043,6 +6086,8 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,1.25b,QC", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "13x9, Q7, SONY", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "15x15, 2b, MTK", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "33x25, 2b, LSI", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b, 221x4", Q_NULLPTR)
         );
         lsc84->clear();
         lsc84->insertItems(0, QStringList()
@@ -6050,6 +6095,8 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,1.25b,QC", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "13x9, Q7, SONY", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "15x15, 2b, MTK", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "33x25, 2b, LSI", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b, 221x4", Q_NULLPTR)
         );
         label_190->setText(QApplication::translate("EEPROM_Data_VerifierClass", "offset", Q_NULLPTR));
         label_191->setText(QApplication::translate("EEPROM_Data_VerifierClass", "offset", Q_NULLPTR));
@@ -6139,6 +6186,7 @@ public:
         label_107->setText(QApplication::translate("EEPROM_Data_VerifierClass", "D_MAC", Q_NULLPTR));
         label_108->setText(QApplication::translate("EEPROM_Data_VerifierClass", "MID1", Q_NULLPTR));
         label_109->setText(QApplication::translate("EEPROM_Data_VerifierClass", "MID2", Q_NULLPTR));
+        checkBox_ZOOM->setText(QApplication::translate("EEPROM_Data_VerifierClass", "ZOOM", Q_NULLPTR));
         groupBox_8->setTitle(QApplication::translate("EEPROM_Data_VerifierClass", "SFR Data", Q_NULLPTR));
         SFR_name1->setHtml(QApplication::translate("EEPROM_Data_VerifierClass", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
@@ -6170,8 +6218,9 @@ public:
         SFR_Format->insertItems(0, QStringList()
          << QApplication::translate("EEPROM_Data_VerifierClass", "Hex 1b", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "DEC 1b", Q_NULLPTR)
-         << QApplication::translate("EEPROM_Data_VerifierClass", "DEC 2b", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "DEC 2b/100", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "PIMA 2b", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "DEC 2b/10", Q_NULLPTR)
         );
         groupBox_17->setTitle(QApplication::translate("EEPROM_Data_VerifierClass", "long Size Hex Info", Q_NULLPTR));
         AF_info11->setHtml(QApplication::translate("EEPROM_Data_VerifierClass", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
@@ -6473,6 +6522,9 @@ public:
         DCC143->insertItems(0, QStringList()
          << QApplication::translate("EEPROM_Data_VerifierClass", "PD Offset,  QC", Q_NULLPTR)
         );
+        PD_Offset_HL->setText(QApplication::translate("EEPROM_Data_VerifierClass", "HL", Q_NULLPTR));
+        PD_Offset_LH->setText(QApplication::translate("EEPROM_Data_VerifierClass", "LH", Q_NULLPTR));
+        PD_offet_new->setText(QApplication::translate("EEPROM_Data_VerifierClass", "new dll", Q_NULLPTR));
         tabWidget->setTabText(tabWidget->indexOf(tab_7), QApplication::translate("EEPROM_Data_VerifierClass", "PDAF", Q_NULLPTR));
         pushButton_folder_sorting->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Sorting", Q_NULLPTR));
         tabWidget->setTabText(tabWidget->indexOf(tab_8), QApplication::translate("EEPROM_Data_VerifierClass", "Dual", Q_NULLPTR));

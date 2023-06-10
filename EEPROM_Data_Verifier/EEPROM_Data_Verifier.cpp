@@ -17,7 +17,7 @@ using namespace std;
 char D[524288][2] = { 0};
 bool useData[524288], spec_Bin_Ready=false;
 unsigned char DecData[524288], dflt_Data,spec_Data[524288];
-int LSC[15][17][4], MTK_LSC[15][15][4], LSC_LSI1[25][33][4], LSC_LSI2[11][13][4];
+int LSC[25][33][4], MTK_LSC[15][15][4], LSC_LSI1[25][33][4], LSC_LSI2[11][13][4];
 int PDgainLeft[30][30], PDgainRight[30][30],shift_Data[2][21], Cross_DW_before[2][21], Cross_DW_after[2][14];
 int GainMostBrightLeft[15][17], GainMostBrightRight[15][17];
 int DCC[15][17], DCC2[15][17], checkSum_addr[30][4],SR_Spec[2][2], Gmap_Item3[12], PD_Item3[14];
@@ -31,7 +31,6 @@ float QSC_Data[4][4][12][16] = { 0 };
 int selection = 0,reserved_check = 1,duplicate_value_NG_ratio=50, SFR_Format=0;
 extern void EEPMap_Out();
 extern void set_Map_inf(string info, string ref, int addr, data_Type t);
-
 int DataFormat = 0;
 int EEP_Size = 16384;
 
@@ -254,6 +253,35 @@ float lptstr2flt(LPTSTR v) {
 	return sum;
 }
 
+#define SEC_CRC_ID 0xEDB88320
+unsigned long Get_SEC_CRC32(unsigned char* ucBuffer, unsigned int unStartAddress, unsigned long ulSizeInBytes)
+{
+	unsigned char* Buffer = (unsigned char*)(ucBuffer + unStartAddress);
+	unsigned long Length = ulSizeInBytes;
+
+	unsigned long CRC = 0;
+	unsigned long table[256];
+	unsigned long i, j, k;
+	unsigned long id = SEC_CRC_ID;
+
+	//Make Table
+	for (i = 0; i < 256; ++i) {
+		k = i;
+		for (j = 0; j < 8; ++j) {
+			if (k & 1) k = (k >> 1) ^ id;
+			else k >>= 1;
+		}
+		table[i] = k;
+	}
+
+	//Calculate CRC
+	CRC = ~CRC;
+	while (Length--)
+		CRC = table[(CRC ^ *(Buffer++)) & 0xFF] ^ (CRC >> 8);
+
+	CRC = ~CRC;
+	return CRC;
+}
 
 void save_EEPROM_Setting() {
 	WritePrivateProfileString(TEXT("Default_Setting"), TEXT("Model_Select"), lptstr2int(modelSelect), TEXT(".\\Setting\\EEPROM_Tool_Setting.ini"));
@@ -351,10 +379,20 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 	if ((selection & 0x4000) >0) {
 		ui.sr100->setChecked(true);
 	}
-	else {
-		
+	else {	
 	}
-
+	if ((selection & 0x8000) >0) {
+		ui.PD_Offset_LH->setChecked(true);
+	}
+	else {
+		ui.PD_Offset_HL->setChecked(true);
+	}
+	if ((selection & 0x10000) >0) {
+		ui.PD_offet_new->setChecked(true);
+	}
+	else {
+		ui.PD_offet_new->setChecked(false);
+	}
 
 	//////////////////////////////////first_Pixel
 	if (first_Pixel == 0) {
@@ -1466,6 +1504,8 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 	if (checkDivisor == 0)ui.radioButton_255->setChecked(true);
 	else if (checkDivisor == 1)ui.radioButton_255_1->setChecked(true);
 	else if (checkDivisor == 2)ui.radioButton_256->setChecked(true);
+	else if (checkDivisor == 4)ui.radioButton_CRC32->setChecked(true);
+	else if (checkDivisor == 8)ui.radioButton_FFFF->setChecked(true);
 
 	if (HL&1)ui.radioButton_HL->setChecked(true);
 	else ui.radioButton_LH->setChecked(true);
@@ -1475,6 +1515,9 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 
 	if (HL & 4)ui.SR_LH->setChecked(true);
 	else ui.SR_HL->setChecked(true);
+
+	if (HL & 8)ui.PD_Offset_LH->setChecked(true);
+	else ui.PD_Offset_HL->setChecked(true);
 
 	ui.info11->setText(infoData[0].item[0].c_str());
 	ui.info12->setText(infoData[0].item[1].c_str());
@@ -1982,7 +2025,7 @@ void EEPROM_Data_Verifier::load_Panel() {
 
 	modelSelect = ui.model->document()->toPlainText().toInt();
 	SFR_Format = ui.SFR_Format->currentIndex();
-
+	 
 	if (ui.info_date->isChecked()) {
 		selection |= 1;
 	}
@@ -2073,6 +2116,18 @@ void EEPROM_Data_Verifier::load_Panel() {
 	else {
 		selection &= 0xFFFFFFFF - 0x4000;
 	}
+	if (ui.PD_Offset_LH->isChecked()) {
+		selection |= 0x8000;
+	}
+	else {
+		selection &= 0xFFFFFFFF - 0x8000;
+	}
+	if (ui.PD_offet_new->isChecked()) {
+		selection |= 0x10000;
+	} 
+	else {
+		selection &= 0xFFFFFFFF - 0x10000;
+	}
 
 	///////////////////////////////////DataFormat
 	if (ui.oppo->isChecked()) {
@@ -2125,6 +2180,12 @@ void EEPROM_Data_Verifier::load_Panel() {
 	}
 	else {
 		HL &= 0xFFFFFFFF - 4;
+	}
+	if (ui.PD_Offset_LH->isChecked()) {
+		HL |= 8;
+	}
+	else {
+		HL &= 0xFFFFFFFF - 8;
 	}
 
 	///////////////////Same_Item
@@ -3590,6 +3651,10 @@ void EEPROM_Data_Verifier::save_EEPROM_Address() {
 		WritePrivateProfileString(TEXT("EEPROM_Set"), TEXT("checkDivisor"), TEXT("1"), CA2CT(EEPROM_Map.c_str()));
 	else if (ui.radioButton_256->isChecked())
 		WritePrivateProfileString(TEXT("EEPROM_Set"), TEXT("checkDivisor"), TEXT("2"), CA2CT(EEPROM_Map.c_str()));
+	else if (ui.radioButton_CRC32->isChecked())
+		WritePrivateProfileString(TEXT("EEPROM_Set"), TEXT("checkDivisor"), TEXT("4"), CA2CT(EEPROM_Map.c_str()));
+	else if (ui.radioButton_FFFF->isChecked())
+		WritePrivateProfileString(TEXT("EEPROM_Set"), TEXT("checkDivisor"), TEXT("8"), CA2CT(EEPROM_Map.c_str()));
 
 	WritePrivateProfileString(TEXT("EEPROM_Set"), TEXT("selection"), CA2CT(to_string(selection).c_str()), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Set"), TEXT("DataFormat"), CA2CT(to_string(DataFormat).c_str()), CA2CT(EEPROM_Map.c_str()));
@@ -3615,6 +3680,7 @@ EEPROM_Data_Verifier::EEPROM_Data_Verifier(QWidget *parent)
 
 	selectModel();
 	load_EEPROM_Address();
+
 }
 
 
@@ -3662,7 +3728,6 @@ int ushort_Out(int e, bool H_L) {
 	}
 	return tmp;
 }
-
 
 float gyro_Out(int e, bool H_L) {
 
@@ -3739,7 +3804,7 @@ float SR_Out100(int e, bool H_L) {
 int int_Out(int e, bool H_L) {
 
 	unsigned int tmp = 0;
-	int* fp = (int*)&tmp;
+
 	if (H_L) {
 		for (int i = 0; i < 4; i++) {
 			tmp *= 256;
@@ -3754,10 +3819,7 @@ int int_Out(int e, bool H_L) {
 			useData[e + i] = 1;
 		}
 	}
-	if (DecData[e] == 0 && DecData[e + 1] == 0) {
-		return short_Out(e+2,HL);
-	}
-
+	int* fp = (int*)&tmp;
 	return *fp;
 }
 
@@ -3802,6 +3864,19 @@ float flt_Out(int e, bool H_L) {
 	return *fp ;
 }
 
+float flt_Out2301(int e, bool H_L) {
+
+	unsigned int tmp = 0;
+	float* fp = (float*)&tmp;
+	if (H_L) {
+		tmp = (DecData[e + 1]<<24)+(DecData[e] << 16)+(DecData[e+3] << 8) + DecData[e+2];	
+	}
+	else {
+		tmp = (DecData[e + 2] << 24) + (DecData[e+3] << 16) + (DecData[e + 0] << 8) + DecData[e + 1];
+	}
+	return *fp;
+}
+
 double dbl_Out(int e, bool H_L) {
 
 	unsigned long long tmp = 0;
@@ -3819,6 +3894,24 @@ double dbl_Out(int e, bool H_L) {
 		}
 	}
 	return *fp;
+}
+
+UINT uByte_3(int e, bool H_L) {
+
+	unsigned long tmp = 0;
+	if (H_L) {
+		for (int i = 0; i < 3; i++) {
+			tmp *= 256;
+			tmp += DecData[e + i];
+		}
+	}
+	else {
+		for (int i = 2; i >= 0; i--) {
+			tmp *= 256;
+			tmp += DecData[e + i];
+		}
+	}
+	return tmp;
 }
 
 
@@ -3909,6 +4002,36 @@ int EEPROM_Data_Verifier::LSC_Parse(int start, int group) {
 					useData[e] = 1;
 					e += 1;
 				}
+		}
+		else if (LSC_Item3[group] == 4) {
+			int offset = atoi(QC_LSC_Data[group].item[2].c_str());
+			e += offset;
+			W = 33, H = 25;
+			for (int i = 0; i < H; i++)
+				for (int j = 0; j < W; j++) {
+					LSC[i][j][0] = DecData[e] << 4 + DecData[e + 1] >> 4;
+					LSC[i][j][1] = (DecData[e + 1] & 0xF) << 8 + DecData[e + 2];
+					LSC[i][j][2] = DecData[e + 3] << 4 + DecData[e + 4] >> 4;
+					LSC[i][j][3] = (DecData[e + 4] & 0xF) << 8 + DecData[e + 5];
+					for (int k = 0; k < 6; k++){
+						useData[e + k] = 1;
+					}
+					e += 6;
+				}
+		}
+		else if (LSC_Item3[group] == 5) {
+			for (int k = 0; k < 4; k++)
+				for (int i = 0; i < H; i++)
+					for (int j = 0; j < W; j++) {
+
+						if (HL & 1)
+							LSC[i][j][k] = 256 * DecData[e] + DecData[e + 1];
+						else
+							LSC[i][j][k] = 256 * DecData[e + 1] + DecData[e];
+
+						useData[e + 1] = useData[e] = 1;
+						e += 2;
+					}
 		}
 
 		if (mode == 0) {
@@ -4210,7 +4333,7 @@ int EEPROM_Data_Verifier::CheckSum_Check() {
 	customer_Data_END = 0;
 
 	for (int i = 0; i < 40; i++) {
-		unsigned int tmp = 0, d = 0, temp_cksm=0;
+		unsigned long long tmp = 0, d = 0, temp_cksm=0;
 		if (checkSum[i].end > 0) {
 			if(checkSum[i].item[1].length()>2&&i<38)
 				map_Push(checkSum[i].flag, "Flag of " + checkSum[i].item[0], " ", Flag1);
@@ -4241,24 +4364,46 @@ int EEPROM_Data_Verifier::CheckSum_Check() {
 				d = tmp % 255 + 1;
 			else if (checkDivisor == 2)
 				d = tmp % 0x10000;
+			else if (checkDivisor == 4)
+				d = Get_SEC_CRC32(DecData, checkSum[i].start, checkSum[i].end- checkSum[i].start+1);
+			else if (checkDivisor == 8)
+				d = tmp % 0xFFFF+1;
 
 			getHex(d);
 			string chk_str = "";
 		
-			if (checkDivisor != 2) {
+			if (checkDivisor < 2) {
 				fout << D[checkSum[i].checksum][0] << D[checkSum[i].checksum][1] << "	";
 				chk_str += chk[0];
 				chk_str += chk[1];	
 				fout << chk_str << "	";
 				temp_cksm = DecData[checkSum[i].checksum];
 			}
-			else {
+			else if (checkDivisor == 2|| checkDivisor == 8) {
 				temp_cksm = ushort_Out(checkSum[i].checksum, HL&1);
 				fout << D[checkSum[i].checksum][0] << D[checkSum[i].checksum][1] << D[checkSum[i].checksum+1][0] << D[checkSum[i].checksum+1][1] <<"	";
 				getHex(d / 256);
 				chk_str += chk[0];
 				chk_str += chk[1];
 				getHex(d % 256);
+				chk_str += chk[0];
+				chk_str += chk[1];
+				fout << chk_str << "	";
+			}
+			else if (checkDivisor == 4) {
+				temp_cksm = uint_Out(checkSum[i].checksum, HL & 1);
+				fout << D[checkSum[i].checksum+3][0] << D[checkSum[i].checksum+3][1] << D[checkSum[i].checksum + 2][0] << D[checkSum[i].checksum + 2][1];
+				fout << D[checkSum[i].checksum+1][0] << D[checkSum[i].checksum+1][1] << D[checkSum[i].checksum][0] << D[checkSum[i].checksum][1] << "	";
+				getHex(d / 0xFFFFFF);
+				chk_str += chk[0];
+				chk_str += chk[1];
+				getHex((d&0xFFFFFF)/ 0xFFFF);
+				chk_str += chk[0];
+				chk_str += chk[1];
+				getHex((d & 0xFFFF) / 0xFF);
+				chk_str += chk[0];
+				chk_str += chk[1];
+				getHex((d & 0xFF));
 				chk_str += chk[0];
 				chk_str += chk[1];
 				fout << chk_str << "	";
@@ -4278,7 +4423,7 @@ int EEPROM_Data_Verifier::CheckSum_Check() {
 				strDisplay += " NG: 0x";
 				strDisplay.append(D[checkSum[i].checksum][0]);
 				strDisplay.append(D[checkSum[i].checksum][1]);
-				if (checkDivisor == 2) {
+				if (checkDivisor == 2|| checkDivisor == 8) {
 					strDisplay.append(D[checkSum[i+1].checksum][0]);
 					strDisplay.append(D[checkSum[i+1].checksum][1]);
 				}
@@ -5080,7 +5225,8 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 					for (int i = 0; i < H; i++) {
 						for (int j = 0; j < W; j++) {
 							float xx = PDgainLeft[i][j] / 1024.0;
-							if (xx<0.5 || xx>1.5) {ret |= 128;} 
+							if (xx<0.5 || xx>1.5) {
+								ret |= 128;} 
 							fout << xx << "	";
 						}
 						fout << endl;
@@ -5282,6 +5428,7 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 
 			/////// QC PD offset
 			if (PD_Item3[k] == 4 || k>9) {
+				fout << "~~~~~~~~~~~" << PD_Item[k][0] << "(QC PD offset)_Data:" << endl;
 				float F_DCC[6][8] = { 0 };
 				for (int i = 0; i <H; i++)
 					for (int j = 0; j < W; j++) {
@@ -5289,7 +5436,10 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 						for (int a = 0; a < 4; a++)
 							useData[e + a] = 1;
 
-						F_DCC[i][j] = flt_Out(e, HL);
+						F_DCC[i][j] = flt_Out(e, ui.PD_Offset_HL->isChecked());
+						if(ui.PD_offet_new->isChecked())
+							F_DCC[i][j] = flt_Out2301(e, ui.PD_Offset_HL->isChecked());
+
 						if (F_DCC[i][j]>5|| F_DCC[i][j] < -5) {
 							ret |= 32;
 						}
@@ -5528,6 +5678,14 @@ int EEPROM_Data_Verifier::af_Parse() {
 					SFR_Data[k] = DecData[d + 2 * k] * 256 + DecData[d + 2 * k + 1];
 					if (mode == 0)
 						fout << SFR_Data[k] << "	";
+				}
+				else if (SFR_Format == 4) {
+					if((HL&1)==0)
+						SFR_Data[k] = DecData[d + 2 * k]  + DecData[d + 2 * k + 1]*256;
+					else SFR_Data[k] = DecData[d + 2 * k] * 256 + DecData[d + 2 * k + 1] * 256;
+					if (mode == 0)
+						fout << (float)SFR_Data[k] / 1000.0 << "	";
+					SFR_Data[k] = SFR_Data[k] / 10;
 				}
 			}
 			SFR_ret += SFR_FP_Check(SFR_Data, cnt, i + 1, SFR_Format);
@@ -6871,7 +7029,8 @@ int EEPROM_Data_Verifier::value_Data_Parse() {
 				dd = short_Out(addr, mHL&1);
 				if (dd < 0)
 					dd += 0x10000;
-				value_Hash[i + 20].hash[((int)dd)% 1009] ++;
+				if(mHL<9)
+					value_Hash[i + 20].hash[((int)dd)% 1009] ++;
 				dd /= 0x8000;
 				break;
 			case 8:
@@ -6921,11 +7080,12 @@ int EEPROM_Data_Verifier::value_Data_Parse() {
 			for (int a = addr; a < addr + data_len; a++) {
 				s = (s * 256 + DecData[a]) % 1009;
 			}
-			value_Hash[i + 20].hash[s] ++;
+			if (mHL<9)
+				value_Hash[i + 20].hash[s] ++;
 
 			int ret = 0;
 			//////////////////////value check		
-			if (d_type < 6) {
+			if (d_type < 7) {
 				if (sData_Item[i][3].length() > 0) {
 					int spec1 = atoi(sData_Item[i][3].c_str());
 					if (d < spec1)
@@ -6937,7 +7097,6 @@ int EEPROM_Data_Verifier::value_Data_Parse() {
 						ret |= 1;
 				}
 				fout << sData_Item[i][0] << ":	" << d << endl;
-
 
 			}
 			else {
@@ -6962,11 +7121,169 @@ int EEPROM_Data_Verifier::value_Data_Parse() {
 	
 		}
 	fout << endl;
+	fout << "-------Loop Data Spec Check------" << endl;
+	TCHAR lpTexts[256];
+	for (int i = 0; i < 20; i++) {
+		string item;
+		item = "Loop_Size_" + to_string(i + 1);
+		GetPrivateProfileString(TEXT("LOOP_DATA"), CA2CT(item.c_str()), TEXT("0"), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
+		int loop_Size = _wtoi(lpTexts);
+		item = "Loop_Count_" + to_string(i + 1);
+		GetPrivateProfileString(TEXT("LOOP_DATA"), CA2CT(item.c_str()), TEXT("0"), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
+		int Loop_Count = _wtoi(lpTexts);
+		if (loop_Size >0&& Loop_Count>0) {
+			for (int j = 0; j < 10; j++) {
+				string Start1 = "Data_Start_" + to_string(i + 1) + to_string(j + 1);
+				int addr = GetPrivateProfileInt(_T("LOOP_DATA"), CA2CT(Start1.c_str()), -1, CA2CT(EEPROM_Map.c_str()));
+				string Type1 = "Data_Type_" + to_string(i + 1) + to_string(j + 1);
+				GetPrivateProfileString(TEXT("LOOP_DATA"), CA2CT(Type1.c_str()), TEXT("0"), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
+				int d_type = get_Data_TypeTchar(lpTexts);
+
+				if (addr > 0) {
+					if (d_type == 0) {
+						tret |= 0x10000;
+						continue;
+					}
+					for (int k = 0; k < Loop_Count; k++, addr+= loop_Size) {
+
+						long long d = 0;
+						double dd = 0;
+
+						switch (d_type) {
+						case 1:
+							d = DecData[addr];
+							if (d > 0x7F)
+								d = d - 0x100;
+							break;
+						case 2:
+							d = DecData[addr];
+							break;
+						case 3:
+							d = short_Out(addr, HL & 1);
+							break;
+						case 4:
+							d = short_Out(addr, HL & 1);
+							if (d < 0)
+								d += 65536;
+							break;
+						case 5:
+							d = int_Out(addr, HL & 1);
+							break;
+						case 6:
+							d = int_Out(addr, HL & 1);
+							if (d < 0)
+								d += 0x100000000;
+							break;
+						case 7:
+							dd = short_Out(addr, HL & 1);
+							if (dd < 0)
+								dd += 0x10000;
+							if (HL<9)
+								value_Hash[i + 20].hash[((int)dd) % 1009] ++;
+							dd /= 0x8000;
+							break;
+						case 8:
+							dd = int_Out(addr, HL & 1);
+							if (dd < 0)
+								dd += 0x100000000;
+							dd /= 0x80000000;
+							break;
+						case 9:
+							dd = flt_Out(addr, HL & 1);
+							break;
+						case 10:
+							dd = dbl_Out(addr, HL & 1);
+							break;
+						case 11:
+							dd = uByte_3(addr, HL & 1);
+							break;
+						default:
+							break;
+						}
+
+						int ret = 0;
+						//////////////////////value check		
+						string Spec_Min = "Spec_Min_" + to_string(i + 1) + to_string(j + 1) + to_string(k + 1);
+						int spec1 = GetPrivateProfileInt(_T("LOOP_DATA"), CA2CT(Spec_Min.c_str()), -999999991, CA2CT(EEPROM_Map.c_str()));
+
+						string Spec_Max = "Spec_Max_" + to_string(i + 1) + to_string(j + 1) + to_string(k + 1);
+						int spec2 = GetPrivateProfileInt(_T("LOOP_DATA"), CA2CT(Spec_Max.c_str()), 999999991, CA2CT(EEPROM_Map.c_str()));
+
+						if (d_type < 7) {
+							if (d < spec1&&spec1!= -999999991)	
+								ret |= 2;
+							if (d > spec2&&spec2!= 999999991)	
+								ret |= 2;
+							fout << Start1 + to_string(k + 1) << ":	" << d << endl;
+						}
+						else {
+							if (dd < spec1&&spec1 != -999999991)	ret |= 2;
+							if (dd > spec2&&spec2 != 999999991)	ret |= 2;
+							fout << Start1 + to_string(k + 1) << ":	" << dd << endl;
+						}
+
+						if (ret>0) {
+							string s = Start1 +to_string(k + 1)+ " in addr" + to_string(addr) + " NG!\n";
+							ui.log->insertPlainText(s.c_str());
+							tret = tret * 1000 + ret;
+						}
+
+					}
+				}
+			}
+		}
+	}
+
 
 	return tret;
 
 }
 
+
+int EEPROM_Data_Verifier::get_Data_TypeTchar(TCHAR Str[256]) {
+
+	if (Str[0] == 'c'&&Str[1] == 'h'&&Str[2] == 'a') {
+		return 1;
+	}
+	else if (Str[0] == 'u'&&Str[1] == 'c'&&Str[2] == 'h') {
+		return 2;
+	}
+	else if (Str[0] == 's'&&Str[1] == 'h'&&Str[2] == 'o') {
+		return 3;
+	}
+	else if (Str[0] == 'u'&&Str[1] == 's'&&Str[2] == 'h') {
+		return 4;
+	}
+	else if (Str[0] == 'i'&&Str[1] == 'n'&&Str[2] == 't') {
+		return 5;
+	}
+	else if (Str[0] == 'u'&&Str[1] == 'i'&&Str[2] == 'n') {
+		return 6;
+	}
+	else if (Str[0] == '2'&&Str[1] == 'd'&&Str[2] == 'c') {
+		return 7;
+	}
+	else if (Str[0] == '4'&&Str[1] == 'd'&&Str[2] == 'c') {
+		return 8;
+	}
+	else if (Str[0] == 'f'&&Str[1] == 'l') {
+		return 9;
+	}
+	else if (Str[0] == 'd'&&Str[1] == 'o'&&Str[2] == 'u') {
+		return 10;
+	}
+	else if (Str[0] == 'u'&&Str[1] == '3'&&Str[2] == 'b') {
+		return 11;
+	}
+	else if (Str[0] == 'Q') {
+		int k = 1,sum= Str[0] -'0';
+		if(Str[1]>='0')
+			sum = sum * 10 + Str[1]-'0';	
+		return sum+100;
+	}
+
+	return 0;
+}
 
 int EEPROM_Data_Verifier::get_Data_Type(int x) {
 
@@ -7003,11 +7320,11 @@ int EEPROM_Data_Verifier::get_Data_Type(int x) {
 		return 10;
 	}
 	else if (sData_Item[x][2][0] == 'Q') {
-		int k = 1,sum=0;
+		int k = 1, sum = 0;
 		while (k < sData_Item[x][2].length()) {
-			sum = sum * 10 + sData_Item[x][2][k++]-'0';
+			sum = sum * 10 + sData_Item[x][2][k++] - '0';
 		}
-		return sum+100;
+		return sum + 100;
 	}
 
 	return ret;
@@ -7614,6 +7931,13 @@ void EEPROM_Data_Verifier::on_pushButton_parser_clicked()
 		if (SONY_AWB_FP_Check(VIVO_AWB_Data) != 0) {
 			ui.log->insertPlainText("SONY AWB Data NG, please check FP_log. \n");
 		}
+	}
+
+	if (ui.SAMSUNG->isChecked()) {	
+		//MTK_AWB_Parse(0);
+		//if (MTK_AWB_FP_Check(MTK_AWB, 1) != 0) {
+		//	ui.log->insertPlainText("SAMSUNG AWB Data NG, please check FP_log. \n");
+		//}	
 	}
 	OIS_Parse();
 	AEC_Parse();
@@ -8336,6 +8660,12 @@ void EEPROM_Data_Verifier::on_pushButton_dump_SFR_clicked()
 							}
 							else if (SFR_Format == 3) {
 								SFR_Data[k] = DecData[d + 2 * k] * 256 + DecData[d + 2 * k + 1];
+								fout << SFR_Data[k] << "	";
+							}
+							else if (SFR_Format == 4) {
+								if ((HL&1) == 0)
+									SFR_Data[k] = DecData[d + 2 * k] + DecData[d + 2 * k + 1] * 256;
+								else SFR_Data[k] = DecData[d + 2 * k] * 256 + DecData[d + 2 * k + 1] * 256;
 								fout << SFR_Data[k] << "	";
 							}
 						}				

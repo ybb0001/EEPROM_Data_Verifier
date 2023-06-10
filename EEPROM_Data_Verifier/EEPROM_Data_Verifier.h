@@ -75,6 +75,7 @@ private:
 	void load_Panel();
 	void dump_Check();
 	int get_Data_Type(int x);
+	int get_Data_TypeTchar(TCHAR Str[256]);
 
 	int CheckSum_Check();
 	int info_Data_Parse();
