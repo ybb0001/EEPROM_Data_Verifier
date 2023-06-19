@@ -1299,18 +1299,18 @@ public:
     QCheckBox *full_log;
     QLabel *label_8;
     QPushButton *pushButton_folder;
-    QButtonGroup *buttonGroup_5;
-    QButtonGroup *buttonGroup_6;
-    QButtonGroup *buttonGroup_4;
-    QButtonGroup *buttonGroup_2;
     QButtonGroup *buttonGroup_18;
-    QButtonGroup *buttonGroup_12;
     QButtonGroup *buttonGroup;
     QButtonGroup *buttonGroup_16;
-    QButtonGroup *buttonGroup_15;
-    QButtonGroup *buttonGroup_7;
-    QButtonGroup *buttonGroup_13;
     QButtonGroup *buttonGroup_3;
+    QButtonGroup *buttonGroup_13;
+    QButtonGroup *buttonGroup_4;
+    QButtonGroup *buttonGroup_12;
+    QButtonGroup *buttonGroup_7;
+    QButtonGroup *buttonGroup_6;
+    QButtonGroup *buttonGroup_2;
+    QButtonGroup *buttonGroup_15;
+    QButtonGroup *buttonGroup_5;
 
     void setupUi(QWidget *EEPROM_Data_VerifierClass)
     {
@@ -4825,7 +4825,7 @@ public:
         PD_Offset_LH->setGeometry(QRect(210, 172, 41, 16));
         PD_offet_new = new QCheckBox(groupBox_11);
         PD_offet_new->setObjectName(QStringLiteral("PD_offet_new"));
-        PD_offet_new->setGeometry(QRect(290, 173, 61, 16));
+        PD_offet_new->setGeometry(QRect(290, 173, 81, 16));
         DCC143->raise();
         DCC43->raise();
         DCC103->raise();
@@ -6524,7 +6524,7 @@ public:
         );
         PD_Offset_HL->setText(QApplication::translate("EEPROM_Data_VerifierClass", "HL", Q_NULLPTR));
         PD_Offset_LH->setText(QApplication::translate("EEPROM_Data_VerifierClass", "LH", Q_NULLPTR));
-        PD_offet_new->setText(QApplication::translate("EEPROM_Data_VerifierClass", "new dll", Q_NULLPTR));
+        PD_offet_new->setText(QApplication::translate("EEPROM_Data_VerifierClass", "abnormal", Q_NULLPTR));
         tabWidget->setTabText(tabWidget->indexOf(tab_7), QApplication::translate("EEPROM_Data_VerifierClass", "PDAF", Q_NULLPTR));
         pushButton_folder_sorting->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Sorting", Q_NULLPTR));
         tabWidget->setTabText(tabWidget->indexOf(tab_8), QApplication::translate("EEPROM_Data_VerifierClass", "Dual", Q_NULLPTR));

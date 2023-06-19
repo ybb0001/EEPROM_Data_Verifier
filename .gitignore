@@ -26,3 +26,5 @@
 *.bin
 *.ilk
 *.qrc
+*.res
+*.aps
