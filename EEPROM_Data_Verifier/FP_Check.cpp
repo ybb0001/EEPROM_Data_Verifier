@@ -645,9 +645,9 @@ int MTK_AWB_FP_Check(oppo_AWB_Format OPPO_AWB[3], int mode) {
 
 	for (int i = 0; i < mode; i++)
 		for (int j = 0; j < 4; j++) {
-			if (OPPO_AWB[i].AWB[j]>1100 || OPPO_AWB[i].AWB[j] < 100)
+			if (OPPO_AWB[i].AWB[j]>65530 || OPPO_AWB[i].AWB[j] < 100)
 				return 4096;
-			if (OPPO_AWB[i].Golden[j]>1100 || OPPO_AWB[i].Golden[j] < 100)
+			if (OPPO_AWB[i].Golden[j]>65530 || OPPO_AWB[i].Golden[j] < 100)
 				return 4096;
 		}
 
@@ -929,6 +929,88 @@ int VIVO_QC_AWB_FP_Check(vivo_AWB_Format VIVO_AWB[2]) {
 			}
 			else {
 				if (VIVO_AWB[i].Light[j] < 800 || VIVO_AWB[i].Light[j]>1200) {
+					ret = ret | 8;
+				}
+			}
+		}
+	if ((ret & 8) > 0) {
+		FP_log << "Lightsource Coef Data NG!" << endl;
+	}
+
+	return ret;
+}
+
+
+int MOTO_QC_AWB_FP_Check(vivo_AWB_Format VIVO_AWB[2]) {
+
+	int ret = 0;
+	string color[2] = { "5100k","3100k" };
+	float AWB_diff[2][3];
+
+	for (int i = 0; i < 1; i++)
+		for (int j = 0; j < 3; j++) {
+			if (VIVO_AWB[i].AWB[j]>65530 || VIVO_AWB[i].AWB[j] < 100)
+				return 4096;
+			if (VIVO_AWB[i].Golden[j]>65530 || VIVO_AWB[i].Golden[j] < 100)
+				return 4096;
+		}
+
+	for (int i = 0; i < 1; i++)
+		for (int j = 0; j < 3; j++) {
+			AWB_diff[i][j] = abs(VIVO_AWB[i].AWB[j] * 1.0 - VIVO_AWB[i].Golden[j]) / VIVO_AWB[i].Golden[j];
+		}
+
+	for (int i = 0; i < 1; i++) {
+
+		if (abs(AWB_diff[i][0]) > awb_tolerance[i][0] / 100.0) {
+			FP_log << "QC " << color[i] << "R_G awb_tolerance=: " << AWB_diff[i][0] << endl;
+			ret = ret | 2;
+		}
+
+		if (abs(AWB_diff[i][1]) > awb_tolerance[i][1] / 100.0) {
+			FP_log << "QC " << color[i] << "B_G awb_tolerance=: " << AWB_diff[i][1] << endl;
+			ret = ret | 2;
+		}
+
+		if (abs(AWB_diff[i][2]) > awb_tolerance[i][2] / 10000.0) {
+			FP_log << "QC " << color[i] << "Gr_Gb awb_tolerance=: " << AWB_diff[i][1] << endl;
+			ret = ret | 2;
+		}
+	}
+
+	if ((ret & 2) > 0) {
+		FP_log << "awb_tolerance spec check NG!" << endl;
+	}
+
+	int golden_Spec[2][3];
+	for (int i = 0; i < 1; i++) {
+		string item = "golden_rg_" + color[i];
+		golden_Spec[i][0] = GetPrivateProfileInt(_T("OTHER"), CA2CT(item.c_str()), 0, CA2CT(INI_Path.c_str()));
+		item = "golden_bg_" + color[i];
+		golden_Spec[i][1] = GetPrivateProfileInt(_T("OTHER"), CA2CT(item.c_str()), 0, CA2CT(INI_Path.c_str()));
+		item = "golden_grgb_" + color[i];
+		golden_Spec[i][2] = GetPrivateProfileInt(_T("OTHER"), CA2CT(item.c_str()), 0, CA2CT(INI_Path.c_str()));
+
+		for (int k = 0; k < 3; k++) {
+			if (golden_Spec[i][k] != VIVO_AWB[i].Golden[k] && awb_golden_check == 1) {
+				ret = ret | 4;
+			}
+		}
+	}
+
+	if ((ret & 4) > 0) {
+		FP_log << "awb_golden spec check NG!" << endl;
+	}
+
+	for (int i = 0; i < 1; i++)
+		for (int j = 0; j < 4; j++) {
+			if (VIVO_AWB[i].Light[j]>2000) {
+				if (VIVO_AWB[i].Light[j] < 9700 || VIVO_AWB[i].Light[j]>10300) {
+					ret = ret | 8;
+				}
+			}
+			else {
+				if (VIVO_AWB[i].Light[j] < 970 || VIVO_AWB[i].Light[j]>1030) {
 					ret = ret | 8;
 				}
 			}
@@ -1315,7 +1397,7 @@ int QSC_Check(float QSC_Data[4][4][12][16]) {
 			for (int i = 0; i < 12; i++) {
 				for (int j = 0; j < 16; j++)
 				{
-					if (QSC_Data[a][k][i][j]> QSC_Max || QSC_Data[a][k][i][j] < QSC_Min){
+					if (QSC_Data[a][k][i][j]> QSC_Max/1000.0 || QSC_Data[a][k][i][j] < QSC_Min / 1000.0){
 						ret |= 1;
 						FP_log << "QSC CH" << a << "_" << k << "Tablep [" << i << "," << j << "]=	" << QSC_Data[a][k][i][j] << "	NG!" << endl;
 					}

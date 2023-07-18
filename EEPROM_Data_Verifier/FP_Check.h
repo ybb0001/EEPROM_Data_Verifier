@@ -8,7 +8,7 @@ typedef struct {
 }oppo_AWB_Format;
 
 typedef struct {
-	unsigned int AWB[3] = { 0 }, Golden[3] = { 0 }, Light[3] = { 0 };
+	unsigned int AWB[3] = { 0 }, Golden[3] = { 0 }, Light[4] = { 0 };
 	bool HL = true;
 }vivo_AWB_Format;
 
@@ -20,6 +20,8 @@ int MTK_AWB_FP_Check(oppo_AWB_Format OPPO_AWB[3],int mode);
 int LSI_AWB_FP_Check(oppo_AWB_Format OPPO_AWB[3], int mode);
 
 int VIVO_QC_AWB_FP_Check(vivo_AWB_Format VIVO_AWB[2]);
+int MOTO_QC_AWB_FP_Check(vivo_AWB_Format VIVO_AWB[2]);
+
 int SONY_AWB_FP_Check(vivo_AWB_Format VIVO_AWB[2]);
 int XiaoMi_QC_AWB_FP_Check(vivo_AWB_Format AWB);
 

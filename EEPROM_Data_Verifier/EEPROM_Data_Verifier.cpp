@@ -41,6 +41,15 @@ typedef struct {
 Panel_Data Flag[2], noData;
 
 typedef struct {
+	int MTK_SLOPE = 9;
+	int QFORMAT = 4;
+	int center_diff = 3;
+	float DCC_center[5];
+	float MTK_center[5];
+}PDAF_d;
+PDAF_d PDAF_Data;
+
+typedef struct {
 	string item_name = "";
 	int hash[1010] = {0};
 }Value_Hs;
@@ -283,6 +292,18 @@ unsigned long Get_SEC_CRC32(unsigned char* ucBuffer, unsigned int unStartAddress
 	return CRC;
 }
 
+unsigned long Get_SEC_CRC16(unsigned char* ucBuffer, unsigned long ulSizeInBytes)
+{
+	register unsigned short i, j;
+	unsigned short crc_accum = 0;
+	for (j = 0; j < ulSizeInBytes; j++)
+	{
+		i = ((unsigned short)(crc_accum >> 8) ^ *ucBuffer++) & 0xff;
+		crc_accum = ((crc_accum << 8) & 0xffff) ^ crc_table[i];
+	}
+	return crc_accum;
+}
+
 void save_EEPROM_Setting() {
 	WritePrivateProfileString(TEXT("Default_Setting"), TEXT("Model_Select"), lptstr2int(modelSelect), TEXT(".\\Setting\\EEPROM_Tool_Setting.ini"));
 }
@@ -393,6 +414,13 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 	else {
 		ui.PD_offet_new->setChecked(false);
 	}
+	if ((selection & 0x20000) >0) {
+		ui.Cross_DW ->setChecked(true);
+	}
+	else {
+		ui.Cross_AW->setChecked(false);
+	}
+
 
 	//////////////////////////////////first_Pixel
 	if (first_Pixel == 0) {
@@ -1506,6 +1534,7 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 	else if (checkDivisor == 2)ui.radioButton_256->setChecked(true);
 	else if (checkDivisor == 4)ui.radioButton_CRC32->setChecked(true);
 	else if (checkDivisor == 8)ui.radioButton_FFFF->setChecked(true);
+	else if (checkDivisor == 16)ui.radioButton_CRC16->setChecked(true);
 
 	if (HL&1)ui.radioButton_HL->setChecked(true);
 	else ui.radioButton_LH->setChecked(true);
@@ -2010,6 +2039,10 @@ void EEPROM_Data_Verifier::load_EEPROM_Address() {
 	Gyro_offset_spec[0] = GetPrivateProfileInt(_T("Spec_Set"), TEXT("Gyro_Offset_Spec_X"), 3000, CA2CT(EEPROM_Map.c_str()));
 	Gyro_offset_spec[1] = GetPrivateProfileInt(_T("Spec_Set"), TEXT("Gyro_Offset_Spec_Y"), 3000, CA2CT(EEPROM_Map.c_str()));
 
+	PDAF_Data.MTK_SLOPE = GetPrivateProfileInt(_T("Spec_Set"), TEXT("MTK_PD_SLOPE_BASE"), 9, CA2CT(EEPROM_Map.c_str()));
+	PDAF_Data.QFORMAT = GetPrivateProfileInt(_T("Spec_Set"), TEXT("QC_QFORMAT"), 4, CA2CT(EEPROM_Map.c_str()));
+	PDAF_Data.center_diff = GetPrivateProfileInt(_T("Spec_Set"), TEXT("PLATFORM_DCC_DIFF"), 3, CA2CT(EEPROM_Map.c_str()));
+
 	int save_OnOff = GetPrivateProfileInt(_T("EEPROM_Set"), TEXT("save_OnOff"), 1, CA2CT(EEPROM_Map.c_str()));
 	if (save_OnOff == 0) {
 		ui.pushButton_setsave->setEnabled(false);
@@ -2127,6 +2160,12 @@ void EEPROM_Data_Verifier::load_Panel() {
 	} 
 	else {
 		selection &= 0xFFFFFFFF - 0x10000;
+	}
+	if (ui.Cross_DW->isChecked()) {
+		selection |= 0x20000;
+	}
+	else {
+		selection &= 0xFFFFFFFF - 0x20000;
 	}
 
 	///////////////////////////////////DataFormat
@@ -3655,6 +3694,8 @@ void EEPROM_Data_Verifier::save_EEPROM_Address() {
 		WritePrivateProfileString(TEXT("EEPROM_Set"), TEXT("checkDivisor"), TEXT("4"), CA2CT(EEPROM_Map.c_str()));
 	else if (ui.radioButton_FFFF->isChecked())
 		WritePrivateProfileString(TEXT("EEPROM_Set"), TEXT("checkDivisor"), TEXT("8"), CA2CT(EEPROM_Map.c_str()));
+	else if (ui.radioButton_CRC16->isChecked())
+		WritePrivateProfileString(TEXT("EEPROM_Set"), TEXT("checkDivisor"), TEXT("16"), CA2CT(EEPROM_Map.c_str()));
 
 	WritePrivateProfileString(TEXT("EEPROM_Set"), TEXT("selection"), CA2CT(to_string(selection).c_str()), CA2CT(EEPROM_Map.c_str()));
 	WritePrivateProfileString(TEXT("EEPROM_Set"), TEXT("DataFormat"), CA2CT(to_string(DataFormat).c_str()), CA2CT(EEPROM_Map.c_str()));
@@ -4359,7 +4400,7 @@ int EEPROM_Data_Verifier::CheckSum_Check() {
 				fout << "Tsum_" <<i-37<< "	";
 			}
   			if (checkDivisor == 0)
-				d = tmp % 255;
+				d = tmp % 256;
 			else if (checkDivisor == 1)
 				d = tmp % 255 + 1;
 			else if (checkDivisor == 2)
@@ -4368,6 +4409,8 @@ int EEPROM_Data_Verifier::CheckSum_Check() {
 				d = Get_SEC_CRC32(DecData, checkSum[i].start, checkSum[i].end- checkSum[i].start+1);
 			else if (checkDivisor == 8)
 				d = tmp % 0xFFFF+1;
+			else if (checkDivisor == 16)
+				d = Get_SEC_CRC16(&DecData[checkSum[i].start], checkSum[i].end - checkSum[i].start + 1);
 
 			getHex(d);
 			string chk_str = "";
@@ -4379,7 +4422,7 @@ int EEPROM_Data_Verifier::CheckSum_Check() {
 				fout << chk_str << "	";
 				temp_cksm = DecData[checkSum[i].checksum];
 			}
-			else if (checkDivisor == 2|| checkDivisor == 8) {
+			else if (checkDivisor == 2|| checkDivisor == 8 || checkDivisor == 16) {
 				temp_cksm = ushort_Out(checkSum[i].checksum, HL&1);
 				fout << D[checkSum[i].checksum][0] << D[checkSum[i].checksum][1] << D[checkSum[i].checksum+1][0] << D[checkSum[i].checksum+1][1] <<"	";
 				getHex(d / 256);
@@ -4390,7 +4433,7 @@ int EEPROM_Data_Verifier::CheckSum_Check() {
 				chk_str += chk[1];
 				fout << chk_str << "	";
 			}
-			else if (checkDivisor == 4) {
+			else if (checkDivisor == 4 ) {
 				temp_cksm = uint_Out(checkSum[i].checksum, HL & 1);
 				fout << D[checkSum[i].checksum+3][0] << D[checkSum[i].checksum+3][1] << D[checkSum[i].checksum + 2][0] << D[checkSum[i].checksum + 2][1];
 				fout << D[checkSum[i].checksum+1][0] << D[checkSum[i].checksum+1][1] << D[checkSum[i].checksum][0] << D[checkSum[i].checksum][1] << "	";
@@ -4423,7 +4466,7 @@ int EEPROM_Data_Verifier::CheckSum_Check() {
 				strDisplay += " NG: 0x";
 				strDisplay.append(D[checkSum[i].checksum][0]);
 				strDisplay.append(D[checkSum[i].checksum][1]);
-				if (checkDivisor == 2|| checkDivisor == 8) {
+				if (checkDivisor == 2|| checkDivisor == 8 || checkDivisor == 16) {
 					strDisplay.append(D[checkSum[i+1].checksum][0]);
 					strDisplay.append(D[checkSum[i+1].checksum][1]);
 				}
@@ -4960,6 +5003,10 @@ int EEPROM_Data_Verifier::cross_Parse() {
 
 int EEPROM_Data_Verifier::PDAF_Parse() {
 
+	for (int i = 0; i < 5; i++) {
+		PDAF_Data.MTK_center[i] = PDAF_Data.DCC_center[i] = 0;
+	}
+
 	int ret = 0;
 	unsigned int spec;
 	for (int i = 0; i < 16; i++)
@@ -5294,6 +5341,11 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 							e += 2;
 						}
 
+					for (int a = 2; a < 4; a++)
+						for (int b = 3; b < 5; b++) {
+							PDAF_Data.DCC_center[k / 2] += DCC[a][b] / (pow(2, PDAF_Data.QFORMAT)) / 4.0;
+						}
+
 					if (mode == 0) {
 						for (int i = 0; i < H; i++) {
 							for (int j = 0; j < W; j++) {
@@ -5344,6 +5396,11 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 						ui.log->insertPlainText(s.c_str());
 						ret |= 16;
 					}
+
+					for (int a = 3; a < 5; a++)
+						for (int b = 3; b < 5; b++) {
+							PDAF_Data.MTK_center[k / 2] += DCC[a][b] / (pow(2, PDAF_Data.MTK_SLOPE)) / 4.0;
+						}
 
 					if (mode == 0) {
 						fout << "~~~~~~~~~~~" << PD_Item[k][0] << " MTK Proc2 LR DCC:" << endl;
@@ -5406,6 +5463,10 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 							MTK_PD_Data[i][j] = DecData[e];				
 							e++; 
 						}
+					for (int a = 3; a < 5; a++)
+						for (int b = 3; b < 5; b++) {
+							PDAF_Data.MTK_center[k/2]+= DCC[a][b]/(pow(2, PDAF_Data.MTK_SLOPE))/4.0;
+						}
 
 					if (mode == 0) {
 						fout << "~~~~~~~~~~~" << PD_Item[k][0] << " MTK Proc2 LR DCC:" << endl;
@@ -5449,7 +5510,7 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 				if (mode == 0||(ret&32)>0) {
 					for (int i = 0; i < 6; i++) {
 						for (int j = 0; j < 8; j++) {
-							fout << F_DCC[i][j] << "	";
+							fout << F_DCC[i][j ] << "	";
 						}
 						fout << endl;
 					}
@@ -5461,6 +5522,20 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 				}
 			}
 		}
+		for (int i = 0; i < 5; i++) {
+			if(PDAF_Data.MTK_center[i]>0&& PDAF_Data.DCC_center[i]>0)
+				if (PDAF_Data.center_diff > 0) {
+					float cdiff= PDAF_Data.DCC_center[i] - PDAF_Data.MTK_center[i];
+					if (abs(cdiff) > PDAF_Data.center_diff) {
+						ret |= 64;
+						string s = PD_Item[2*i][0] + " vs " + PD_Item[2*i+1][0] + " center value Diff NG!\n ";
+						ui.log->insertPlainText(s.c_str());
+						s = "diff=	" + to_string(cdiff)+" , spec=	" + to_string(PDAF_Data.center_diff) + "\n";
+						ui.log->insertPlainText(s.c_str());
+					}
+				}
+		}
+
 	return ret;
 }
 
@@ -5972,7 +6047,6 @@ void EEPROM_Data_Verifier::Oppo_AWB_Parse(int group) {
 
 }
 
-
 void EEPROM_Data_Verifier::VIVO_AWB_Parse(int group) {
 
 	TCHAR lpTexts[10]; int temp = 0, L, H;
@@ -6063,6 +6137,103 @@ void EEPROM_Data_Verifier::VIVO_AWB_Parse(int group) {
 
 }
 
+void EEPROM_Data_Verifier::MOTO_AWB_Parse(int group) {
+
+	TCHAR lpTexts[10]; int temp = 0, L, H;
+	int ret = 0;
+	string s, color = "AWB_5100K_", item;
+
+	if (group == 1)
+		color = "AWB_3100K_";
+
+	fout << "-------" << color << "Data------" << endl;
+
+	/////////////////////////////////// AWB 
+	item = color + "Gain R/Gr";
+	GetPrivateProfileString(TEXT("OTHER"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	s = CT2A(lpTexts);
+	H = marking_Hex2int(s, item + " H", "", VIVO_AWB);
+	map_Push(H + 1, item + " L", "", VIVO_AWB);
+	VIVO_AWB_Data[group].AWB[0] = DecData[H] * 256 + DecData[H + 1];
+	fout << item << " :	" << VIVO_AWB_Data[group].AWB[0] << endl;
+
+	item = color + "Gain B/Gr";
+	GetPrivateProfileString(TEXT("OTHER"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	s = CT2A(lpTexts);
+	H = marking_Hex2int(s, item + " H", "", VIVO_AWB);
+	map_Push(H + 1, item + " L", "", VIVO_AWB);
+	VIVO_AWB_Data[group].AWB[1] = DecData[H] * 256 + DecData[H + 1];
+	fout << item << " :	" << VIVO_AWB_Data[group].AWB[1] << endl;
+
+	item = color + "Gain Gr/Gb";
+	GetPrivateProfileString(TEXT("OTHER"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	s = CT2A(lpTexts);
+	H = marking_Hex2int(s, item + " H", "", VIVO_AWB);
+	map_Push(H + 1, item + " L", "", VIVO_AWB);
+	VIVO_AWB_Data[group].AWB[2] = DecData[H] * 256 + DecData[H + 1];
+	fout << item << " :	" << VIVO_AWB_Data[group].AWB[2] << endl;
+
+	/////////////////////////////////// Golden
+	item = color + "Golden Gain R/Gr";
+	GetPrivateProfileString(TEXT("OTHER"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	s = CT2A(lpTexts);
+	H = marking_Hex2int(s, item + " H", "", VIVO_AWB);
+	map_Push(H + 1, item + " L", "", VIVO_AWB);
+	VIVO_AWB_Data[group].Golden[0] = DecData[H] * 256 + DecData[H + 1];
+	fout << item << " :	" << VIVO_AWB_Data[group].Golden[0] << endl;
+
+	item = color + "Golden Gain B/Gr";
+	GetPrivateProfileString(TEXT("OTHER"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	s = CT2A(lpTexts);
+	H = marking_Hex2int(s, item + " H", "", VIVO_AWB);
+	map_Push(H + 1, item + " L", "", VIVO_AWB);
+	VIVO_AWB_Data[group].Golden[1] = DecData[H] * 256 + DecData[H + 1];
+	fout << item << " :	" << VIVO_AWB_Data[group].Golden[1] << endl;
+
+	item = color + "Golden Gain Gr/Gb";
+	GetPrivateProfileString(TEXT("OTHER"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	s = CT2A(lpTexts);
+	H = marking_Hex2int(s, item + " H", "", VIVO_AWB);
+	map_Push(H + 1, item + " L", "", VIVO_AWB);
+	VIVO_AWB_Data[group].Golden[2] = DecData[H] * 256 + DecData[H + 1];
+	fout << item << " :	" << VIVO_AWB_Data[group].Golden[2] << endl;
+
+	//////////////////////////////////////// light coef
+	item = color + "Light Source R";
+	GetPrivateProfileString(TEXT("OTHER"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	s = CT2A(lpTexts);
+	H = marking_Hex2int(s, item + " Calibration H", "", VIVO_AWB);
+	map_Push(H + 1, item + "Calibration L", "", VIVO_AWB);
+	VIVO_AWB_Data[group].Light[0] = DecData[H] * 256 + DecData[H + 1];
+	fout << item << " :	" << VIVO_AWB_Data[group].Light[0] << endl;
+
+	item = color + "Light Source Gr";
+	GetPrivateProfileString(TEXT("OTHER"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	s = CT2A(lpTexts);
+	H = marking_Hex2int(s, item + " Calibration H", "", VIVO_AWB);
+	map_Push(H + 1, item + "Calibration L", "", VIVO_AWB);
+	VIVO_AWB_Data[group].Light[1] = DecData[H] * 256 + DecData[H + 1];
+	fout << item << " :	" << VIVO_AWB_Data[group].Light[1] << endl;
+
+	item = color + "Light Source Gb";
+	GetPrivateProfileString(TEXT("OTHER"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	s = CT2A(lpTexts);
+	H = marking_Hex2int(s, item + " Calibration H", "", VIVO_AWB);
+	map_Push(H + 1, item + "Calibration L", "", VIVO_AWB);
+	VIVO_AWB_Data[group].Light[2] = DecData[H] * 256 + DecData[H + 1];
+	fout << item << " :	" << VIVO_AWB_Data[group].Light[2] << endl;
+
+	item = color + "Light Source B";
+	GetPrivateProfileString(TEXT("OTHER"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	s = CT2A(lpTexts);
+	H = marking_Hex2int(s, item + " Calibration H", "", VIVO_AWB);
+	map_Push(H + 1, item + "Calibration L", "", VIVO_AWB);
+	VIVO_AWB_Data[group].Light[3] = DecData[H] * 256 + DecData[H + 1];
+	fout << item << " :	" << VIVO_AWB_Data[group].Light[3] << endl;
+
+	fout << endl;
+
+}
 
 void EEPROM_Data_Verifier::SONY_AWB_Parse(int group) {
 
@@ -6100,7 +6271,6 @@ void EEPROM_Data_Verifier::SONY_AWB_Parse(int group) {
 	fout << endl;
 
 }
-
 
 void EEPROM_Data_Verifier::vivo_MTK_AWB_Parse(int group) {
 
@@ -6191,7 +6361,6 @@ void EEPROM_Data_Verifier::vivo_MTK_AWB_Parse(int group) {
 
 }
 
-
 void EEPROM_Data_Verifier::MTK_AWB_Parse(int group) {
 
 	TCHAR lpTexts[10]; int temp = 0, L, H;
@@ -6281,7 +6450,6 @@ void EEPROM_Data_Verifier::MTK_AWB_Parse(int group) {
 	fout << endl;
 
 }
-
 
 void EEPROM_Data_Verifier::LSI_AWB_Parse(int group) {
 
@@ -6404,7 +6572,6 @@ void EEPROM_Data_Verifier::XiaoMi_AWB_Parse(int group) {
 
 }
 
-
 void dual_Cal_Parse(int S, int E) {
 
 	unsigned int Dou[2] = { 0,0 };
@@ -6505,7 +6672,7 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 					}
 
 				}
-				if (d == 2) {
+				if (d  == 2) {
 					c = short_Out(e, OIS_HL);
 					if (OIS_HL == 0) {
 						map_Push(e, OIS_info_Item[i][0] + "_L", "",  OIS_Hall);
@@ -6604,7 +6771,7 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 				}
 				fout << OIS_data_Item[i][0] << ":	" << c << endl;
 
-				value_Hash[i + 66].item_name = OIS_info_Item[i][0];
+				value_Hash[i + 66].item_name = OIS_data_Item[i][0];
 				value_Hash[i + 66].hash[(0x7FFFFFFF+c) % 1009]++;
 
 				if (c < -1*Gyro_offset_spec[i] || c>Gyro_offset_spec[i]) {
@@ -6656,11 +6823,11 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 				fout << OIS_data_Item[i][0] << ":	" << Gyro_Gain[i - 2] << endl;
 
 				if (d == 4) {
-					value_Hash[i + 66].item_name = OIS_info_Item[i][0];
+					value_Hash[i + 66].item_name = OIS_data_Item[i][0];
 					value_Hash[i + 66].hash[uint_Out(e, 1) % 1009]++;
 				}
 				else if (d == 2) {
-					value_Hash[i + 66].item_name = OIS_info_Item[i][0];
+					value_Hash[i + 66].item_name = OIS_data_Item[i][0];
 					value_Hash[i + 66].hash[ushort_Out(e, 1) % 1009]++;
 				}
 
@@ -6693,7 +6860,7 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 					ui.log->insertPlainText(s.c_str());
 					ret |= 4;
 				}
-				value_Hash[i + 66].item_name = OIS_info_Item[i][0];
+				value_Hash[i + 66].item_name = OIS_data_Item[i][0];
 				value_Hash[i + 66].hash[ushort_Out(e, 1) % 1009]++;
 			}	
 		}
@@ -6793,7 +6960,8 @@ int EEPROM_Data_Verifier::info_Data_Parse() {
 		int k = 0;
 
 		for (int i = start; i <= end; i++) {
-			fout << (char)DecData[i];
+			if(DecData[i]!=0)
+				fout << (char)DecData[i];
 
 			if (k < QR_Data.item[2].length()) {
 				if (DecData[i] != QR_Data.item[2][k++]) {
@@ -7921,6 +8089,19 @@ void EEPROM_Data_Verifier::on_pushButton_parser_clicked()
 			MTK_AWB_Parse(0);
 			if (MTK_AWB_FP_Check(MTK_AWB,1) != 0) {
 				ui.log->insertPlainText("MTK AWB Data NG, please check FP_log. \n");
+			}
+		}
+	}
+
+	if (ui.CS_other->isChecked()) {
+		MOTO_AWB_Parse(0);
+		if (MOTO_QC_AWB_FP_Check(VIVO_AWB_Data) != 0) {
+			ui.log->insertPlainText("QC AWB Data NG, please check FP_log. \n");
+		}
+		if (ui.MTK->isChecked()) {
+			MTK_AWB_Parse(0);
+			if (MTK_AWB_FP_Check(MTK_AWB, 1) != 0) {
+				ui.log->insertPlainText("MOTO AWB Data NG, please check FP_log. \n");
 			}
 		}
 	}
