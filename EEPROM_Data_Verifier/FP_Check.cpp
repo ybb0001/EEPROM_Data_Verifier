@@ -11,7 +11,7 @@ int LSC_H_TABLE[8], LSC_V_TABLE[6], LSC_H_TABLE_RE[8], LSC_V_TABLE_RE[6];
 float GainMap_Diff = 0.3, GainMap_LR_Diff = 0.3, GainMap_TB_Diff = 0.3, DCC_Diff=0.4;
 float MTK_Proc1_Diff = 0.3, MTK_Proc1_LR_Diff = 0.3, MTK_Proc1_TB_Diff = 0.3, MTK_Proc2_Diff = 0.4;
 float MTK_LSC_H_TABLE[7], MTK_LSC_V_TABLE[7], MTK_LSC_H_TABLE_RE[7], MTK_LSC_V_TABLE_RE[7];
-float LSC_COR_USL = 0.9, LSC_COR_LSL = 0.1, LSC_MINMAX_SPEC[4], LSC_MINMAX_CORNER[3],MTK_LSC_MINMAX_SPEC[4];
+float LSC_COR_USL = 0.9, LSC_COR_LSL = 0.1, LSC_MINMAX_SPEC[4], LSC_MINMAX_CORNER[3],MTK_LSC_MINMAX_SPEC[4], MTK_LSC_MINMAX_CORNER[3];
 float golden_Spec[2][3] = {0};
 unsigned int awb_distance[3], awb_tolerance[3][3];
 int QSC_Min, QSC_Max, LSC_Sequence_check=1;
@@ -111,6 +111,13 @@ void load_Spec(int x) {
 	GetPrivateProfileString(TEXT("Spec_Set"), TEXT("MTK_LSC_MINMAX_SPEC_B"), TEXT(""), lpTexts, 8, CA2CT(INI_Path.c_str()));
 	MTK_LSC_MINMAX_SPEC[3] = atof(CT2A(lpTexts));
 
+	GetPrivateProfileString(TEXT("Spec_Set"), TEXT("MTK_LSC_MINMAX_CORNER_ONOFF"), TEXT("0"), lpTexts, 8, CA2CT(INI_Path.c_str()));
+	MTK_LSC_MINMAX_CORNER[0] = atof(CT2A(lpTexts));
+	GetPrivateProfileString(TEXT("Spec_Set"), TEXT("MTK_LSC_MINMAX_ERRCOUNT"), TEXT("1"), lpTexts, 8, CA2CT(INI_Path.c_str()));
+	MTK_LSC_MINMAX_CORNER[1] = atof(CT2A(lpTexts));
+	GetPrivateProfileString(TEXT("Spec_Set"), TEXT("MTK_LSC_MINMAX_ERRCOUNT_SPEC"), TEXT("26"), lpTexts, 8, CA2CT(INI_Path.c_str()));
+	MTK_LSC_MINMAX_CORNER[2] = atof(CT2A(lpTexts));
+
 	GetPrivateProfileString(TEXT("SONY"), TEXT("golden_rg_High_Color"), TEXT("0"), lpTexts, 10, CA2CT(INI_Path.c_str()));
 	
 	golden_Spec[0][0] = atof(CT2A(lpTexts));
@@ -124,11 +131,6 @@ void load_Spec(int x) {
 	golden_Spec[1][1] = atof(CT2A(lpTexts));
 	GetPrivateProfileString(TEXT("SONY"), TEXT("golden_gbgr_Low_Color"), TEXT("0"), lpTexts, 10, CA2CT(INI_Path.c_str()));
 	golden_Spec[1][2] = atof(CT2A(lpTexts));
-
-
-	LSC_MINMAX_CORNER_ONOFF = GetPrivateProfileInt(_T("Spec_Set"), TEXT("LSC_MINMAX_CORNER_ONOFF"), LSC_MINMAX_CORNER_ONOFF, CA2CT(INI_Path.c_str()));
-	LSC_MINMAX_ERRCOUNT = GetPrivateProfileInt(_T("Spec_Set"), TEXT("LSC_MINMAX_ERRCOUNT"), LSC_MINMAX_CORNER_ONOFF, CA2CT(INI_Path.c_str()));
-	LSC_MINMAX_ERRCOUNT_SPEC = GetPrivateProfileInt(_T("Spec_Set"), TEXT("LSC_MINMAX_ERRCOUNT_SPEC"), LSC_MINMAX_CORNER_ONOFF, CA2CT(INI_Path.c_str()));
 
 	QSC_Min= GetPrivateProfileInt(_T("Spec_Set"), TEXT("QSC_Min"), 920, CA2CT(INI_Path.c_str()));
 	QSC_Max = GetPrivateProfileInt(_T("Spec_Set"), TEXT("QSC_Max"), 1080, CA2CT(INI_Path.c_str()));
@@ -309,7 +311,7 @@ int QC_LSC_FP_Check(int LSC[25][33][4],int type) {
 			}
 
 	float LSC_MAX_DIFF[6][8][4];
-	int ERRCOUNT = 0, cnt=0;
+	int ERRCOUNT = 0, cnt = 0, except_cnt = 0;
 	for (int k = 0; k < T; k++)
 		for (int i = 1; i < H/2; i++)
 			for (int j = 1; j < W / 2; j++) {
@@ -333,10 +335,19 @@ int QC_LSC_FP_Check(int LSC[25][33][4],int type) {
 					max = LSC_AVG[H - 1 - i][W - 1 - j][k];
 
 				LSC_MAX_DIFF[i][j][k] = max - min;
-				if (LSC_MINMAX_CORNER == 0||i!=1||j!=1){
-					if (LSC_MAX_DIFF[i][j][k] > LSC_MINMAX_SPEC[k] * C / 1024.0) {
+				if (LSC_MINMAX_CORNER[0] > 0){
+					if (LSC_MAX_DIFF[i][j][k] >LSC_MINMAX_CORNER[2] * C / 1024.0) {
 						ret = ret | 8;
 						FP_log << color[k] << " [" << i << "," << j << "]" << "LSC block NG!" << endl;
+					}
+					else {
+						if (LSC_MAX_DIFF[i][j][k] > LSC_MINMAX_SPEC[k] * C / 1024.0) {
+							except_cnt++;
+						}
+					}
+					if (except_cnt > LSC_MINMAX_CORNER[1]) {
+						ret = ret | 8;
+						FP_log << color[k] << " [" << i << "," << j << "]" << "LSC block NG!" << endl;		
 					}
 				}
 				else {
@@ -484,7 +495,7 @@ int MTK_LSC_FP_Check(int LSC[15][15][4], int first_pixel) {
 			}
 
 	float LSC_MAX_DIFF[7][7][4];
-	int ERRCOUNT = 0;
+	int cnt = 0, except_cnt=0;
 	for (int k = 0; k < 4; k++)
 		for (int i = 1; i < 7; i++)
 			for (int j = 1; j < 7; j++) {
@@ -508,9 +519,33 @@ int MTK_LSC_FP_Check(int LSC[15][15][4], int first_pixel) {
 					max = LSC_AVG[13 - i][13 - j][k];
 
 				LSC_MAX_DIFF[i][j][k] = max - min;
-				if (LSC_MAX_DIFF[i][j][k] > MTK_LSC_MINMAX_SPEC[k]) {
- 					ret = ret | 8;
-					FP_log << color[k] << " [" << i << "," << j << "]" << " MTK_LSC block NG!" << endl;
+
+				//if (LSC_MAX_DIFF[i][j][k] > MTK_LSC_MINMAX_SPEC[k]) {
+ 			//		ret = ret | 8;
+				//	FP_log << color[k] << " [" << i << "," << j << "]" << " MTK_LSC block NG!" << endl;
+				//}
+
+				if (MTK_LSC_MINMAX_CORNER[0] > 0) {
+					if (LSC_MAX_DIFF[i][j][k] > MTK_LSC_MINMAX_CORNER[2]) {
+						ret = ret | 8;
+						FP_log << color[k] << " [" << i << "," << j << "]" << "MTK_LSC block NG!" << endl;
+					}
+					else {
+						if (LSC_MAX_DIFF[i][j][k] >  MTK_LSC_MINMAX_SPEC[k] ) {
+							except_cnt++;
+						}
+					}
+					if (except_cnt >  MTK_LSC_MINMAX_CORNER[1]) {
+						ret = ret | 8;
+						FP_log << color[k] << " [" << i << "," << j << "]" << "MTK_LSC block NG!" << endl;
+					}
+				}
+				else {
+					if (LSC_MAX_DIFF[i][j][k] >  MTK_LSC_MINMAX_SPEC[k]) {
+						cnt++;
+					}
+					if (cnt>1)
+						ret = ret | 8;
 				}
 			}
 

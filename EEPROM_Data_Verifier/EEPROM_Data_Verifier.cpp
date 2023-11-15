@@ -1530,8 +1530,9 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 	ui.checksum405->setText(checkSum[39].item[4].c_str());
 
 	if (checkDivisor == 0)ui.radioButton_255->setChecked(true);
+	else if (checkDivisor == -1)ui.radioButton_256->setChecked(true);
 	else if (checkDivisor == 1)ui.radioButton_255_1->setChecked(true);
-	else if (checkDivisor == 2)ui.radioButton_256->setChecked(true);
+	else if (checkDivisor == 2)ui.radioButton_10000->setChecked(true);
 	else if (checkDivisor == 4)ui.radioButton_CRC32->setChecked(true);
 	else if (checkDivisor == 8)ui.radioButton_FFFF->setChecked(true);
 	else if (checkDivisor == 16)ui.radioButton_CRC16->setChecked(true);
@@ -3689,6 +3690,8 @@ void EEPROM_Data_Verifier::save_EEPROM_Address() {
 	else if (ui.radioButton_255_1->isChecked())
 		WritePrivateProfileString(TEXT("EEPROM_Set"), TEXT("checkDivisor"), TEXT("1"), CA2CT(EEPROM_Map.c_str()));
 	else if (ui.radioButton_256->isChecked())
+		WritePrivateProfileString(TEXT("EEPROM_Set"), TEXT("checkDivisor"), TEXT("-1"), CA2CT(EEPROM_Map.c_str()));
+	else if (ui.radioButton_10000->isChecked())
 		WritePrivateProfileString(TEXT("EEPROM_Set"), TEXT("checkDivisor"), TEXT("2"), CA2CT(EEPROM_Map.c_str()));
 	else if (ui.radioButton_CRC32->isChecked())
 		WritePrivateProfileString(TEXT("EEPROM_Set"), TEXT("checkDivisor"), TEXT("4"), CA2CT(EEPROM_Map.c_str()));
@@ -4400,6 +4403,8 @@ int EEPROM_Data_Verifier::CheckSum_Check() {
 				fout << "Tsum_" <<i-37<< "	";
 			}
   			if (checkDivisor == 0)
+				d = tmp % 255;
+			else if (checkDivisor == -1)
 				d = tmp % 256;
 			else if (checkDivisor == 1)
 				d = tmp % 255 + 1;

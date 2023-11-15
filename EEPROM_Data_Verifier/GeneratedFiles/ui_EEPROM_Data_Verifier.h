@@ -122,7 +122,7 @@ public:
     QTextEdit *checksum162;
     QRadioButton *radioButton_255;
     QRadioButton *radioButton_255_1;
-    QRadioButton *radioButton_256;
+    QRadioButton *radioButton_10000;
     QTextEdit *flag_valid;
     QLabel *label_2;
     QLabel *label_5;
@@ -172,6 +172,8 @@ public:
     QRadioButton *CS_other;
     QRadioButton *radioButton_CRC32;
     QRadioButton *radioButton_FFFF;
+    QRadioButton *radioButton_CRC16;
+    QRadioButton *radioButton_256;
     QTextEdit *checksum213;
     QTextEdit *checksum335;
     QTextEdit *checksum231;
@@ -1299,18 +1301,18 @@ public:
     QCheckBox *full_log;
     QLabel *label_8;
     QPushButton *pushButton_folder;
-    QButtonGroup *buttonGroup_18;
-    QButtonGroup *buttonGroup;
     QButtonGroup *buttonGroup_16;
-    QButtonGroup *buttonGroup_3;
-    QButtonGroup *buttonGroup_13;
+    QButtonGroup *buttonGroup_18;
     QButtonGroup *buttonGroup_4;
+    QButtonGroup *buttonGroup_5;
+    QButtonGroup *buttonGroup_13;
     QButtonGroup *buttonGroup_12;
-    QButtonGroup *buttonGroup_7;
+    QButtonGroup *buttonGroup;
     QButtonGroup *buttonGroup_6;
     QButtonGroup *buttonGroup_2;
     QButtonGroup *buttonGroup_15;
-    QButtonGroup *buttonGroup_5;
+    QButtonGroup *buttonGroup_7;
+    QButtonGroup *buttonGroup_3;
 
     void setupUi(QWidget *EEPROM_Data_VerifierClass)
     {
@@ -1593,16 +1595,16 @@ public:
         buttonGroup_12->setObjectName(QStringLiteral("buttonGroup_12"));
         buttonGroup_12->addButton(radioButton_255);
         radioButton_255->setObjectName(QStringLiteral("radioButton_255"));
-        radioButton_255->setGeometry(QRect(10, 25, 41, 16));
-        radioButton_255->setChecked(true);
+        radioButton_255->setGeometry(QRect(10, 25, 45, 16));
+        radioButton_255->setChecked(false);
         radioButton_255_1 = new QRadioButton(tab_2);
         buttonGroup_12->addButton(radioButton_255_1);
         radioButton_255_1->setObjectName(QStringLiteral("radioButton_255_1"));
         radioButton_255_1->setGeometry(QRect(10, 45, 51, 16));
-        radioButton_256 = new QRadioButton(tab_2);
-        buttonGroup_12->addButton(radioButton_256);
-        radioButton_256->setObjectName(QStringLiteral("radioButton_256"));
-        radioButton_256->setGeometry(QRect(10, 65, 60, 16));
+        radioButton_10000 = new QRadioButton(tab_2);
+        buttonGroup_12->addButton(radioButton_10000);
+        radioButton_10000->setObjectName(QStringLiteral("radioButton_10000"));
+        radioButton_10000->setGeometry(QRect(10, 65, 55, 16));
         flag_valid = new QTextEdit(tab_2);
         flag_valid->setObjectName(QStringLiteral("flag_valid"));
         flag_valid->setGeometry(QRect(405, 15, 30, 25));
@@ -1775,7 +1777,16 @@ public:
         radioButton_FFFF = new QRadioButton(groupBox_2);
         buttonGroup_12->addButton(radioButton_FFFF);
         radioButton_FFFF->setObjectName(QStringLiteral("radioButton_FFFF"));
-        radioButton_FFFF->setGeometry(QRect(60, 20, 61, 16));
+        radioButton_FFFF->setGeometry(QRect(100, 20, 61, 16));
+        radioButton_CRC16 = new QRadioButton(groupBox_2);
+        buttonGroup_12->addButton(radioButton_CRC16);
+        radioButton_CRC16->setObjectName(QStringLiteral("radioButton_CRC16"));
+        radioButton_CRC16->setGeometry(QRect(70, 60, 51, 16));
+        radioButton_256 = new QRadioButton(groupBox_2);
+        buttonGroup_12->addButton(radioButton_256);
+        radioButton_256->setObjectName(QStringLiteral("radioButton_256"));
+        radioButton_256->setGeometry(QRect(50, 20, 45, 16));
+        radioButton_256->setChecked(true);
         checksum213 = new QTextEdit(tab_2);
         checksum213->setObjectName(QStringLiteral("checksum213"));
         checksum213->setGeometry(QRect(320, 105, 40, 28));
@@ -2199,7 +2210,7 @@ public:
         checksum162->raise();
         radioButton_255->raise();
         radioButton_255_1->raise();
-        radioButton_256->raise();
+        radioButton_10000->raise();
         flag_valid->raise();
         label_2->raise();
         label_5->raise();
@@ -5923,7 +5934,7 @@ public:
 
     void retranslateUi(QWidget *EEPROM_Data_VerifierClass)
     {
-        EEPROM_Data_VerifierClass->setWindowTitle(QApplication::translate("EEPROM_Data_VerifierClass", "EEPROM_Verifier_20230610", Q_NULLPTR));
+        EEPROM_Data_VerifierClass->setWindowTitle(QApplication::translate("EEPROM_Data_VerifierClass", "EEPROM_Verifier_20231017", Q_NULLPTR));
         label->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Input Memory Data", Q_NULLPTR));
         label_3->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Result & logs", Q_NULLPTR));
         pushButton_golden->setText(QApplication::translate("EEPROM_Data_VerifierClass", "AWB Golden", Q_NULLPTR));
@@ -5931,7 +5942,7 @@ public:
         tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("EEPROM_Data_VerifierClass", "Main", Q_NULLPTR));
         radioButton_255->setText(QApplication::translate("EEPROM_Data_VerifierClass", "%FF", Q_NULLPTR));
         radioButton_255_1->setText(QApplication::translate("EEPROM_Data_VerifierClass", "%FF+1", Q_NULLPTR));
-        radioButton_256->setText(QApplication::translate("EEPROM_Data_VerifierClass", "%10000", Q_NULLPTR));
+        radioButton_10000->setText(QApplication::translate("EEPROM_Data_VerifierClass", "%10000", Q_NULLPTR));
         flag_valid->setHtml(QApplication::translate("EEPROM_Data_VerifierClass", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -5973,6 +5984,8 @@ public:
         CS_other->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Other", Q_NULLPTR));
         radioButton_CRC32->setText(QApplication::translate("EEPROM_Data_VerifierClass", "CRC32", Q_NULLPTR));
         radioButton_FFFF->setText(QApplication::translate("EEPROM_Data_VerifierClass", "%FFFF+1", Q_NULLPTR));
+        radioButton_CRC16->setText(QApplication::translate("EEPROM_Data_VerifierClass", "CRC16", Q_NULLPTR));
+        radioButton_256->setText(QApplication::translate("EEPROM_Data_VerifierClass", "%256", Q_NULLPTR));
         label_91->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Flag", Q_NULLPTR));
         label_129->setText(QApplication::translate("EEPROM_Data_VerifierClass", "ChkSum", Q_NULLPTR));
         label_130->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Item", Q_NULLPTR));
