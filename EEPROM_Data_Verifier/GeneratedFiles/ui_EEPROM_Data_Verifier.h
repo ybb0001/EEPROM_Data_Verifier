@@ -169,7 +169,7 @@ public:
     QCheckBox *LSI;
     QRadioButton *sony;
     QRadioButton *SAMSUNG;
-    QRadioButton *CS_other;
+    QRadioButton *honor;
     QRadioButton *radioButton_CRC32;
     QRadioButton *radioButton_FFFF;
     QRadioButton *radioButton_CRC16;
@@ -910,12 +910,6 @@ public:
     QTextEdit *PDAF_info143;
     QTextEdit *PDAF_info142;
     QTextEdit *PDAF_info141;
-    QTextEdit *PDAF_info152;
-    QTextEdit *PDAF_info151;
-    QTextEdit *PDAF_info153;
-    QTextEdit *PDAF_info163;
-    QTextEdit *PDAF_info162;
-    QTextEdit *PDAF_info161;
     QGroupBox *groupBox_10;
     QTextEdit *Gmap21;
     QTextEdit *Gmap12;
@@ -1012,6 +1006,12 @@ public:
     QRadioButton *PD_Offset_HL;
     QRadioButton *PD_Offset_LH;
     QCheckBox *PD_offet_new;
+    QTextEdit *DCC152;
+    QTextEdit *DCC161;
+    QComboBox *DCC163;
+    QTextEdit *DCC151;
+    QComboBox *DCC153;
+    QTextEdit *DCC162;
     QWidget *tab_8;
     QPushButton *pushButton_folder_sorting;
     QWidget *tab_9;
@@ -1301,24 +1301,24 @@ public:
     QCheckBox *full_log;
     QLabel *label_8;
     QPushButton *pushButton_folder;
-    QButtonGroup *buttonGroup_16;
-    QButtonGroup *buttonGroup_18;
     QButtonGroup *buttonGroup_4;
-    QButtonGroup *buttonGroup_5;
-    QButtonGroup *buttonGroup_13;
-    QButtonGroup *buttonGroup_12;
-    QButtonGroup *buttonGroup;
-    QButtonGroup *buttonGroup_6;
-    QButtonGroup *buttonGroup_2;
-    QButtonGroup *buttonGroup_15;
-    QButtonGroup *buttonGroup_7;
     QButtonGroup *buttonGroup_3;
+    QButtonGroup *buttonGroup_12;
+    QButtonGroup *buttonGroup_13;
+    QButtonGroup *buttonGroup_6;
+    QButtonGroup *buttonGroup_15;
+    QButtonGroup *buttonGroup_16;
+    QButtonGroup *buttonGroup_2;
+    QButtonGroup *buttonGroup;
+    QButtonGroup *buttonGroup_7;
+    QButtonGroup *buttonGroup_18;
+    QButtonGroup *buttonGroup_5;
 
     void setupUi(QWidget *EEPROM_Data_VerifierClass)
     {
         if (EEPROM_Data_VerifierClass->objectName().isEmpty())
             EEPROM_Data_VerifierClass->setObjectName(QStringLiteral("EEPROM_Data_VerifierClass"));
-        EEPROM_Data_VerifierClass->resize(860, 730);
+        EEPROM_Data_VerifierClass->resize(865, 730);
         input = new QTextEdit(EEPROM_Data_VerifierClass);
         input->setObjectName(QStringLiteral("input"));
         input->setGeometry(QRect(10, 20, 401, 511));
@@ -1765,11 +1765,11 @@ public:
         SAMSUNG->setObjectName(QStringLiteral("SAMSUNG"));
         SAMSUNG->setGeometry(QRect(215, 40, 61, 16));
         SAMSUNG->setChecked(false);
-        CS_other = new QRadioButton(groupBox_2);
-        buttonGroup_3->addButton(CS_other);
-        CS_other->setObjectName(QStringLiteral("CS_other"));
-        CS_other->setGeometry(QRect(215, 60, 61, 16));
-        CS_other->setChecked(false);
+        honor = new QRadioButton(groupBox_2);
+        buttonGroup_3->addButton(honor);
+        honor->setObjectName(QStringLiteral("honor"));
+        honor->setGeometry(QRect(215, 60, 61, 16));
+        honor->setChecked(false);
         radioButton_CRC32 = new QRadioButton(groupBox_2);
         buttonGroup_12->addButton(radioButton_CRC32);
         radioButton_CRC32->setObjectName(QStringLiteral("radioButton_CRC32"));
@@ -4333,7 +4333,7 @@ public:
         tab_7->setObjectName(QStringLiteral("tab_7"));
         groupBox_9 = new QGroupBox(tab_7);
         groupBox_9->setObjectName(QStringLiteral("groupBox_9"));
-        groupBox_9->setGeometry(QRect(0, 0, 441, 271));
+        groupBox_9->setGeometry(QRect(0, 0, 441, 241));
         PDAF_info21 = new QTextEdit(groupBox_9);
         PDAF_info21->setObjectName(QStringLiteral("PDAF_info21"));
         PDAF_info21->setGeometry(QRect(220, 30, 130, 30));
@@ -4478,27 +4478,9 @@ public:
         PDAF_info141 = new QTextEdit(groupBox_9);
         PDAF_info141->setObjectName(QStringLiteral("PDAF_info141"));
         PDAF_info141->setGeometry(QRect(220, 210, 130, 30));
-        PDAF_info152 = new QTextEdit(groupBox_9);
-        PDAF_info152->setObjectName(QStringLiteral("PDAF_info152"));
-        PDAF_info152->setGeometry(QRect(125, 240, 45, 30));
-        PDAF_info151 = new QTextEdit(groupBox_9);
-        PDAF_info151->setObjectName(QStringLiteral("PDAF_info151"));
-        PDAF_info151->setGeometry(QRect(0, 240, 130, 30));
-        PDAF_info153 = new QTextEdit(groupBox_9);
-        PDAF_info153->setObjectName(QStringLiteral("PDAF_info153"));
-        PDAF_info153->setGeometry(QRect(170, 240, 45, 30));
-        PDAF_info163 = new QTextEdit(groupBox_9);
-        PDAF_info163->setObjectName(QStringLiteral("PDAF_info163"));
-        PDAF_info163->setGeometry(QRect(395, 240, 45, 30));
-        PDAF_info162 = new QTextEdit(groupBox_9);
-        PDAF_info162->setObjectName(QStringLiteral("PDAF_info162"));
-        PDAF_info162->setGeometry(QRect(350, 240, 45, 30));
-        PDAF_info161 = new QTextEdit(groupBox_9);
-        PDAF_info161->setObjectName(QStringLiteral("PDAF_info161"));
-        PDAF_info161->setGeometry(QRect(220, 240, 130, 30));
         groupBox_10 = new QGroupBox(tab_7);
         groupBox_10->setObjectName(QStringLiteral("groupBox_10"));
-        groupBox_10->setGeometry(QRect(0, 270, 441, 185));
+        groupBox_10->setGeometry(QRect(0, 240, 441, 185));
         Gmap21 = new QTextEdit(groupBox_10);
         Gmap21->setObjectName(QStringLiteral("Gmap21"));
         Gmap21->setGeometry(QRect(220, 30, 100, 30));
@@ -4693,7 +4675,7 @@ public:
         label_193->raise();
         groupBox_11 = new QGroupBox(tab_7);
         groupBox_11->setObjectName(QStringLiteral("groupBox_11"));
-        groupBox_11->setGeometry(QRect(0, 455, 441, 271));
+        groupBox_11->setGeometry(QRect(0, 425, 441, 281));
         DCC12 = new QTextEdit(groupBox_11);
         DCC12->setObjectName(QStringLiteral("DCC12"));
         DCC12->setGeometry(QRect(130, 20, 45, 30));
@@ -4837,6 +4819,26 @@ public:
         PD_offet_new = new QCheckBox(groupBox_11);
         PD_offet_new->setObjectName(QStringLiteral("PD_offet_new"));
         PD_offet_new->setGeometry(QRect(290, 173, 81, 16));
+        DCC152 = new QTextEdit(groupBox_11);
+        DCC152->setObjectName(QStringLiteral("DCC152"));
+        DCC152->setGeometry(QRect(130, 250, 45, 30));
+        DCC161 = new QTextEdit(groupBox_11);
+        DCC161->setObjectName(QStringLiteral("DCC161"));
+        DCC161->setGeometry(QRect(220, 250, 130, 30));
+        DCC163 = new QComboBox(groupBox_11);
+        DCC163->setObjectName(QStringLiteral("DCC163"));
+        DCC163->setGeometry(QRect(325, 250, 115, 30));
+        DCC151 = new QTextEdit(groupBox_11);
+        DCC151->setObjectName(QStringLiteral("DCC151"));
+        DCC151->setGeometry(QRect(0, 250, 130, 30));
+        DCC153 = new QComboBox(groupBox_11);
+        DCC153->setObjectName(QStringLiteral("DCC153"));
+        DCC153->setGeometry(QRect(105, 250, 115, 30));
+        DCC162 = new QTextEdit(groupBox_11);
+        DCC162->setObjectName(QStringLiteral("DCC162"));
+        DCC162->setGeometry(QRect(350, 250, 45, 30));
+        DCC163->raise();
+        DCC153->raise();
         DCC143->raise();
         DCC43->raise();
         DCC103->raise();
@@ -4883,6 +4885,10 @@ public:
         PD_Offset_HL->raise();
         PD_Offset_LH->raise();
         PD_offet_new->raise();
+        DCC152->raise();
+        DCC161->raise();
+        DCC151->raise();
+        DCC162->raise();
         tabWidget->addTab(tab_7, QString());
         tab_8 = new QWidget();
         tab_8->setObjectName(QStringLiteral("tab_8"));
@@ -5934,7 +5940,7 @@ public:
 
     void retranslateUi(QWidget *EEPROM_Data_VerifierClass)
     {
-        EEPROM_Data_VerifierClass->setWindowTitle(QApplication::translate("EEPROM_Data_VerifierClass", "EEPROM_Verifier_20231017", Q_NULLPTR));
+        EEPROM_Data_VerifierClass->setWindowTitle(QApplication::translate("EEPROM_Data_VerifierClass", "EEPROM_Verifier_20241028", Q_NULLPTR));
         label->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Input Memory Data", Q_NULLPTR));
         label_3->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Result & logs", Q_NULLPTR));
         pushButton_golden->setText(QApplication::translate("EEPROM_Data_VerifierClass", "AWB Golden", Q_NULLPTR));
@@ -5981,7 +5987,7 @@ public:
         LSI->setText(QApplication::translate("EEPROM_Data_VerifierClass", "LSI", Q_NULLPTR));
         sony->setText(QApplication::translate("EEPROM_Data_VerifierClass", "SONY", Q_NULLPTR));
         SAMSUNG->setText(QApplication::translate("EEPROM_Data_VerifierClass", "SAMSUNG", Q_NULLPTR));
-        CS_other->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Other", Q_NULLPTR));
+        honor->setText(QApplication::translate("EEPROM_Data_VerifierClass", "HONOR", Q_NULLPTR));
         radioButton_CRC32->setText(QApplication::translate("EEPROM_Data_VerifierClass", "CRC32", Q_NULLPTR));
         radioButton_FFFF->setText(QApplication::translate("EEPROM_Data_VerifierClass", "%FFFF+1", Q_NULLPTR));
         radioButton_CRC16->setText(QApplication::translate("EEPROM_Data_VerifierClass", "CRC16", Q_NULLPTR));
@@ -6446,6 +6452,7 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1576, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1004, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "PD Offset,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b,SONY", Q_NULLPTR)
         );
         DCC33->clear();
         DCC33->insertItems(0, QStringList()
@@ -6454,6 +6461,7 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1576, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1004, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "PD Offset,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b,SONY", Q_NULLPTR)
         );
         DCC53->clear();
         DCC53->insertItems(0, QStringList()
@@ -6462,6 +6470,7 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1576, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1004, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "PD Offset,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b,SONY", Q_NULLPTR)
         );
         DCC73->clear();
         DCC73->insertItems(0, QStringList()
@@ -6470,6 +6479,7 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1576, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1004, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "PD Offset,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b,SONY", Q_NULLPTR)
         );
         DCC93->clear();
         DCC93->insertItems(0, QStringList()
@@ -6478,6 +6488,7 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1576, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1004, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "PD Offset,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b,SONY", Q_NULLPTR)
         );
         DCC113->clear();
         DCC113->insertItems(0, QStringList()
@@ -6490,6 +6501,7 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1576, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1004, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "PD Offset,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b,SONY", Q_NULLPTR)
         );
         DCC23->clear();
         DCC23->insertItems(0, QStringList()
@@ -6498,6 +6510,7 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1576, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1004, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "PD Offset,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b,SONY", Q_NULLPTR)
         );
         DCC63->clear();
         DCC63->insertItems(0, QStringList()
@@ -6506,6 +6519,7 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1576, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1004, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "PD Offset,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b,SONY", Q_NULLPTR)
         );
         DCC123->clear();
         DCC123->insertItems(0, QStringList()
@@ -6518,6 +6532,7 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1576, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1004, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "PD Offset,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b,SONY", Q_NULLPTR)
         );
         DCC83->clear();
         DCC83->insertItems(0, QStringList()
@@ -6526,6 +6541,7 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1576, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1004, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "PD Offset,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b,SONY", Q_NULLPTR)
         );
         DCC133->clear();
         DCC133->insertItems(0, QStringList()
@@ -6538,6 +6554,14 @@ public:
         PD_Offset_HL->setText(QApplication::translate("EEPROM_Data_VerifierClass", "HL", Q_NULLPTR));
         PD_Offset_LH->setText(QApplication::translate("EEPROM_Data_VerifierClass", "LH", Q_NULLPTR));
         PD_offet_new->setText(QApplication::translate("EEPROM_Data_VerifierClass", "abnormal", Q_NULLPTR));
+        DCC163->clear();
+        DCC163->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "PD Offset,  QC", Q_NULLPTR)
+        );
+        DCC153->clear();
+        DCC153->insertItems(0, QStringList()
+         << QApplication::translate("EEPROM_Data_VerifierClass", "PD Offset,  QC", Q_NULLPTR)
+        );
         tabWidget->setTabText(tabWidget->indexOf(tab_7), QApplication::translate("EEPROM_Data_VerifierClass", "PDAF", Q_NULLPTR));
         pushButton_folder_sorting->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Sorting", Q_NULLPTR));
         tabWidget->setTabText(tabWidget->indexOf(tab_8), QApplication::translate("EEPROM_Data_VerifierClass", "Dual", Q_NULLPTR));

@@ -40,6 +40,7 @@ enum data_Type {
 	QSC_Type = 23,
 	MTK_AWB_Type=24,
 	LSI_AWB_Type = 25,
+	HONOR_AWB=26,
 };
 
 
@@ -92,7 +93,8 @@ public:
 	QImage img;
 	QImage imgScaled;
 	std::string name;
-	
+	std::string name2;
+
 
 private:
 	Ui::EEPROM_Data_VerifierClass ui;
@@ -124,6 +126,7 @@ private:
 	void SONY_AWB_Parse(int group);
 	void XiaoMi_AWB_Parse(int group);
 	void MOTO_AWB_Parse(int group);
+	void HONOR_AWB_Parse(int group);
 
 	void History_Date_Parser();
 

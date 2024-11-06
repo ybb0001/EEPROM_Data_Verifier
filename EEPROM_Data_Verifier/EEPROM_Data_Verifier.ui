@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>860</width>
+    <width>865</width>
     <height>730</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>EEPROM_Verifier_20231017</string>
+   <string>EEPROM_Verifier_20241028</string>
   </property>
   <widget class="QTextEdit" name="input">
    <property name="geometry">
@@ -1570,7 +1570,7 @@ p, li { white-space: pre-wrap; }
        <string notr="true">buttonGroup_3</string>
       </attribute>
      </widget>
-     <widget class="QRadioButton" name="CS_other">
+     <widget class="QRadioButton" name="honor">
       <property name="geometry">
        <rect>
         <x>215</x>
@@ -1580,7 +1580,7 @@ p, li { white-space: pre-wrap; }
        </rect>
       </property>
       <property name="text">
-       <string>Other</string>
+       <string>HONOR</string>
       </property>
       <property name="checked">
        <bool>false</bool>
@@ -9954,7 +9954,7 @@ p, li { white-space: pre-wrap; }
        <x>0</x>
        <y>0</y>
        <width>441</width>
-       <height>271</height>
+       <height>241</height>
       </rect>
      </property>
      <property name="title">
@@ -10458,72 +10458,12 @@ p, li { white-space: pre-wrap; }
        </rect>
       </property>
      </widget>
-     <widget class="QTextEdit" name="PDAF_info152">
-      <property name="geometry">
-       <rect>
-        <x>125</x>
-        <y>240</y>
-        <width>45</width>
-        <height>30</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QTextEdit" name="PDAF_info151">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>240</y>
-        <width>130</width>
-        <height>30</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QTextEdit" name="PDAF_info153">
-      <property name="geometry">
-       <rect>
-        <x>170</x>
-        <y>240</y>
-        <width>45</width>
-        <height>30</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QTextEdit" name="PDAF_info163">
-      <property name="geometry">
-       <rect>
-        <x>395</x>
-        <y>240</y>
-        <width>45</width>
-        <height>30</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QTextEdit" name="PDAF_info162">
-      <property name="geometry">
-       <rect>
-        <x>350</x>
-        <y>240</y>
-        <width>45</width>
-        <height>30</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QTextEdit" name="PDAF_info161">
-      <property name="geometry">
-       <rect>
-        <x>220</x>
-        <y>240</y>
-        <width>130</width>
-        <height>30</height>
-       </rect>
-      </property>
-     </widget>
     </widget>
     <widget class="QGroupBox" name="groupBox_10">
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>270</y>
+       <y>240</y>
        <width>441</width>
        <height>185</height>
       </rect>
@@ -11338,9 +11278,9 @@ p, li { white-space: pre-wrap; }
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>455</y>
+       <y>425</y>
        <width>441</width>
-       <height>271</height>
+       <height>281</height>
       </rect>
      </property>
      <property name="title">
@@ -11633,6 +11573,11 @@ p, li { white-space: pre-wrap; }
         <string>PD Offset,  QC</string>
        </property>
       </item>
+      <item>
+       <property name="text">
+        <string>17x13,2b,SONY</string>
+       </property>
+      </item>
      </widget>
      <widget class="QComboBox" name="DCC33">
       <property name="geometry">
@@ -11666,6 +11611,11 @@ p, li { white-space: pre-wrap; }
       <item>
        <property name="text">
         <string>PD Offset,  QC</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>17x13,2b,SONY</string>
        </property>
       </item>
      </widget>
@@ -11703,6 +11653,11 @@ p, li { white-space: pre-wrap; }
         <string>PD Offset,  QC</string>
        </property>
       </item>
+      <item>
+       <property name="text">
+        <string>17x13,2b,SONY</string>
+       </property>
+      </item>
      </widget>
      <widget class="QComboBox" name="DCC73">
       <property name="geometry">
@@ -11738,6 +11693,11 @@ p, li { white-space: pre-wrap; }
         <string>PD Offset,  QC</string>
        </property>
       </item>
+      <item>
+       <property name="text">
+        <string>17x13,2b,SONY</string>
+       </property>
+      </item>
      </widget>
      <widget class="QComboBox" name="DCC93">
       <property name="geometry">
@@ -11771,6 +11731,11 @@ p, li { white-space: pre-wrap; }
       <item>
        <property name="text">
         <string>PD Offset,  QC</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>17x13,2b,SONY</string>
        </property>
       </item>
      </widget>
@@ -11823,6 +11788,11 @@ p, li { white-space: pre-wrap; }
         <string>PD Offset,  QC</string>
        </property>
       </item>
+      <item>
+       <property name="text">
+        <string>17x13,2b,SONY</string>
+       </property>
+      </item>
      </widget>
      <widget class="QComboBox" name="DCC23">
       <property name="geometry">
@@ -11858,6 +11828,11 @@ p, li { white-space: pre-wrap; }
         <string>PD Offset,  QC</string>
        </property>
       </item>
+      <item>
+       <property name="text">
+        <string>17x13,2b,SONY</string>
+       </property>
+      </item>
      </widget>
      <widget class="QComboBox" name="DCC63">
       <property name="geometry">
@@ -11891,6 +11866,11 @@ p, li { white-space: pre-wrap; }
       <item>
        <property name="text">
         <string>PD Offset,  QC</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>17x13,2b,SONY</string>
        </property>
       </item>
      </widget>
@@ -11943,6 +11923,11 @@ p, li { white-space: pre-wrap; }
         <string>PD Offset,  QC</string>
        </property>
       </item>
+      <item>
+       <property name="text">
+        <string>17x13,2b,SONY</string>
+       </property>
+      </item>
      </widget>
      <widget class="QComboBox" name="DCC83">
       <property name="geometry">
@@ -11976,6 +11961,11 @@ p, li { white-space: pre-wrap; }
       <item>
        <property name="text">
         <string>PD Offset,  QC</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>17x13,2b,SONY</string>
        </property>
       </item>
      </widget>
@@ -12097,6 +12087,78 @@ p, li { white-space: pre-wrap; }
        <string>abnormal</string>
       </property>
      </widget>
+     <widget class="QTextEdit" name="DCC152">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>250</y>
+        <width>45</width>
+        <height>30</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="DCC161">
+      <property name="geometry">
+       <rect>
+        <x>220</x>
+        <y>250</y>
+        <width>130</width>
+        <height>30</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="DCC163">
+      <property name="geometry">
+       <rect>
+        <x>325</x>
+        <y>250</y>
+        <width>115</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text">
+        <string>PD Offset,  QC</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QTextEdit" name="DCC151">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>250</y>
+        <width>130</width>
+        <height>30</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="DCC153">
+      <property name="geometry">
+       <rect>
+        <x>105</x>
+        <y>250</y>
+        <width>115</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text">
+        <string>PD Offset,  QC</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QTextEdit" name="DCC162">
+      <property name="geometry">
+       <rect>
+        <x>350</x>
+        <y>250</y>
+        <width>45</width>
+        <height>30</height>
+       </rect>
+      </property>
+     </widget>
+     <zorder>DCC163</zorder>
+     <zorder>DCC153</zorder>
      <zorder>DCC143</zorder>
      <zorder>DCC43</zorder>
      <zorder>DCC103</zorder>
@@ -12143,6 +12205,10 @@ p, li { white-space: pre-wrap; }
      <zorder>PD_Offset_HL</zorder>
      <zorder>PD_Offset_LH</zorder>
      <zorder>PD_offet_new</zorder>
+     <zorder>DCC152</zorder>
+     <zorder>DCC161</zorder>
+     <zorder>DCC151</zorder>
+     <zorder>DCC162</zorder>
     </widget>
    </widget>
    <widget class="QWidget" name="tab_8">
@@ -15543,17 +15609,17 @@ p, li { white-space: pre-wrap; }
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup_16"/>
-  <buttongroup name="buttonGroup_18"/>
   <buttongroup name="buttonGroup_4"/>
-  <buttongroup name="buttonGroup_5"/>
-  <buttongroup name="buttonGroup_13"/>
-  <buttongroup name="buttonGroup_12"/>
-  <buttongroup name="buttonGroup"/>
-  <buttongroup name="buttonGroup_6"/>
-  <buttongroup name="buttonGroup_2"/>
-  <buttongroup name="buttonGroup_15"/>
-  <buttongroup name="buttonGroup_7"/>
   <buttongroup name="buttonGroup_3"/>
+  <buttongroup name="buttonGroup_12"/>
+  <buttongroup name="buttonGroup_13"/>
+  <buttongroup name="buttonGroup_6"/>
+  <buttongroup name="buttonGroup_15"/>
+  <buttongroup name="buttonGroup_16"/>
+  <buttongroup name="buttonGroup_2"/>
+  <buttongroup name="buttonGroup"/>
+  <buttongroup name="buttonGroup_7"/>
+  <buttongroup name="buttonGroup_18"/>
+  <buttongroup name="buttonGroup_5"/>
  </buttongroups>
 </ui>

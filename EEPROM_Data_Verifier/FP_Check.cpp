@@ -666,7 +666,7 @@ int OPPO_QC_AWB_FP_Check(oppo_AWB_Format OPPO_AWB[3]) {
 	}
 
 	if ((ret&4) > 0) {
-		FP_log << "VIVO QC awb_golden spec check NG!" << endl;
+		FP_log << "OPPO QC awb_golden spec check NG!" << endl;
 	}
 
 	return ret;
@@ -976,6 +976,83 @@ int VIVO_QC_AWB_FP_Check(vivo_AWB_Format VIVO_AWB[2]) {
 }
 
 
+int HONOR_QC_AWB_FP_Check(vivo_AWB_Format VIVO_AWB[3]) {
+
+	int ret = 0;
+	string color[3] = { "5100k","4000k","3100k" };
+	float AWB_diff[3][3];
+
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++) {
+			if (VIVO_AWB[i].AWB[j]>1100 || VIVO_AWB[i].AWB[j] < 100)
+				return 4096;
+			if (VIVO_AWB[i].Golden[j]>1100 || VIVO_AWB[i].Golden[j] < 100)
+				return 4096;
+		}
+
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++) {
+			AWB_diff[i][j] = abs(VIVO_AWB[i].AWB[j] * 1.0 - VIVO_AWB[i].Golden[j]) / VIVO_AWB[i].Golden[j];
+		}
+
+	/////////////awb_distance check
+	for (int i = 0; i < 3; i++) {
+		//float d = sqrt(pow(AWB_diff[i][0], 2) + pow(AWB_diff[i][1], 2));
+		float d = sqrt(pow(VIVO_AWB[i].AWB[0] / 1024.0 - golden_Spec[i][0] / 1000.0, 2) + pow(VIVO_AWB[i].AWB[1] / 1024.0 - golden_Spec[i][1] / 1000.0, 2));
+
+		if (d > awb_distance[i] / 100.0) {
+			FP_log << color[i] << " awb_distance=: " << d << endl;
+			ret = ret | 1;
+		}
+	}
+
+	if ((ret & 1) > 0) {
+		FP_log << "awb_distance spec check NG!" << endl;
+	}
+
+	for (int i = 0; i < 3; i++) {
+
+		if (abs(AWB_diff[i][0]) > awb_tolerance[i][0] / 100.0) {
+			FP_log << "QC " << color[i] << "R_G awb_tolerance=: " << AWB_diff[i][0] << endl;
+			ret = ret | 2;
+		}
+
+		if (abs(AWB_diff[i][1]) > awb_tolerance[i][1] / 100.0) {
+			FP_log << "QC " << color[i] << "B_G awb_tolerance=: " << AWB_diff[i][1] << endl;
+			ret = ret | 2;
+		}
+
+		if (abs(AWB_diff[i][2]) > awb_tolerance[i][2] / 10000.0) {
+			FP_log << "QC " << color[i] << "Gr_Gb awb_tolerance=: " << AWB_diff[i][1] << endl;
+			ret = ret | 2;
+		}
+	}
+
+	if ((ret & 2) > 0) {
+		FP_log << "awb_tolerance spec check NG!" << endl;
+	}
+
+	//for (int i = 0; i < 3; i++)
+	//	for (int j = 0; j < 3; j++) {
+	//		if (VIVO_AWB[i].Light[j]>2000) {
+	//			if (VIVO_AWB[i].Light[j] < 8000 || VIVO_AWB[i].Light[j]>12000) {
+	//				ret = ret | 8;
+	//			}
+	//		}
+	//		else {
+	//			if (VIVO_AWB[i].Light[j] < 800 || VIVO_AWB[i].Light[j]>1200) {
+	//				ret = ret | 8;
+	//			}
+	//		}
+	//	}
+	//if ((ret & 8) > 0) {
+	//	FP_log << "Lightsource Coef Data NG!" << endl;
+	//}
+
+	return ret;
+}
+
+
 int MOTO_QC_AWB_FP_Check(vivo_AWB_Format VIVO_AWB[2]) {
 
 	int ret = 0;
@@ -1078,9 +1155,7 @@ int SONY_AWB_FP_Check(vivo_AWB_Format VIVO_AWB[2]) {
 
 	/////////////awb_distance check
 	for (int i = 0; i < 2; i++) {
-	//	float d = sqrt(pow(AWB_diff[i][0], 2) + pow(AWB_diff[i][1], 2));
-		float d = sqrt(pow(VIVO_AWB[i].AWB[0] / 1024.0 - golden_Spec[i][0] / 1000.0, 2) + pow(VIVO_AWB[i].AWB[1] / 1024.0 - golden_Spec[i][1] / 1000.0, 2));
-
+		float d = sqrt(pow(AWB_diff[i][0], 2) + pow(AWB_diff[i][1], 2));
 		if (d > awb_distance[i] / 100.0) {
 			FP_log << color[i] << " SONY awb_distance=: " << d << endl;
 			ret = ret | 1;

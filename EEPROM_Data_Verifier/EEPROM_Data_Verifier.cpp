@@ -20,7 +20,7 @@ unsigned char DecData[524288], dflt_Data,spec_Data[524288];
 int LSC[25][33][4], MTK_LSC[15][15][4], LSC_LSI1[25][33][4], LSC_LSI2[11][13][4];
 int PDgainLeft[30][30], PDgainRight[30][30],shift_Data[2][21], Cross_DW_before[2][21], Cross_DW_after[2][14];
 int GainMostBrightLeft[15][17], GainMostBrightRight[15][17];
-int DCC[15][17], DCC2[15][17], checkSum_addr[30][4],SR_Spec[2][2], Gmap_Item3[12], PD_Item3[14];
+int DCC[15][17], DCC2[15][17], checkSum_addr[30][4],SR_Spec[2][2], Gmap_Item3[12], PD_Item3[18];
 int AF_Data[6][3],SFR_Data[50],LCC_CrossTalk[3],LSC_Item3[10],Gyro_offset_spec[2];
 char chk[2], Fuse_ID[30];  int fuse_ID_Length = 16;
 string global_STR, shift_Item[4], cross_Item[3], akm_cross_Item[3], AF_Item[6][5],AF_info_Item[10][4],SFR_Item[4][4],ZOOM_Item[3][3],Magnification[9];
@@ -43,6 +43,8 @@ Panel_Data Flag[2], noData;
 typedef struct {
 	int MTK_SLOPE = 9;
 	int QFORMAT = 4;
+	int PD_range_max = 10;
+
 	int center_diff = 3;
 	float DCC_center[5];
 	float MTK_center[5];
@@ -113,7 +115,7 @@ Hash_Number current_Hash;
 vector<Hash_Number> dump_Hash;
 
 oppo_AWB_Format OPPO_AWB[3],MTK_AWB[3],LSI_AWB[3];
-vivo_AWB_Format VIVO_AWB_Data[2], XIAOMI_AWB_Data;
+vivo_AWB_Format VIVO_AWB_Data[2], XIAOMI_AWB_Data,HONOR_AWB_Data[3];
 
 int checkFF(int x) {
 	if (x == 255)
@@ -453,7 +455,7 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 		ui.SAMSUNG->setChecked(true);
 	}
 	else if ((DataFormat % 10) == 6) {
-		ui.CS_other->setChecked(true);
+		ui.honor->setChecked(true);
 	}
 
 	ui.SFR_Format->setCurrentIndex(SFR_Format);
@@ -996,6 +998,14 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 	ui.DCC142->setText(PD_Item[13][1].c_str());
 	ui.DCC143->setCurrentIndex(PD_Item3[13]);
 
+	ui.DCC151->setText(PD_Item[14][0].c_str());
+	ui.DCC152->setText(PD_Item[14][1].c_str());
+	ui.DCC153->setCurrentIndex(PD_Item3[14]);
+
+	ui.DCC161->setText(PD_Item[15][0].c_str());
+	ui.DCC162->setText(PD_Item[15][1].c_str());
+	ui.DCC163->setCurrentIndex(PD_Item3[15]);
+
 	////////Gmap addr setting
 	ui.Gmap11->setText(Gmap_Item[0][0].c_str());
 	ui.Gmap12->setText(Gmap_Item[0][1].c_str());
@@ -1104,13 +1114,7 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 	ui.PDAF_info142->setText(PDAF_info_Item[13][1].c_str());
 	ui.PDAF_info143->setText(PDAF_info_Item[13][2].c_str());
 
-	ui.PDAF_info151->setText(PDAF_info_Item[14][0].c_str());
-	ui.PDAF_info152->setText(PDAF_info_Item[14][1].c_str());
-	ui.PDAF_info153->setText(PDAF_info_Item[14][2].c_str());
 
-	ui.PDAF_info161->setText(PDAF_info_Item[15][0].c_str());
-	ui.PDAF_info162->setText(PDAF_info_Item[15][1].c_str());
-	ui.PDAF_info163->setText(PDAF_info_Item[15][2].c_str());
 
 	//////////////////////////////////////////////////////////
 	ui.QR_start->setText(QR_Data.item[0].c_str());
@@ -2043,6 +2047,7 @@ void EEPROM_Data_Verifier::load_EEPROM_Address() {
 	PDAF_Data.MTK_SLOPE = GetPrivateProfileInt(_T("Spec_Set"), TEXT("MTK_PD_SLOPE_BASE"), 9, CA2CT(EEPROM_Map.c_str()));
 	PDAF_Data.QFORMAT = GetPrivateProfileInt(_T("Spec_Set"), TEXT("QC_QFORMAT"), 4, CA2CT(EEPROM_Map.c_str()));
 	PDAF_Data.center_diff = GetPrivateProfileInt(_T("Spec_Set"), TEXT("PLATFORM_DCC_DIFF"), 3, CA2CT(EEPROM_Map.c_str()));
+	PDAF_Data.PD_range_max = GetPrivateProfileInt(_T("Spec_Set"), TEXT("QC_PD_MAX"), 16, CA2CT(EEPROM_Map.c_str()));
 
 	int save_OnOff = GetPrivateProfileInt(_T("EEPROM_Set"), TEXT("save_OnOff"), 1, CA2CT(EEPROM_Map.c_str()));
 	if (save_OnOff == 0) {
@@ -2054,7 +2059,6 @@ void EEPROM_Data_Verifier::load_EEPROM_Address() {
 	parameterDisplay();
 }
 
- 
 void EEPROM_Data_Verifier::load_Panel() {
 
 	modelSelect = ui.model->document()->toPlainText().toInt();
@@ -2185,7 +2189,7 @@ void EEPROM_Data_Verifier::load_Panel() {
 	else if (ui.SAMSUNG->isChecked()) {
 		DataFormat = DataFormat / 10 + 5;
 	}
-	else if (ui.CS_other->isChecked()) {
+	else if (ui.honor->isChecked()) {
 		DataFormat = DataFormat / 10 + 6;
 	}
 
@@ -2803,6 +2807,14 @@ void EEPROM_Data_Verifier::load_Panel() {
 	PD_Item[13][1] = string((const char *)ui.DCC142->document()->toPlainText().toLocal8Bit());
 //	PD_Item[13][2] = string((const char *)ui.DCC143->document()->toPlainText().toLocal8Bit());
 	PD_Item3[13] = ui.DCC143->currentIndex();
+	PD_Item[14][0] = string((const char *)ui.DCC151->document()->toPlainText().toLocal8Bit());
+	PD_Item[14][1] = string((const char *)ui.DCC152->document()->toPlainText().toLocal8Bit());
+	//	PD_Item[12][2] = string((const char *)ui.DCC133->document()->toPlainText().toLocal8Bit());
+	PD_Item3[14] = ui.DCC153->currentIndex();
+	PD_Item[15][0] = string((const char *)ui.DCC161->document()->toPlainText().toLocal8Bit());
+	PD_Item[15][1] = string((const char *)ui.DCC162->document()->toPlainText().toLocal8Bit());
+	//	PD_Item[13][2] = string((const char *)ui.DCC143->document()->toPlainText().toLocal8Bit());
+	PD_Item3[15] = ui.DCC163->currentIndex();
 
 	///////////////////GMap_data
 	Gmap_Item[0][0] = string((const char *)ui.Gmap11->document()->toPlainText().toLocal8Bit());
@@ -2912,13 +2924,6 @@ void EEPROM_Data_Verifier::load_Panel() {
 	PDAF_info_Item[13][1] = string((const char *)ui.PDAF_info142->document()->toPlainText().toLocal8Bit());
 	PDAF_info_Item[13][2] = string((const char *)ui.PDAF_info143->document()->toPlainText().toLocal8Bit());
 
-	PDAF_info_Item[14][0] = string((const char *)ui.PDAF_info151->document()->toPlainText().toLocal8Bit());
-	PDAF_info_Item[14][1] = string((const char *)ui.PDAF_info152->document()->toPlainText().toLocal8Bit());
-	PDAF_info_Item[14][2] = string((const char *)ui.PDAF_info153->document()->toPlainText().toLocal8Bit());
-
-	PDAF_info_Item[15][0] = string((const char *)ui.PDAF_info161->document()->toPlainText().toLocal8Bit());
-	PDAF_info_Item[15][1] = string((const char *)ui.PDAF_info162->document()->toPlainText().toLocal8Bit());
-	PDAF_info_Item[15][2] = string((const char *)ui.PDAF_info163->document()->toPlainText().toLocal8Bit());
 
 	///////////////////  INFO data
 	QR_Data.item[0] = string((const char *)ui.QR_start->document()->toPlainText().toLocal8Bit());
@@ -3529,7 +3534,7 @@ void EEPROM_Data_Verifier::save_EEPROM_Address() {
 		SFR_Item[i][2] = CT2A(lpTexts);
 	}
 
-	for (int i = 0; i < 16; i++)
+	for (int i = 0; i < 14; i++)
 		for (int k = 0; k < 3; k++) {
 			string item = "PDAF_info" + to_string(i + 1) + to_string(k + 1);
 			WritePrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), CA2CT(PDAF_info_Item[i][k].c_str()), CA2CT(EEPROM_Map.c_str()));
@@ -3551,7 +3556,7 @@ void EEPROM_Data_Verifier::save_EEPROM_Address() {
 			}
 		}
 
-	for (int i = 0; i < 14; i++)
+	for (int i = 0; i < 16; i++)
 		for (int k = 0; k < 3; k++) {
 			string item = "PD_Item" + to_string(i + 1) + to_string(k + 1);
 			if (k < 2) {
@@ -5014,7 +5019,7 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 
 	int ret = 0;
 	unsigned int spec;
-	for (int i = 0; i < 16; i++)
+	for (int i = 0; i < 14; i++)
 		if (PDAF_info_Item[i][1].length()>1) {
 
 			if (i == 0 && mode == 0) {
@@ -5321,16 +5326,19 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 			}
 		}
 	
-	for (int k = 0; k < 14; k++)
+	for (int k = 0; k < 16; k++)
 		if (PD_Item[k][1].length()>1) {
 			unsigned int e = marking_Hex2int(PD_Item[k][1], PD_Item[k][0], "", QC_DCC);
 			int W = 8, H = 6, offset = 0;
 			if (PD_Item3[k] == 1) {
 				W = 16, H = 12;
 			}
+			if (PD_Item3[k] == 5) {
+				W = 17, H = 13;
+			}
 
 			if (k < 10) {
-				if (PD_Item3[k] < 2) {
+				if (PD_Item3[k] < 2|| PD_Item3[k] ==5) {
 					if (mode == 0)
 						fout << "~~~~~~~~~~~" << PD_Item[k][0] << " Map:" << endl;
 					e += offset;
@@ -5365,6 +5373,15 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 						string s = PD_Item[k][0] + " in 0x" + PD_Item[k][1] + " is NG!\n ";
 						ui.log->insertPlainText(s.c_str());
 						ret |= 16;
+					}
+
+					if (PD_Item3[k] == 0) {			
+						float pd_range =1.0* (AF_Data[0][0] - AF_Data[0][1])* (2^ PDAF_Data.QFORMAT)/ DCC[2][3];
+						if (pd_range > PDAF_Data.PD_range_max) {
+							ret |= 128;
+							string s = PD_Item[k][0] + " in 0x" + PD_Item[k][1] + "QC Qformat check, PD_range="+to_string(pd_range);
+							ui.log->insertPlainText(s.c_str());
+						}
 					}
 				}
 
@@ -5645,7 +5662,6 @@ int EEPMap_Data_add(int size, string addr, string item, string ref, data_Type t)
 	}
 	return e;
 }
-
 
 int EEPROM_Data_Verifier::af_Parse() {
 
@@ -6137,6 +6153,87 @@ void EEPROM_Data_Verifier::VIVO_AWB_Parse(int group) {
 	//map_Push(H + 1, item + "Calibration L", "", VIVO_AWB);
 	//VIVO_AWB_Data[group].Light[2] = DecData[H] * 256 + DecData[H + 1];
 	//fout << item << " :	" << VIVO_AWB_Data[group].Light[2] << endl;
+
+	fout << endl;
+
+}
+
+void EEPROM_Data_Verifier::HONOR_AWB_Parse(int group) {
+
+	TCHAR lpTexts[10]; int temp = 0, L, H;
+	int ret = 0;
+	string s, color = "AWB_5100K_", item;
+
+	if (group == 1)
+		color = "AWB_4000K_";
+
+	if (group == 2)
+		color = "AWB_3100K_";
+
+	fout << "-------" << color << "Data------" << endl;
+
+	/////////////////////////////////// AWB 
+	item = color + "Gain R/Gr";
+	GetPrivateProfileString(TEXT("HONOR"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	s = CT2A(lpTexts);
+	H = marking_Hex2int(s, item + " H", "", HONOR_AWB);
+	map_Push(H + 1, item + " L", "", HONOR_AWB);
+	HONOR_AWB_Data[group].AWB[0] = DecData[H] * 256 + DecData[H + 1];
+	fout << item << " :	" << HONOR_AWB_Data[group].AWB[0] << endl;
+
+	item = color + "Gain B/Gr";
+	GetPrivateProfileString(TEXT("HONOR"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	s = CT2A(lpTexts);
+	H = marking_Hex2int(s, item + " H", "", HONOR_AWB);
+	map_Push(H + 1, item + " L", "", HONOR_AWB);
+	HONOR_AWB_Data[group].AWB[1] = DecData[H] * 256 + DecData[H + 1];
+	fout << item << " :	" << HONOR_AWB_Data[group].AWB[1] << endl;
+
+	item = color + "Gain Gb/Gr";
+	GetPrivateProfileString(TEXT("HONOR"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	s = CT2A(lpTexts);
+	H = marking_Hex2int(s, item + " H", "", HONOR_AWB);
+	map_Push(H + 1, item + " L", "", HONOR_AWB);
+	HONOR_AWB_Data[group].AWB[2] = DecData[H] * 256 + DecData[H + 1];
+	fout << item << " :	" << HONOR_AWB_Data[group].AWB[2] << endl;
+
+	/////////////////////////////////// Golden
+	item = color + "Golden R/Gr";
+	HONOR_AWB_Data[group].Golden[0] = GetPrivateProfileInt(_T("HONOR"), CA2CT(item.c_str()), 0, CA2CT(EEPROM_Map.c_str()));
+	fout << item << " :	" << HONOR_AWB_Data[group].Golden[0] << endl;
+
+	item = color + "Golden B/Gr";
+	HONOR_AWB_Data[group].Golden[1] = GetPrivateProfileInt(_T("HONOR"), CA2CT(item.c_str()), 0, CA2CT(EEPROM_Map.c_str()));
+	fout << item << " :	" << HONOR_AWB_Data[group].Golden[1] << endl;
+
+	item = color + "Golden Gb/Gr";
+	HONOR_AWB_Data[group].Golden[2] = GetPrivateProfileInt(_T("HONOR"), CA2CT(item.c_str()), 0, CA2CT(EEPROM_Map.c_str()));
+	fout << item << " :	" << HONOR_AWB_Data[group].Golden[2] << endl;
+
+	//////////////////////////////////////// CCT
+	item = color + "CCT_x";
+	GetPrivateProfileString(TEXT("HONOR"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	s = CT2A(lpTexts);
+	H = marking_Hex2int(s, item + " Calibration H", "", HONOR_AWB);
+	map_Push(H + 1, item + "Calibration L", "", HONOR_AWB);
+	HONOR_AWB_Data[group].Light[0] = DecData[H] * 256 + DecData[H + 1];
+	fout << item << " :	" << HONOR_AWB_Data[group].Light[0] << endl;
+
+	item = color + "CCT_y";
+	GetPrivateProfileString(TEXT("HONOR"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	s = CT2A(lpTexts);
+	H = marking_Hex2int(s, item + " Calibration H", "", HONOR_AWB);
+	map_Push(H + 1, item + "Calibration L", "", HONOR_AWB);
+	HONOR_AWB_Data[group].Light[1] = DecData[H] * 256 + DecData[H + 1];
+	fout << item << " :	" << HONOR_AWB_Data[group].Light[1] << endl;
+
+	item = color + "CCT_lux";
+	GetPrivateProfileString(TEXT("HONOR"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	s = CT2A(lpTexts);
+	H = marking_Hex2int(s, item + " Calibration H", "", HONOR_AWB);
+	map_Push(H + 1, item + "Calibration L", "", HONOR_AWB);
+	HONOR_AWB_Data[group].Light[2] = DecData[H] * 256 + DecData[H + 1];
+	fout << item << " :	" << HONOR_AWB_Data[group].Light[2] << endl;
 
 	fout << endl;
 
@@ -6858,7 +6955,7 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 					map_Push(e, OIS_data_Item[i][0] + "_H", "", OIS_Gyro);
 					map_Push(e + 1, OIS_data_Item[i][0] + "_L", "", OIS_Gyro);
 				}
-				fout << OIS_data_Item[i][0] << ":	" << SR[i - 4] << endl;
+				fout << name2<<"	"<< OIS_data_Item[i][0] << ":	" << SR[i - 4] << endl;
 				
 				if (SR[i - 4] < SR_Spec[(i - 4) / 2][(i - 4)%2] || SR[i - 4] > 99) {
 					string s = OIS_data_Item[i][0] + " Data in 0x" + OIS_data_Item[i][1] + " SR value NG!" + '\n';
@@ -6887,7 +6984,7 @@ int EEPROM_Data_Verifier::info_Data_Parse() {
 			s += to_string(DecData[y1]);
 		}
 		int y2 = unstringHex2int(product_Date.item[1]);
-		if (y2 > 0) {
+		if (product_Date.item[1].length() > 0) {
 			if (y1 > 0)
 				map_Push(y2, "Year_L", "", info1);
 			else { map_Push(y2, "Year", "", info1); }
@@ -8098,7 +8195,9 @@ void EEPROM_Data_Verifier::on_pushButton_parser_clicked()
 		}
 	}
 
-	if (ui.CS_other->isChecked()) {
+	if (ui.honor->isChecked()) {
+
+#if 0
 		MOTO_AWB_Parse(0);
 		if (MOTO_QC_AWB_FP_Check(VIVO_AWB_Data) != 0) {
 			ui.log->insertPlainText("QC AWB Data NG, please check FP_log. \n");
@@ -8109,6 +8208,16 @@ void EEPROM_Data_Verifier::on_pushButton_parser_clicked()
 				ui.log->insertPlainText("MOTO AWB Data NG, please check FP_log. \n");
 			}
 		}
+
+#else
+		HONOR_AWB_Parse(0);
+		HONOR_AWB_Parse(1);
+		HONOR_AWB_Parse(2);
+
+		if (HONOR_QC_AWB_FP_Check(HONOR_AWB_Data) != 0) {
+			ui.log->insertPlainText("QC AWB Data NG, please check FP_log. \n");
+		}
+#endif
 	}
 
 	if (ui.sony->isChecked()) {
@@ -8918,6 +9027,7 @@ void EEPROM_Data_Verifier::on_pushButton_folder_clicked() {
 	while (iVector != files1.end())
 	{
 		dump_result << (*iVector) << "	";
+		name2 = (*iVector);
 		fout << (*iVector) << endl;
 		fuse_ID_output(*iVector);
 
@@ -8942,7 +9052,6 @@ void EEPROM_Data_Verifier::on_pushButton_folder_clicked() {
 		memset(DecData, 0, sizeof(DecData));
 		memset(useData, 0, sizeof(useData));
 		name = ".\\bin_data\\"+ *iVector;
-
 		ifstream fin(name, std::ios::binary);
 
 		//获取文件大小方法一
