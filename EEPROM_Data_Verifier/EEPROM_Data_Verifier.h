@@ -132,7 +132,9 @@ private:
 
 	int LSC_Parse(int start,int group);
 	int MTK_LSC_Parse(int start);
+	void HONOR_MTK_AWB_Parse(int group);
 	void vivo_MTK_AWB_Parse(int group);
+
 	void MTK_AWB_Parse(int group);
 	void LSI_AWB_Parse(int group);
 	int drift_Parse();

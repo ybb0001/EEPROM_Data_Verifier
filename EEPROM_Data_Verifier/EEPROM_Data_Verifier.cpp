@@ -5275,6 +5275,10 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 						useData[e + 1] = 1;
 						PDgainLeft[i][j] = DecData[e] + DecData[e + 1] * 256;
 					
+						if (PDgainLeft[i][j]>2000) {
+							int xxxx = 0;
+						}
+
 						e += 2; 
 					}
 				if (mode == 0) {
@@ -6463,14 +6467,92 @@ void EEPROM_Data_Verifier::vivo_MTK_AWB_Parse(int group) {
 
 }
 
+void EEPROM_Data_Verifier::HONOR_MTK_AWB_Parse(int group) {
+
+	TCHAR lpTexts[10]; int temp = 0, L, H;
+	string s, color = "MTK_AWB_5100K", item;
+	if (group == 0)
+		color = "MTK_AWB_5100K";
+	else if (group == 1)
+		color = "MTK_AWB_3100K";
+	else if (group == 2)
+		color = "MTK_AWB_4000K";
+
+	fout << "-------MTK_" << color << " AWB Data------" << endl;
+
+	/////////////////////////////////// AWB 
+	item = color + "_Gain_R";
+	GetPrivateProfileString(TEXT("MTK"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	s = CT2A(lpTexts);
+	H = marking_Hex2int(s, item , "", MTK_AWB_Type);
+	MTK_AWB[group].AWB[0] = DecData[H];
+	fout << item << " :	" << MTK_AWB[group].AWB[0] << endl;
+
+	item = color + "_Gain_Gr";
+	GetPrivateProfileString(TEXT("MTK"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	s = CT2A(lpTexts);
+	H = marking_Hex2int(s, item, "", MTK_AWB_Type);
+	MTK_AWB[group].AWB[1] = DecData[H];
+	fout << item << " :	" << MTK_AWB[group].AWB[1] << endl;
+
+	item = color + "_Gain_Gb";
+	GetPrivateProfileString(TEXT("MTK"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	s = CT2A(lpTexts);
+	H = marking_Hex2int(s, item, "", MTK_AWB_Type);
+	MTK_AWB[group].AWB[2] = DecData[H];
+	fout << item << " :	" << MTK_AWB[group].AWB[2] << endl;
+
+	item = color + "_Gain_B";
+	GetPrivateProfileString(TEXT("MTK"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	s = CT2A(lpTexts);
+	H = marking_Hex2int(s, item, "", MTK_AWB_Type);
+	MTK_AWB[group].AWB[3] = DecData[H];
+	fout << item << " :	" << MTK_AWB[group].AWB[3] << endl;
+
+	/////////////////////////////////// Golden
+	item = color + "_Golden_R";
+	GetPrivateProfileString(TEXT("MTK"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	s = CT2A(lpTexts);
+	H = marking_Hex2int(s, item , "", MTK_AWB_Type);
+	MTK_AWB[group].Golden[0] = DecData[H];
+	fout << item << " :	" << MTK_AWB[group].Golden[0] << endl;
+
+	item = color + "_Golden_Gr";
+	GetPrivateProfileString(TEXT("MTK"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	s = CT2A(lpTexts);
+	H = marking_Hex2int(s, item, "", MTK_AWB_Type);
+	MTK_AWB[group].Golden[1] = DecData[H];
+	fout << item << " :	" << MTK_AWB[group].Golden[1] << endl;
+
+	item = color + "_Golden_Gb";
+	GetPrivateProfileString(TEXT("MTK"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	s = CT2A(lpTexts);
+	H = marking_Hex2int(s, item, "", MTK_AWB_Type);
+	MTK_AWB[group].Golden[2] = DecData[H];
+	fout << item << " :	" << MTK_AWB[group].Golden[2] << endl;
+
+	item = color + "_Golden_B";
+	GetPrivateProfileString(TEXT("MTK"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	s = CT2A(lpTexts);
+	H = marking_Hex2int(s, item, "", MTK_AWB_Type);
+	MTK_AWB[group].Golden[3] = DecData[H];
+	fout << item << " :	" << MTK_AWB[group].Golden[3] << endl;
+
+	fout << endl;
+
+}
+
 void EEPROM_Data_Verifier::MTK_AWB_Parse(int group) {
 
 	TCHAR lpTexts[10]; int temp = 0, L, H;
-	string s, color = "MTK_AWB_5100K_", item;
+	string s, color = "MTK_AWB_5100K", item;
 	fout << "-------MTK_" << color << " AWB Data------" << endl;
 	if (group == 0)
 		color = "MTK_AWB_5100K";
-
+	else if (group == 1)
+		color = "MTK_AWB_3100K";
+	else if (group == 2)
+		color = "MTK_AWB_4000K";
 	/////////////////////////////////// AWB 
 	item = color + "_R";
 	GetPrivateProfileString(TEXT("MTK"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
@@ -8208,15 +8290,24 @@ void EEPROM_Data_Verifier::on_pushButton_parser_clicked()
 				ui.log->insertPlainText("MOTO AWB Data NG, please check FP_log. \n");
 			}
 		}
-
 #else
 		HONOR_AWB_Parse(0);
 		HONOR_AWB_Parse(1);
 		HONOR_AWB_Parse(2);
-
 		if (HONOR_QC_AWB_FP_Check(HONOR_AWB_Data) != 0) {
 			ui.log->insertPlainText("QC AWB Data NG, please check FP_log. \n");
 		}
+
+		if (ui.MTK->isChecked()) {
+			HONOR_MTK_AWB_Parse(0);
+			HONOR_MTK_AWB_Parse(1);
+			HONOR_MTK_AWB_Parse(2);
+			if (MTK_AWB_FP_Check(MTK_AWB,3) != 0) {
+				ui.log->insertPlainText("MTK AWB Data NG, please check FP_log. \n");
+			}
+		}
+
+
 #endif
 	}
 
@@ -8372,6 +8463,32 @@ void EEPROM_Data_Verifier::dump_Check() {
 			}
 		}
 
+	}
+
+	if (ui.honor->isChecked()) {
+
+		HONOR_AWB_Parse(0);
+		HONOR_AWB_Parse(1);
+		HONOR_AWB_Parse(2);
+		if (HONOR_QC_AWB_FP_Check(HONOR_AWB_Data) == 0) {
+			dump_result << "Honor_QC_AWB PASS" << "	";
+		}
+		else {
+			dump_result << "XiaoMi_QC_AWB NG" << "	";
+			ret |= 16;
+		}
+		if (ui.MTK->isChecked()) {
+			HONOR_MTK_AWB_Parse(0);
+			HONOR_MTK_AWB_Parse(1);
+			HONOR_MTK_AWB_Parse(2);
+			if (MTK_AWB_FP_Check(MTK_AWB, 3) == 0) {
+				dump_result << "Honor_MTK_AWB PASS" << "	";
+			}
+			else {
+				dump_result << "Honor_MTK_AWB NG" << "	";
+				ret |= 16;
+			}
+		}
 	}
 
 	if (ui.xiaomi->isChecked()) {

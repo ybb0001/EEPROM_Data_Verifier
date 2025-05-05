@@ -676,13 +676,13 @@ int OPPO_QC_AWB_FP_Check(oppo_AWB_Format OPPO_AWB[3]) {
 int MTK_AWB_FP_Check(oppo_AWB_Format OPPO_AWB[3], int mode) {
 
 	int ret = 0;
-	string color[3] = { "5100k","4000k","3100k" };
+	string color[3] = { "5100k","3100k","4000k" };
 
 	for (int i = 0; i < mode; i++)
 		for (int j = 0; j < 4; j++) {
-			if (OPPO_AWB[i].AWB[j]>65530 || OPPO_AWB[i].AWB[j] < 100)
+			if (OPPO_AWB[i].AWB[j]>65530 || OPPO_AWB[i].AWB[j] < 10)
 				return 4096;
-			if (OPPO_AWB[i].Golden[j]>65530 || OPPO_AWB[i].Golden[j] < 100)
+			if (OPPO_AWB[i].Golden[j]>65530 || OPPO_AWB[i].Golden[j] < 10)
 				return 4096;
 		}
 

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>EEPROM_Verifier_20241028</string>
+   <string>EEPROM_Verifier_20250314</string>
   </property>
   <widget class="QTextEdit" name="input">
    <property name="geometry">
@@ -15609,17 +15609,17 @@ p, li { white-space: pre-wrap; }
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup_4"/>
-  <buttongroup name="buttonGroup_3"/>
-  <buttongroup name="buttonGroup_12"/>
-  <buttongroup name="buttonGroup_13"/>
   <buttongroup name="buttonGroup_6"/>
-  <buttongroup name="buttonGroup_15"/>
-  <buttongroup name="buttonGroup_16"/>
   <buttongroup name="buttonGroup_2"/>
-  <buttongroup name="buttonGroup"/>
   <buttongroup name="buttonGroup_7"/>
+  <buttongroup name="buttonGroup_16"/>
+  <buttongroup name="buttonGroup_13"/>
   <buttongroup name="buttonGroup_18"/>
+  <buttongroup name="buttonGroup_12"/>
   <buttongroup name="buttonGroup_5"/>
+  <buttongroup name="buttonGroup_15"/>
+  <buttongroup name="buttonGroup_3"/>
+  <buttongroup name="buttonGroup"/>
+  <buttongroup name="buttonGroup_4"/>
  </buttongroups>
 </ui>

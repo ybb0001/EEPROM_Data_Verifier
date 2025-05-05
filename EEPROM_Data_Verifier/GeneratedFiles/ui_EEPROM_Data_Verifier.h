@@ -1301,18 +1301,18 @@ public:
     QCheckBox *full_log;
     QLabel *label_8;
     QPushButton *pushButton_folder;
-    QButtonGroup *buttonGroup_4;
-    QButtonGroup *buttonGroup_3;
-    QButtonGroup *buttonGroup_12;
-    QButtonGroup *buttonGroup_13;
     QButtonGroup *buttonGroup_6;
-    QButtonGroup *buttonGroup_15;
-    QButtonGroup *buttonGroup_16;
     QButtonGroup *buttonGroup_2;
-    QButtonGroup *buttonGroup;
     QButtonGroup *buttonGroup_7;
+    QButtonGroup *buttonGroup_16;
+    QButtonGroup *buttonGroup_13;
     QButtonGroup *buttonGroup_18;
+    QButtonGroup *buttonGroup_12;
     QButtonGroup *buttonGroup_5;
+    QButtonGroup *buttonGroup_15;
+    QButtonGroup *buttonGroup_3;
+    QButtonGroup *buttonGroup;
+    QButtonGroup *buttonGroup_4;
 
     void setupUi(QWidget *EEPROM_Data_VerifierClass)
     {
@@ -5940,7 +5940,7 @@ public:
 
     void retranslateUi(QWidget *EEPROM_Data_VerifierClass)
     {
-        EEPROM_Data_VerifierClass->setWindowTitle(QApplication::translate("EEPROM_Data_VerifierClass", "EEPROM_Verifier_20241028", Q_NULLPTR));
+        EEPROM_Data_VerifierClass->setWindowTitle(QApplication::translate("EEPROM_Data_VerifierClass", "EEPROM_Verifier_20250314", Q_NULLPTR));
         label->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Input Memory Data", Q_NULLPTR));
         label_3->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Result & logs", Q_NULLPTR));
         pushButton_golden->setText(QApplication::translate("EEPROM_Data_VerifierClass", "AWB Golden", Q_NULLPTR));
