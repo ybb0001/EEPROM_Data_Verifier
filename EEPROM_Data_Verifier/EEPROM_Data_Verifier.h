@@ -13,6 +13,8 @@
 extern char D[524288][2];
 extern unsigned char DecData[524288], dflt_Data;
 extern int EEP_Size, checkSum_addr[30][4],selection, DataFormat, mode;
+extern PDAF_d PDAF_Data;
+
 
 enum data_Type {
 	info1 = 1,
@@ -107,6 +109,8 @@ private:
 	void on_pushButton_clear_clicked();
 	void on_pushButton_dump_value_clicked();
 	void on_pushButton_dump_SFR_clicked();
+	void on_pushButton_dump_LSC_clicked();
+
 	void selectModel();
 
 	void DisplayOutput();

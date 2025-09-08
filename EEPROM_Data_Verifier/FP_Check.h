@@ -3,6 +3,17 @@
 #include <afx.h>
 
 typedef struct {
+	int MTK_SLOPE = 9;
+	int QFORMAT = 4;
+	int PD_range_max = 10;
+	int DCC_min = 500;
+	int DCC_max = 12000;
+	int center_diff = 3;
+	float DCC_center[5];
+	float MTK_center[5];
+}PDAF_d;
+
+typedef struct {
 	unsigned int AWB[4] = { 0 }, Golden[4] = { 0 }, Light[2] = { 0 };
 	bool HL = true;
 }oppo_AWB_Format;

@@ -40,16 +40,6 @@ typedef struct {
 }Panel_Data;
 Panel_Data Flag[2], noData;
 
-typedef struct {
-	int MTK_SLOPE = 9;
-	int QFORMAT = 4;
-	int PD_range_max = 10;
-
-	int center_diff = 3;
-	float DCC_center[5];
-	float MTK_center[5];
-}PDAF_d;
-PDAF_d PDAF_Data;
 
 typedef struct {
 	string item_name = "";
@@ -310,6 +300,30 @@ void save_EEPROM_Setting() {
 	WritePrivateProfileString(TEXT("Default_Setting"), TEXT("Model_Select"), lptstr2int(modelSelect), TEXT(".\\Setting\\EEPROM_Tool_Setting.ini"));
 }
 
+vector<string> getFiles(string cate_dir)
+{
+	vector<string> files;//存放文件名
+	_finddata_t file;
+	long lf = 0;
+	//输入文件夹路径
+	if ((lf = _findfirst(cate_dir.c_str(), &file)) == -1) {
+		cout << cate_dir << " not found!!!" << endl;
+	}
+	else {
+		while (_findnext(lf, &file) == 0) {
+			//输出文件名
+			//cout<<file.name<<endl;
+			if (strcmp(file.name, ".") == 0 || strcmp(file.name, "..") == 0)
+				continue;
+			files.push_back(file.name);
+		}
+	}
+	_findclose(lf);
+
+	//排序，按从小到大排序
+	//	sort(files.begin(), files.end());
+	return files;
+}
 
 void EEPROM_Data_Verifier::parameterDisplay() {
 
@@ -457,6 +471,13 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 	else if ((DataFormat % 10) == 6) {
 		ui.honor->setChecked(true);
 	}
+	else if ((DataFormat % 10) == 7) {
+		ui.moto->setChecked(true);
+	}
+	else if ((DataFormat % 10) == 8) {
+		ui.other->setChecked(true);
+	}
+
 
 	ui.SFR_Format->setCurrentIndex(SFR_Format);
 
@@ -2048,6 +2069,8 @@ void EEPROM_Data_Verifier::load_EEPROM_Address() {
 	PDAF_Data.QFORMAT = GetPrivateProfileInt(_T("Spec_Set"), TEXT("QC_QFORMAT"), 4, CA2CT(EEPROM_Map.c_str()));
 	PDAF_Data.center_diff = GetPrivateProfileInt(_T("Spec_Set"), TEXT("PLATFORM_DCC_DIFF"), 3, CA2CT(EEPROM_Map.c_str()));
 	PDAF_Data.PD_range_max = GetPrivateProfileInt(_T("Spec_Set"), TEXT("QC_PD_MAX"), 16, CA2CT(EEPROM_Map.c_str()));
+	PDAF_Data.DCC_min = GetPrivateProfileInt(_T("Spec_Set"), TEXT("DCC_TYPE_MIN"), 500, CA2CT(EEPROM_Map.c_str()));
+	PDAF_Data.DCC_max = GetPrivateProfileInt(_T("Spec_Set"), TEXT("DCC_TYPE_MAX"), 12000, CA2CT(EEPROM_Map.c_str()));
 
 	int save_OnOff = GetPrivateProfileInt(_T("EEPROM_Set"), TEXT("save_OnOff"), 1, CA2CT(EEPROM_Map.c_str()));
 	if (save_OnOff == 0) {
@@ -2191,6 +2214,12 @@ void EEPROM_Data_Verifier::load_Panel() {
 	}
 	else if (ui.honor->isChecked()) {
 		DataFormat = DataFormat / 10 + 6;
+	}
+	else if (ui.moto->isChecked()) {
+		DataFormat = DataFormat / 10 + 7;
+	}
+	else if (ui.other->isChecked()) {
+		DataFormat = DataFormat / 10 + 8;
 	}
 
 	if (ui.R->isChecked()) {
@@ -5342,7 +5371,7 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 			}
 
 			if (k < 10) {
-				if (PD_Item3[k] < 2|| PD_Item3[k] ==5) {
+				if (PD_Item3[k] < 2|| PD_Item3[k] >=4) {
 					if (mode == 0)
 						fout << "~~~~~~~~~~~" << PD_Item[k][0] << " Map:" << endl;
 					e += offset;
@@ -5380,7 +5409,7 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 					}
 
 					if (PD_Item3[k] == 0) {			
-						float pd_range =1.0* (AF_Data[0][0] - AF_Data[0][1])* (2^ PDAF_Data.QFORMAT)/ DCC[2][3];
+						float pd_range =1.0* (AF_Data[0][0] - AF_Data[1][0])* (2^ PDAF_Data.QFORMAT)/ DCC[2][3];
 						if (pd_range > PDAF_Data.PD_range_max) {
 							ret |= 128;
 							string s = PD_Item[k][0] + " in 0x" + PD_Item[k][1] + "QC Qformat check, PD_range="+to_string(pd_range);
@@ -5514,7 +5543,7 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 			}
 
 			/////// QC PD offset
-			if (PD_Item3[k] == 4 || k>9) {
+			else if (PD_Item3[k] == 4 || k>9) {
 				fout << "~~~~~~~~~~~" << PD_Item[k][0] << "(QC PD offset)_Data:" << endl;
 				float F_DCC[6][8] = { 0 };
 				for (int i = 0; i <H; i++)
@@ -6256,7 +6285,7 @@ void EEPROM_Data_Verifier::MOTO_AWB_Parse(int group) {
 
 	/////////////////////////////////// AWB 
 	item = color + "Gain R/Gr";
-	GetPrivateProfileString(TEXT("OTHER"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	GetPrivateProfileString(TEXT("MOTO"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
 	s = CT2A(lpTexts);
 	H = marking_Hex2int(s, item + " H", "", VIVO_AWB);
 	map_Push(H + 1, item + " L", "", VIVO_AWB);
@@ -6264,7 +6293,7 @@ void EEPROM_Data_Verifier::MOTO_AWB_Parse(int group) {
 	fout << item << " :	" << VIVO_AWB_Data[group].AWB[0] << endl;
 
 	item = color + "Gain B/Gr";
-	GetPrivateProfileString(TEXT("OTHER"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	GetPrivateProfileString(TEXT("MOTO"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
 	s = CT2A(lpTexts);
 	H = marking_Hex2int(s, item + " H", "", VIVO_AWB);
 	map_Push(H + 1, item + " L", "", VIVO_AWB);
@@ -6272,7 +6301,7 @@ void EEPROM_Data_Verifier::MOTO_AWB_Parse(int group) {
 	fout << item << " :	" << VIVO_AWB_Data[group].AWB[1] << endl;
 
 	item = color + "Gain Gr/Gb";
-	GetPrivateProfileString(TEXT("OTHER"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	GetPrivateProfileString(TEXT("MOTO"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
 	s = CT2A(lpTexts);
 	H = marking_Hex2int(s, item + " H", "", VIVO_AWB);
 	map_Push(H + 1, item + " L", "", VIVO_AWB);
@@ -6281,7 +6310,7 @@ void EEPROM_Data_Verifier::MOTO_AWB_Parse(int group) {
 
 	/////////////////////////////////// Golden
 	item = color + "Golden Gain R/Gr";
-	GetPrivateProfileString(TEXT("OTHER"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	GetPrivateProfileString(TEXT("MOTO"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
 	s = CT2A(lpTexts);
 	H = marking_Hex2int(s, item + " H", "", VIVO_AWB);
 	map_Push(H + 1, item + " L", "", VIVO_AWB);
@@ -6289,7 +6318,7 @@ void EEPROM_Data_Verifier::MOTO_AWB_Parse(int group) {
 	fout << item << " :	" << VIVO_AWB_Data[group].Golden[0] << endl;
 
 	item = color + "Golden Gain B/Gr";
-	GetPrivateProfileString(TEXT("OTHER"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	GetPrivateProfileString(TEXT("MOTO"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
 	s = CT2A(lpTexts);
 	H = marking_Hex2int(s, item + " H", "", VIVO_AWB);
 	map_Push(H + 1, item + " L", "", VIVO_AWB);
@@ -6297,45 +6326,12 @@ void EEPROM_Data_Verifier::MOTO_AWB_Parse(int group) {
 	fout << item << " :	" << VIVO_AWB_Data[group].Golden[1] << endl;
 
 	item = color + "Golden Gain Gr/Gb";
-	GetPrivateProfileString(TEXT("OTHER"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
+	GetPrivateProfileString(TEXT("MOTO"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
 	s = CT2A(lpTexts);
 	H = marking_Hex2int(s, item + " H", "", VIVO_AWB);
 	map_Push(H + 1, item + " L", "", VIVO_AWB);
 	VIVO_AWB_Data[group].Golden[2] = DecData[H] * 256 + DecData[H + 1];
 	fout << item << " :	" << VIVO_AWB_Data[group].Golden[2] << endl;
-
-	//////////////////////////////////////// light coef
-	item = color + "Light Source R";
-	GetPrivateProfileString(TEXT("OTHER"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
-	s = CT2A(lpTexts);
-	H = marking_Hex2int(s, item + " Calibration H", "", VIVO_AWB);
-	map_Push(H + 1, item + "Calibration L", "", VIVO_AWB);
-	VIVO_AWB_Data[group].Light[0] = DecData[H] * 256 + DecData[H + 1];
-	fout << item << " :	" << VIVO_AWB_Data[group].Light[0] << endl;
-
-	item = color + "Light Source Gr";
-	GetPrivateProfileString(TEXT("OTHER"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
-	s = CT2A(lpTexts);
-	H = marking_Hex2int(s, item + " Calibration H", "", VIVO_AWB);
-	map_Push(H + 1, item + "Calibration L", "", VIVO_AWB);
-	VIVO_AWB_Data[group].Light[1] = DecData[H] * 256 + DecData[H + 1];
-	fout << item << " :	" << VIVO_AWB_Data[group].Light[1] << endl;
-
-	item = color + "Light Source Gb";
-	GetPrivateProfileString(TEXT("OTHER"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
-	s = CT2A(lpTexts);
-	H = marking_Hex2int(s, item + " Calibration H", "", VIVO_AWB);
-	map_Push(H + 1, item + "Calibration L", "", VIVO_AWB);
-	VIVO_AWB_Data[group].Light[2] = DecData[H] * 256 + DecData[H + 1];
-	fout << item << " :	" << VIVO_AWB_Data[group].Light[2] << endl;
-
-	item = color + "Light Source B";
-	GetPrivateProfileString(TEXT("OTHER"), CA2CT(item.c_str()), TEXT(""), lpTexts, 9, CA2CT(EEPROM_Map.c_str()));
-	s = CT2A(lpTexts);
-	H = marking_Hex2int(s, item + " Calibration H", "", VIVO_AWB);
-	map_Push(H + 1, item + "Calibration L", "", VIVO_AWB);
-	VIVO_AWB_Data[group].Light[3] = DecData[H] * 256 + DecData[H + 1];
-	fout << item << " :	" << VIVO_AWB_Data[group].Light[3] << endl;
 
 	fout << endl;
 
@@ -8197,6 +8193,8 @@ void EEPROM_Data_Verifier::on_pushButton_parser_clicked()
 		EEP_Size = 0xD800;
 	else if (src.size() > 96000)
 		EEP_Size = 32768;
+	else if (src.size() > 60000)
+		EEP_Size = 24576;
 	else if (src.size() > 48000)
 		EEP_Size = 16384;
 	else if (src.size() > 36000)
@@ -8277,20 +8275,21 @@ void EEPROM_Data_Verifier::on_pushButton_parser_clicked()
 		}
 	}
 
-	if (ui.honor->isChecked()) {
-
-#if 0
+	if (ui.moto->isChecked()) {
 		MOTO_AWB_Parse(0);
 		if (MOTO_QC_AWB_FP_Check(VIVO_AWB_Data) != 0) {
-			ui.log->insertPlainText("QC AWB Data NG, please check FP_log. \n");
+			ui.log->insertPlainText("MOTO QC AWB Data NG, please check FP_log. \n");
 		}
 		if (ui.MTK->isChecked()) {
 			MTK_AWB_Parse(0);
 			if (MTK_AWB_FP_Check(MTK_AWB, 1) != 0) {
-				ui.log->insertPlainText("MOTO AWB Data NG, please check FP_log. \n");
+				ui.log->insertPlainText("MOTO MTK AWB Data NG, please check FP_log. \n");
 			}
 		}
-#else
+	}
+
+	if (ui.honor->isChecked()) {
+
 		HONOR_AWB_Parse(0);
 		HONOR_AWB_Parse(1);
 		HONOR_AWB_Parse(2);
@@ -8306,9 +8305,6 @@ void EEPROM_Data_Verifier::on_pushButton_parser_clicked()
 				ui.log->insertPlainText("MTK AWB Data NG, please check FP_log. \n");
 			}
 		}
-
-
-#endif
 	}
 
 	if (ui.sony->isChecked()) {
@@ -8428,6 +8424,27 @@ void EEPROM_Data_Verifier::dump_Check() {
 		else {
 			dump_result << "OPPO_AWB NG" << "	";
 			ret |= 8;
+		}
+	}
+
+	if (ui.moto->isChecked()) {
+		MOTO_AWB_Parse(0);
+		if (MOTO_QC_AWB_FP_Check(VIVO_AWB_Data) == 0) {
+			dump_result << "MOTO_QC_AWB PASS" << "	";
+		}
+		else {
+			dump_result << "MOTO_QC_AWB NG" << "	";
+			ret |= 8;
+		}
+		if (ui.MTK->isChecked()) {
+			MTK_AWB_Parse(0);
+			if (MTK_AWB_FP_Check(MTK_AWB, 1)== 0) {
+				dump_result << "MOTO_MTK_AWB PASS" << "	";
+			}
+			else {
+				dump_result << "MOTO_MTK_AWB NG" << "	";
+				ret |= 8;
+			}
 		}
 	}
 
@@ -8857,13 +8874,19 @@ void EEPROM_Data_Verifier::on_pushButton_dump_value_clicked()
 
 		int len = src.length() + 1;
 
-		if (len > 96000)
+		if (src.size() > 192000)
+			EEP_Size = 0x10000;
+		else if (src.size() > 162000)
+			EEP_Size = 0xD800;
+		else if (src.size() > 96000)
 			EEP_Size = 32768;
-		else if (len > 48000)
+		else if (src.size() > 60000)
+			EEP_Size = 24576;
+		else if (src.size() > 48000)
 			EEP_Size = 16384;
-		else if (len > 36000)
+		else if (src.size() > 36000)
 			EEP_Size = 12288;
-		else if (len > 24000)
+		else if (src.size() > 24000)
 			EEP_Size = 8192;
 
 		if (len < 8192)
@@ -8974,6 +8997,150 @@ void EEPROM_Data_Verifier::on_pushButton_dump_value_clicked()
 	}
 
 	fout.close();
+	ui.log->insertPlainText("Dump Data Read finished\n");
+
+}
+
+void EEPROM_Data_Verifier::on_pushButton_dump_LSC_clicked()
+{
+	mode = 1;
+	selectModel();
+	load_EEPROM_Address();
+
+	dump_result.open(".\\dump_result.txt");
+	fout.open(".\\MemoryParseData.txt");
+
+	OK = 0; NG = 0;
+
+	if (ui.full_log->isChecked())
+		mode = 0;
+
+	load_Spec(mode);
+
+	vector<string> files1 = getFiles(".\\bin_data\\*");
+	vector<string> ::iterator iVector = files1.begin();
+	bool ok = false;
+	while (iVector != files1.end())
+	{
+		dump_result << (*iVector) << "	";
+		name2 = (*iVector);
+		fout << (*iVector) << endl;
+		fuse_ID_output(*iVector);
+
+		string fuse = "", time_fuse = (*iVector);
+		int x = 0;
+
+		if (time_fuse[0] == '2'&&time_fuse[1] == '0'&&time_fuse[2] == '2') {
+			while (time_fuse[x] != ' '&&time_fuse[x] != '_'&&x < (*iVector).length()) {
+				x++;
+			}
+			x++;
+			while (time_fuse[x] != ' '&&time_fuse[x] != '_'&&x < (*iVector).length()) {
+				fuse += time_fuse[x++];
+			}
+		}
+		else {
+			while (time_fuse[x] != ' '&&time_fuse[x] != '_'&&x < (*iVector).length()) {
+				fuse += time_fuse[x++];
+			}
+		}
+		current_Hash.fuse_ID = fuse;
+		memset(DecData, 0, sizeof(DecData));
+		memset(useData, 0, sizeof(useData));
+		name = ".\\bin_data\\" + *iVector;
+		ifstream fin(name, std::ios::binary);
+
+		//获取文件大小方法一
+		struct _stat info;
+		_stat(name.c_str(), &info);
+		EEP_Size = info.st_size;
+
+		unsigned char szBuf[262128] = { 0 };
+		fin.read((char*)&szBuf, sizeof(char) * EEP_Size);
+
+		for (int i = 0; i < EEP_Size; i++) {
+			DecData[i] = (unsigned char)szBuf[i];
+			getHex(DecData[i]);
+			D[i][0] = chk[0];
+			D[i][1] = chk[1];
+		}
+
+		for (int a = 0; a < 8; a++) {
+			if (QC_LSC_Data[a].item[1].length() > 1) {
+				int e = marking_Hex2int(QC_LSC_Data[a].item[1], QC_LSC_Data[a].item[0], "", QC_LSC);
+				
+				int W = 17, H = 13;
+				if (e > 0) {
+					if (LSC_Item3[a] == 1) {
+
+						for (int i = 0; i < H; i++)
+							for (int j = 0; j < W; j++) {
+								for (int k = 0; k < 4; k++) {
+									LSC[i][j][k] = DecData[e + k];
+									LSC[i][j][k] += 256 * ((DecData[e + 4] >> (6 - 2 * k)) & 3);
+									useData[e + k] = 1;
+								}
+								useData[e + 5] = 1;
+								e += 5;
+								if ((i * 17 + j + 1) % 51 == 0) {
+									e++;
+								}
+							}
+					}
+					else if (LSC_Item3[a] == 0) {
+
+						for (int i = 0; i < H; i++)
+							for (int j = 0; j < W; j++)
+								for (int k = 0; k < 4; k++) {
+
+									if (HL & 1)
+										LSC[i][j][k] = 256 * DecData[e] + DecData[e + 1];
+									else
+										LSC[i][j][k] = 256 * DecData[e + 1] + DecData[e];
+
+									useData[e + 1] = useData[e] = 1;
+									e += 2;
+								}
+					}
+					else if (LSC_Item3[a] == 2) {
+						int offset = atoi(QC_LSC_Data[a].item[2].c_str());
+						W = 13, H = 9;
+						for (int k = 0; k < 3; k++)
+							for (int i = 0; i < H; i++)
+								for (int j = 0; j < W; j++) {
+									LSC[i][j][k] = DecData[e];
+									useData[e] = 1;
+									e += 1;
+								}
+						e = e + offset;
+
+						for (int i = 0; i < H; i++)
+							for (int j = 0; j < W; j++) {
+								LSC[i][j][3] = DecData[e];
+								useData[e] = 1;
+								e += 1;
+							}
+					}
+				}
+				for (int k = 0; k < 4; k++)
+					for (int i = 0; i < H; i++)
+						for (int j = 0; j < W; j++) {
+							dump_result << LSC[i][j][k] << "	";
+						}
+			}
+		}
+		dump_result << endl;
+
+		fin.close();
+		++iVector;
+		fuse_ID_output("\n");
+	}
+
+	value_duplicate_Check();
+	dump_Hash.clear();
+	FP_logFile_Close();
+	fout.close();
+	dump_result.close();
 	ui.log->insertPlainText("Dump Data Read finished\n");
 
 }
@@ -9095,31 +9262,6 @@ void EEPROM_Data_Verifier::on_pushButton_dump_SFR_clicked()
 
 }
 
-
-vector<string> getFiles(string cate_dir)
-{
-	vector<string> files;//存放文件名
-	_finddata_t file;
-	long lf = 0;
-	//输入文件夹路径
-	if ((lf = _findfirst(cate_dir.c_str(), &file)) == -1) {
-		cout << cate_dir << " not found!!!" << endl;
-	}
-	else {
-		while (_findnext(lf, &file) == 0) {
-			//输出文件名
-			//cout<<file.name<<endl;
-			if (strcmp(file.name, ".") == 0 || strcmp(file.name, "..") == 0)
-				continue;
-			files.push_back(file.name);
-		}
-	}
-	_findclose(lf);
-
-	//排序，按从小到大排序
-//	sort(files.begin(), files.end());
-	return files;
-}
 
 
 void EEPROM_Data_Verifier::on_pushButton_folder_clicked() {

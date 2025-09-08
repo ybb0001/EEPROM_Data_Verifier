@@ -174,6 +174,8 @@ public:
     QRadioButton *radioButton_FFFF;
     QRadioButton *radioButton_CRC16;
     QRadioButton *radioButton_256;
+    QRadioButton *moto;
+    QRadioButton *other;
     QTextEdit *checksum213;
     QTextEdit *checksum335;
     QTextEdit *checksum231;
@@ -495,6 +497,7 @@ public:
     QLabel *label_80;
     QTextEdit *MTK_LSC12;
     QLabel *label_81;
+    QPushButton *pushButton_dump_LSC;
     QGroupBox *groupBox_20;
     QLabel *label_133;
     QTextEdit *AEC12;
@@ -1301,17 +1304,17 @@ public:
     QCheckBox *full_log;
     QLabel *label_8;
     QPushButton *pushButton_folder;
+    QButtonGroup *buttonGroup_3;
+    QButtonGroup *buttonGroup_18;
     QButtonGroup *buttonGroup_6;
     QButtonGroup *buttonGroup_2;
+    QButtonGroup *buttonGroup;
+    QButtonGroup *buttonGroup_15;
     QButtonGroup *buttonGroup_7;
+    QButtonGroup *buttonGroup_5;
     QButtonGroup *buttonGroup_16;
     QButtonGroup *buttonGroup_13;
-    QButtonGroup *buttonGroup_18;
     QButtonGroup *buttonGroup_12;
-    QButtonGroup *buttonGroup_5;
-    QButtonGroup *buttonGroup_15;
-    QButtonGroup *buttonGroup_3;
-    QButtonGroup *buttonGroup;
     QButtonGroup *buttonGroup_4;
 
     void setupUi(QWidget *EEPROM_Data_VerifierClass)
@@ -1717,12 +1720,12 @@ public:
         buttonGroup_3->setObjectName(QStringLiteral("buttonGroup_3"));
         buttonGroup_3->addButton(oppo);
         oppo->setObjectName(QStringLiteral("oppo"));
-        oppo->setGeometry(QRect(165, 20, 45, 16));
+        oppo->setGeometry(QRect(165, 30, 45, 16));
         oppo->setChecked(true);
         vivo = new QRadioButton(groupBox_2);
         buttonGroup_3->addButton(vivo);
         vivo->setObjectName(QStringLiteral("vivo"));
-        vivo->setGeometry(QRect(165, 40, 45, 16));
+        vivo->setGeometry(QRect(165, 45, 45, 16));
         xiaomi = new QRadioButton(groupBox_2);
         buttonGroup_3->addButton(xiaomi);
         xiaomi->setObjectName(QStringLiteral("xiaomi"));
@@ -1758,12 +1761,12 @@ public:
         sony = new QRadioButton(groupBox_2);
         buttonGroup_3->addButton(sony);
         sony->setObjectName(QStringLiteral("sony"));
-        sony->setGeometry(QRect(215, 20, 45, 16));
+        sony->setGeometry(QRect(215, 30, 45, 16));
         sony->setChecked(false);
         SAMSUNG = new QRadioButton(groupBox_2);
         buttonGroup_3->addButton(SAMSUNG);
         SAMSUNG->setObjectName(QStringLiteral("SAMSUNG"));
-        SAMSUNG->setGeometry(QRect(215, 40, 61, 16));
+        SAMSUNG->setGeometry(QRect(215, 45, 61, 16));
         SAMSUNG->setChecked(false);
         honor = new QRadioButton(groupBox_2);
         buttonGroup_3->addButton(honor);
@@ -1787,6 +1790,16 @@ public:
         radioButton_256->setObjectName(QStringLiteral("radioButton_256"));
         radioButton_256->setGeometry(QRect(50, 20, 45, 16));
         radioButton_256->setChecked(true);
+        moto = new QRadioButton(groupBox_2);
+        buttonGroup_3->addButton(moto);
+        moto->setObjectName(QStringLiteral("moto"));
+        moto->setGeometry(QRect(165, 15, 45, 16));
+        moto->setChecked(false);
+        other = new QRadioButton(groupBox_2);
+        buttonGroup_3->addButton(other);
+        other->setObjectName(QStringLiteral("other"));
+        other->setGeometry(QRect(215, 15, 51, 16));
+        other->setChecked(false);
         checksum213 = new QTextEdit(tab_2);
         checksum213->setObjectName(QStringLiteral("checksum213"));
         checksum213->setGeometry(QRect(320, 105, 40, 28));
@@ -3174,6 +3187,10 @@ public:
         label_81 = new QLabel(groupBox_15);
         label_81->setObjectName(QStringLiteral("label_81"));
         label_81->setGeometry(QRect(200, 10, 31, 16));
+        pushButton_dump_LSC = new QPushButton(groupBox_15);
+        pushButton_dump_LSC->setObjectName(QStringLiteral("pushButton_dump_LSC"));
+        pushButton_dump_LSC->setGeometry(QRect(5, 20, 55, 30));
+        pushButton_dump_LSC->setCheckable(false);
         groupBox_20 = new QGroupBox(tab_4);
         groupBox_20->setObjectName(QStringLiteral("groupBox_20"));
         groupBox_20->setGeometry(QRect(0, 360, 441, 221));
@@ -5940,7 +5957,7 @@ public:
 
     void retranslateUi(QWidget *EEPROM_Data_VerifierClass)
     {
-        EEPROM_Data_VerifierClass->setWindowTitle(QApplication::translate("EEPROM_Data_VerifierClass", "EEPROM_Verifier_20250314", Q_NULLPTR));
+        EEPROM_Data_VerifierClass->setWindowTitle(QApplication::translate("EEPROM_Data_VerifierClass", "EEPROM_Verifier_20250902", Q_NULLPTR));
         label->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Input Memory Data", Q_NULLPTR));
         label_3->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Result & logs", Q_NULLPTR));
         pushButton_golden->setText(QApplication::translate("EEPROM_Data_VerifierClass", "AWB Golden", Q_NULLPTR));
@@ -5992,6 +6009,8 @@ public:
         radioButton_FFFF->setText(QApplication::translate("EEPROM_Data_VerifierClass", "%FFFF+1", Q_NULLPTR));
         radioButton_CRC16->setText(QApplication::translate("EEPROM_Data_VerifierClass", "CRC16", Q_NULLPTR));
         radioButton_256->setText(QApplication::translate("EEPROM_Data_VerifierClass", "%256", Q_NULLPTR));
+        moto->setText(QApplication::translate("EEPROM_Data_VerifierClass", "MOTO", Q_NULLPTR));
+        other->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Ohter", Q_NULLPTR));
         label_91->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Flag", Q_NULLPTR));
         label_129->setText(QApplication::translate("EEPROM_Data_VerifierClass", "ChkSum", Q_NULLPTR));
         label_130->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Item", Q_NULLPTR));
@@ -6131,6 +6150,7 @@ public:
         label_79->setText(QApplication::translate("EEPROM_Data_VerifierClass", "MTK LSC1_Name", Q_NULLPTR));
         label_80->setText(QApplication::translate("EEPROM_Data_VerifierClass", "MTK LSC2_Name", Q_NULLPTR));
         label_81->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Start", Q_NULLPTR));
+        pushButton_dump_LSC->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Dump_LSC", Q_NULLPTR));
         groupBox_20->setTitle(QApplication::translate("EEPROM_Data_VerifierClass", "AEC Cal(two byte format)", Q_NULLPTR));
         label_133->setText(QApplication::translate("EEPROM_Data_VerifierClass", "BV", Q_NULLPTR));
         label_131->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Start", Q_NULLPTR));
@@ -6451,7 +6471,7 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,2b,SONY", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1576, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1004, MTK", Q_NULLPTR)
-         << QApplication::translate("EEPROM_Data_VerifierClass", "PD Offset,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "FocusMap,  QC", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b,SONY", Q_NULLPTR)
         );
         DCC33->clear();
@@ -6460,7 +6480,7 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,2b,SONY", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1576, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1004, MTK", Q_NULLPTR)
-         << QApplication::translate("EEPROM_Data_VerifierClass", "PD Offset,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "FocusMap,  QC", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b,SONY", Q_NULLPTR)
         );
         DCC53->clear();
@@ -6469,7 +6489,7 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,2b,SONY", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1576, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1004, MTK", Q_NULLPTR)
-         << QApplication::translate("EEPROM_Data_VerifierClass", "PD Offset,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "FocusMap,  QC", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b,SONY", Q_NULLPTR)
         );
         DCC73->clear();
@@ -6478,7 +6498,7 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,2b,SONY", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1576, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1004, MTK", Q_NULLPTR)
-         << QApplication::translate("EEPROM_Data_VerifierClass", "PD Offset,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "FocusMap,  QC", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b,SONY", Q_NULLPTR)
         );
         DCC93->clear();
@@ -6487,7 +6507,7 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,2b,SONY", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1576, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1004, MTK", Q_NULLPTR)
-         << QApplication::translate("EEPROM_Data_VerifierClass", "PD Offset,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "FocusMap,  QC", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b,SONY", Q_NULLPTR)
         );
         DCC113->clear();
@@ -6500,7 +6520,7 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,2b,SONY", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1576, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1004, MTK", Q_NULLPTR)
-         << QApplication::translate("EEPROM_Data_VerifierClass", "PD Offset,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "FocusMap,  QC", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b,SONY", Q_NULLPTR)
         );
         DCC23->clear();
@@ -6509,7 +6529,7 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,2b,SONY", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1576, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1004, MTK", Q_NULLPTR)
-         << QApplication::translate("EEPROM_Data_VerifierClass", "PD Offset,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "FocusMap,  QC", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b,SONY", Q_NULLPTR)
         );
         DCC63->clear();
@@ -6518,7 +6538,7 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,2b,SONY", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1576, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1004, MTK", Q_NULLPTR)
-         << QApplication::translate("EEPROM_Data_VerifierClass", "PD Offset,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "FocusMap,  QC", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b,SONY", Q_NULLPTR)
         );
         DCC123->clear();
@@ -6531,7 +6551,7 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,2b,SONY", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1576, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1004, MTK", Q_NULLPTR)
-         << QApplication::translate("EEPROM_Data_VerifierClass", "PD Offset,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "FocusMap,  QC", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b,SONY", Q_NULLPTR)
         );
         DCC83->clear();
@@ -6540,7 +6560,7 @@ public:
          << QApplication::translate("EEPROM_Data_VerifierClass", "16x12,2b,SONY", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1576, MTK", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "8x8,1004, MTK", Q_NULLPTR)
-         << QApplication::translate("EEPROM_Data_VerifierClass", "PD Offset,  QC", Q_NULLPTR)
+         << QApplication::translate("EEPROM_Data_VerifierClass", "FocusMap,  QC", Q_NULLPTR)
          << QApplication::translate("EEPROM_Data_VerifierClass", "17x13,2b,SONY", Q_NULLPTR)
         );
         DCC133->clear();
