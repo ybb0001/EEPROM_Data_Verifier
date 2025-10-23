@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>EEPROM_Verifier_20250902</string>
+   <string>EEPROM_Verifier_251023</string>
   </property>
   <widget class="QTextEdit" name="input">
    <property name="geometry">
@@ -12211,6 +12211,22 @@ p, li { white-space: pre-wrap; }
        </rect>
       </property>
      </widget>
+     <widget class="QPushButton" name="pushButton_dump_MTK">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>-3</y>
+        <width>61</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Dump_MTK</string>
+      </property>
+      <property name="checkable">
+       <bool>false</bool>
+      </property>
+     </widget>
      <zorder>DCC163</zorder>
      <zorder>DCC153</zorder>
      <zorder>DCC143</zorder>
@@ -12263,6 +12279,7 @@ p, li { white-space: pre-wrap; }
      <zorder>DCC161</zorder>
      <zorder>DCC151</zorder>
      <zorder>DCC162</zorder>
+     <zorder>pushButton_dump_MTK</zorder>
     </widget>
    </widget>
    <widget class="QWidget" name="tab_8">
@@ -15663,17 +15680,17 @@ p, li { white-space: pre-wrap; }
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup_3"/>
-  <buttongroup name="buttonGroup_18"/>
-  <buttongroup name="buttonGroup_6"/>
-  <buttongroup name="buttonGroup_2"/>
+  <buttongroup name="buttonGroup_12"/>
   <buttongroup name="buttonGroup"/>
-  <buttongroup name="buttonGroup_15"/>
+  <buttongroup name="buttonGroup_18"/>
+  <buttongroup name="buttonGroup_13"/>
+  <buttongroup name="buttonGroup_4"/>
+  <buttongroup name="buttonGroup_6"/>
+  <buttongroup name="buttonGroup_16"/>
+  <buttongroup name="buttonGroup_2"/>
   <buttongroup name="buttonGroup_7"/>
   <buttongroup name="buttonGroup_5"/>
-  <buttongroup name="buttonGroup_16"/>
-  <buttongroup name="buttonGroup_13"/>
-  <buttongroup name="buttonGroup_12"/>
-  <buttongroup name="buttonGroup_4"/>
+  <buttongroup name="buttonGroup_15"/>
+  <buttongroup name="buttonGroup_3"/>
  </buttongroups>
 </ui>

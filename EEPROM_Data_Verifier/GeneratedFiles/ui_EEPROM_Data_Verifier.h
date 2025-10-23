@@ -1015,6 +1015,7 @@ public:
     QTextEdit *DCC151;
     QComboBox *DCC153;
     QTextEdit *DCC162;
+    QPushButton *pushButton_dump_MTK;
     QWidget *tab_8;
     QPushButton *pushButton_folder_sorting;
     QWidget *tab_9;
@@ -1304,18 +1305,18 @@ public:
     QCheckBox *full_log;
     QLabel *label_8;
     QPushButton *pushButton_folder;
-    QButtonGroup *buttonGroup_3;
-    QButtonGroup *buttonGroup_18;
-    QButtonGroup *buttonGroup_6;
-    QButtonGroup *buttonGroup_2;
+    QButtonGroup *buttonGroup_12;
     QButtonGroup *buttonGroup;
-    QButtonGroup *buttonGroup_15;
+    QButtonGroup *buttonGroup_18;
+    QButtonGroup *buttonGroup_13;
+    QButtonGroup *buttonGroup_4;
+    QButtonGroup *buttonGroup_6;
+    QButtonGroup *buttonGroup_16;
+    QButtonGroup *buttonGroup_2;
     QButtonGroup *buttonGroup_7;
     QButtonGroup *buttonGroup_5;
-    QButtonGroup *buttonGroup_16;
-    QButtonGroup *buttonGroup_13;
-    QButtonGroup *buttonGroup_12;
-    QButtonGroup *buttonGroup_4;
+    QButtonGroup *buttonGroup_15;
+    QButtonGroup *buttonGroup_3;
 
     void setupUi(QWidget *EEPROM_Data_VerifierClass)
     {
@@ -4854,6 +4855,10 @@ public:
         DCC162 = new QTextEdit(groupBox_11);
         DCC162->setObjectName(QStringLiteral("DCC162"));
         DCC162->setGeometry(QRect(350, 250, 45, 30));
+        pushButton_dump_MTK = new QPushButton(groupBox_11);
+        pushButton_dump_MTK->setObjectName(QStringLiteral("pushButton_dump_MTK"));
+        pushButton_dump_MTK->setGeometry(QRect(260, -3, 61, 25));
+        pushButton_dump_MTK->setCheckable(false);
         DCC163->raise();
         DCC153->raise();
         DCC143->raise();
@@ -4906,6 +4911,7 @@ public:
         DCC161->raise();
         DCC151->raise();
         DCC162->raise();
+        pushButton_dump_MTK->raise();
         tabWidget->addTab(tab_7, QString());
         tab_8 = new QWidget();
         tab_8->setObjectName(QStringLiteral("tab_8"));
@@ -5957,7 +5963,7 @@ public:
 
     void retranslateUi(QWidget *EEPROM_Data_VerifierClass)
     {
-        EEPROM_Data_VerifierClass->setWindowTitle(QApplication::translate("EEPROM_Data_VerifierClass", "EEPROM_Verifier_20250902", Q_NULLPTR));
+        EEPROM_Data_VerifierClass->setWindowTitle(QApplication::translate("EEPROM_Data_VerifierClass", "EEPROM_Verifier_251023", Q_NULLPTR));
         label->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Input Memory Data", Q_NULLPTR));
         label_3->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Result & logs", Q_NULLPTR));
         pushButton_golden->setText(QApplication::translate("EEPROM_Data_VerifierClass", "AWB Golden", Q_NULLPTR));
@@ -6582,6 +6588,7 @@ public:
         DCC153->insertItems(0, QStringList()
          << QApplication::translate("EEPROM_Data_VerifierClass", "PD Offset,  QC", Q_NULLPTR)
         );
+        pushButton_dump_MTK->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Dump_MTK", Q_NULLPTR));
         tabWidget->setTabText(tabWidget->indexOf(tab_7), QApplication::translate("EEPROM_Data_VerifierClass", "PDAF", Q_NULLPTR));
         pushButton_folder_sorting->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Sorting", Q_NULLPTR));
         tabWidget->setTabText(tabWidget->indexOf(tab_8), QApplication::translate("EEPROM_Data_VerifierClass", "Dual", Q_NULLPTR));

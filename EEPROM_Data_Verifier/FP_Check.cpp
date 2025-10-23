@@ -16,6 +16,9 @@ float golden_Spec[2][3] = {0};
 unsigned int awb_distance[3], awb_tolerance[3][3];
 int QSC_Min, QSC_Max, LSC_Sequence_check=1;
 int log_type = 1, awb_golden_check=1;
+int MTK_LR_ratio_diff, MTK_UD_ratio_diff, MTK_LR_diff, MTK_LR_reverse, MTK_UD_diff, MTK_UD_reverse;
+
+
 string INI_Path ;
 //ofstream FP_log(".\\FP_Check_Log.txt");
 ofstream FP_log;
@@ -134,6 +137,14 @@ void load_Spec(int x) {
 
 	QSC_Min= GetPrivateProfileInt(_T("Spec_Set"), TEXT("QSC_Min"), 920, CA2CT(INI_Path.c_str()));
 	QSC_Max = GetPrivateProfileInt(_T("Spec_Set"), TEXT("QSC_Max"), 1080, CA2CT(INI_Path.c_str()));
+
+	MTK_LR_ratio_diff = GetPrivateProfileInt(_T("Spec_Set"), TEXT("MTK_LR_RATIO_DIFF"), 100, CA2CT(INI_Path.c_str()));
+	MTK_UD_ratio_diff = GetPrivateProfileInt(_T("Spec_Set"), TEXT("MTK_UD_RATIO_DIFF"), 100, CA2CT(INI_Path.c_str()));
+	MTK_LR_diff = GetPrivateProfileInt(_T("Spec_Set"), TEXT("MTK_LR_DIFF"), 100, CA2CT(INI_Path.c_str()));
+	MTK_LR_reverse = GetPrivateProfileInt(_T("Spec_Set"), TEXT("MTK_LR_REVERSE"), 20, CA2CT(INI_Path.c_str()));
+	MTK_UD_diff = GetPrivateProfileInt(_T("Spec_Set"), TEXT("MTK_UD_DIFF"), 60, CA2CT(INI_Path.c_str()));
+	MTK_UD_reverse = GetPrivateProfileInt(_T("Spec_Set"), TEXT("MTK_UD_REVERSE"), 20, CA2CT(INI_Path.c_str()));
+
 
 	GainMap_Diff = GetPrivateProfileInt(_T("Spec_Set"), TEXT("GainMap_Diff"), 25, CA2CT(INI_Path.c_str()));
 	GainMap_Diff = GainMap_Diff / 100;
@@ -256,20 +267,20 @@ int QC_LSC_FP_Check(int LSC[25][33][4],int type) {
 		}
 
 		///////////////  R & B Swap check 
-		int xx = 0;
-		if (LSC[0][0][0] * LSC[0][0][2] * 0.95 > LSC[0][0][3] * LSC[0][0][1])
-			xx++;
-		if (LSC[0][16][0] * LSC[0][16][2] * 0.95 > LSC[0][16][3] * LSC[0][16][1])
-			xx++;
-		if (LSC[12][0][0] * LSC[12][0][2] * 0.95 > LSC[12][0][3] * LSC[12][0][1])
-			xx++;
-		if (LSC[12][16][0] * LSC[12][16][2] * 0.95 > LSC[12][16][3] * LSC[12][16][1])
-			xx++;
+		//int xx = 0;
+		//if (LSC[0][0][0] * LSC[0][0][2] * 0.95 > LSC[0][0][3] * LSC[0][0][1])
+		//	xx++;
+		//if (LSC[0][16][0] * LSC[0][16][2] * 0.95 > LSC[0][16][3] * LSC[0][16][1])
+		//	xx++;
+		//if (LSC[12][0][0] * LSC[12][0][2] * 0.95 > LSC[12][0][3] * LSC[12][0][1])
+		//	xx++;
+		//if (LSC[12][16][0] * LSC[12][16][2] * 0.95 > LSC[12][16][3] * LSC[12][16][1])
+		//	xx++;
 
-		if (xx > 2 && awb_golden_check == 1) {
-			ret |= 4;
-			FP_log << " QC LSC R Gr Gb B Sequence NG!" << endl;
-		}
+		//if (xx > 2 && awb_golden_check == 1) {
+		//	ret |= 4;
+		//	FP_log << " QC LSC R Gr Gb B Sequence NG!" << endl;
+		//}
 	}
 	else if (type == 2) {
 		W = 13, H = 9, T = 3,C=128;
@@ -1352,7 +1363,7 @@ int GainMap_FP_Check(int PDgainLeft[30][30], int PDgainRight[30][30], int type) 
 	if (type == 1|| type == 3) {
 		W = 16, H = 12;
 	}
-	if (type == 2|| type == 4) {
+	if (type == 2|| type == 4|| type>10) {
 		W = 20, H = 4;
 		diff_spec = MTK_Proc1_Diff;
 		LR_diff_spec = MTK_Proc1_LR_Diff;
@@ -1451,6 +1462,118 @@ int GainMap_FP_Check(int PDgainLeft[30][30], int PDgainRight[30][30], int type) 
 	if ((ret & 4) > 0) {
 		FP_log << "Gainmap Seft Top_Down Diff Check NG!" << endl;
 	}
+
+	if (type == 11) {
+		
+		for (int i = 0; i < 4; i++)
+			for (int j = 0; j < 19; j++) {
+				int d = PDgainLeft[i][j] - PDgainLeft[i][j + 1];
+				if (abs(d)>MTK_LR_ratio_diff) {
+					ret |= 4;
+					FP_log << "MTK_LR_Ratio Diff :" << d << endl;
+				}
+
+				d = PDgainRight[i][j] - PDgainRight[i][j + 1];
+				if (abs(d)>MTK_UD_ratio_diff) {
+					ret |= 4;
+					FP_log << "MTK_UD_Ratio Diff :" << d << endl;
+				}
+			}
+	
+	}
+	if (type == 12) {
+
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 19; j++) {
+				int d = PDgainLeft[i][j] - PDgainLeft[i][j + 1];
+				if (abs(d)>MTK_LR_diff) {
+					ret |= 4;
+
+				}
+
+				d = PDgainRight[i][j] - PDgainRight[i][j + 1];
+				if (abs(d)>MTK_LR_diff) {
+					ret |= 4;
+
+				}
+			}
+			for (int j = 0; j < 9; j++) {
+				int d = PDgainLeft[i][j] - PDgainLeft[i][j + 1];
+				if (d>MTK_LR_reverse) {
+					ret |= 4;
+
+				}
+
+				d = PDgainRight[i][j] - PDgainRight[i][j + 1];
+				if (d>MTK_LR_reverse) {
+					ret |= 4;
+
+				}
+			}
+			for (int j = 19; j >10; j--) {
+				int d = PDgainLeft[i][j] - PDgainLeft[i][j - 1];
+				if (d>MTK_LR_reverse) {
+					ret |= 4;
+
+				}
+
+				d = PDgainRight[i][j] - PDgainRight[i][j - 1];
+				if (d>MTK_LR_reverse) {
+					ret |= 4;
+
+				}
+			}
+		}
+
+	}
+
+	if (type == 13) {
+
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 19; j++) {
+				int d = PDgainLeft[i][j] - PDgainLeft[i][j + 1];
+				if (abs(d)>MTK_UD_diff) {
+					ret |= 4;
+
+				}
+
+				d = PDgainRight[i][j] - PDgainRight[i][j + 1];
+				if (abs(d)>MTK_UD_diff) {
+					ret |= 4;
+
+				}
+			}
+			for (int j = 0; j < 9; j++) {
+				int d = PDgainLeft[i][j] - PDgainLeft[i][j + 1];
+				if (d>MTK_UD_diff) {
+					ret |= 4;
+
+				}
+
+				d = PDgainRight[i][j] - PDgainRight[i][j + 1];
+				if (d>MTK_UD_diff) {
+					ret |= 4;
+
+				}
+			}
+			for (int j = 19; j >10; j--) {
+				int d = PDgainLeft[i][j] - PDgainLeft[i][j - 1];
+				if (d>MTK_UD_diff) {
+					ret |= 4;
+
+				}
+
+				d = PDgainRight[i][j] - PDgainRight[i][j - 1];
+				if (d>MTK_UD_diff) {
+					ret |= 4;
+
+				}
+			}
+		}
+
+	}
+
+
 
 	return ret;
 

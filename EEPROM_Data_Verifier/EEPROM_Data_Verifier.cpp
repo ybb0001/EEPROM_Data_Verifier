@@ -2050,6 +2050,8 @@ void EEPROM_Data_Verifier::load_EEPROM_Address() {
 	DataFormat  = GetPrivateProfileInt(_T("EEPROM_Set"), TEXT("DataFormat"), DataFormat, CA2CT(EEPROM_Map.c_str()));
 	selection = GetPrivateProfileInt(_T("EEPROM_Set"), TEXT("selection"), selection, CA2CT(EEPROM_Map.c_str()));
 	first_Pixel = GetPrivateProfileInt(_T("EEPROM_Set"), TEXT("first_Pixel"), 0, CA2CT(EEPROM_Map.c_str()));
+
+
 	duplicate_value_NG_ratio=GetPrivateProfileInt(_T("Spec_Set"), TEXT("duplicate_value_NG_ratio"), 50, CA2CT(EEPROM_Map.c_str()));
 
 	LCC_CrossTalk[0] = GetPrivateProfileInt(_T("Spec_Set"), TEXT("LCC_CrossTalk_noMove"), 4, CA2CT(EEPROM_Map.c_str()));
@@ -5195,17 +5197,23 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 				for (int i = 0; i < H; i++)
 					for (int j = 0; j < W; j++) {
 						useData[e] = useData[e + 1] = 1;
-						useData[e1] = useData[e1 + 1] = 1;
 						PDgainLeft[i][j] = DecData[e]  + DecData[e + 1] * 256;
-						PDgainRight[i][j] = DecData[e1]  + DecData[e1 + 1] * 256;
-						e += 2; e1 += 2;
+						e += 2;
 					}
+
+				for (int j = 0; j < W; j++)
+					for (int i = 0; i < H; i++) {
+						useData[e1] = useData[e1 + 1] = 1;
+						PDgainRight[i][j] = DecData[e1] + DecData[e1 + 1] * 256;
+						e1 += 2;
+					}
+
 				if (mode == 0) {
 					fout << "~~~~~~~~~~~" << Gmap_Item[k][0] << " MTK Proc1 LR Ratio:" << endl;
 					for (int i = 0; i < H; i++) {
 						for (int j = 0; j < W; j++) {
-							float xx = PDgainLeft[i][j] / 1024.0;
-							if (xx<0.5 || xx>1.5) { ret |= 128; }
+							int xx = PDgainLeft[i][j];
+							if (xx<600 || xx>1500) { ret |= 128; }
 							fout << xx << "	";
 						}
 						fout << endl;
@@ -5214,13 +5222,18 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 					fout << "~~~~~~~~~~~" << Gmap_Item[k][0] << " MTK Proc1 UD Ratio:" << endl;
 					for (int i = 0; i < H; i++) {
 						for (int j = 0; j < W; j++) {
-							float xx = PDgainRight[i][j] / 1024.0;
-							if (xx<0.5 || xx>1.5) { ret |= 128; }
+							int xx = PDgainRight[i][j];
+							if (xx<600 || xx>1500) { ret |= 128; }
 							fout << xx << "	";
 						}
 						fout << endl;
 					}
 					fout << endl;
+				}
+				if (GainMap_FP_Check(PDgainLeft, PDgainRight, 11) > 0) {
+					string s = Gmap_Item[k][0] + " GainMap in 0x" + Gmap_Item[k][1] + " is NG!\n ";
+					ui.log->insertPlainText(s.c_str());
+					ret |= 4;
 				}
 
 				e = eStart + 336;
@@ -5253,7 +5266,7 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 					fout << endl;
 				}
 
-				if (GainMap_FP_Check(PDgainLeft, PDgainRight, Gmap_Item3[k]) > 0) {
+				if (GainMap_FP_Check(PDgainLeft, PDgainRight,12) > 0) {
 					string s = Gmap_Item[k][0] + " GainMap in 0x" + Gmap_Item[k][1] + " is NG!\n ";
 					ui.log->insertPlainText(s.c_str());
 					ret |= 4;
@@ -5287,7 +5300,7 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 					}
 					fout << endl;
 				}
-				if (GainMap_FP_Check(PDgainLeft, PDgainRight, Gmap_Item3[k]) > 0) {
+				if (GainMap_FP_Check(PDgainLeft, PDgainRight, 13) > 0) {
 					string s = Gmap_Item[k][0] + " GainMap in 0x" + Gmap_Item[k][1] + " is NG!\n ";
 					ui.log->insertPlainText(s.c_str());
 					ret |= 4;
@@ -5409,10 +5422,10 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 					}
 
 					if (PD_Item3[k] == 0) {			
-						float pd_range =1.0* (AF_Data[0][0] - AF_Data[1][0])* (2^ PDAF_Data.QFORMAT)/ DCC[2][3];
+						float pd_range =1.0* (AF_Data[0][0] - AF_Data[1][0])* pow(2.0f,PDAF_Data.QFORMAT)/ DCC[2][3];
 						if (pd_range > PDAF_Data.PD_range_max) {
 							ret |= 128;
-							string s = PD_Item[k][0] + " in 0x" + PD_Item[k][1] + "QC Qformat check, PD_range="+to_string(pd_range);
+							string s = PD_Item[k][0] + " in 0x" + PD_Item[k][1] + " QC Qformat check, PD_range="+to_string(pd_range);
 							ui.log->insertPlainText(s.c_str());
 						}
 					}
@@ -9145,6 +9158,198 @@ void EEPROM_Data_Verifier::on_pushButton_dump_LSC_clicked()
 
 }
 
+void EEPROM_Data_Verifier::on_pushButton_dump_MTK_clicked()
+{
+	mode = 1;
+	selectModel();
+	load_EEPROM_Address();
+
+	dump_result.open(".\\dump_result.txt");
+	fout.open(".\\MemoryParseData.txt");
+
+	OK = 0; NG = 0;
+
+	if (ui.full_log->isChecked())
+		mode = 0;
+
+	load_Spec(mode);
+
+	vector<string> files1 = getFiles(".\\bin_data\\*");
+	vector<string> ::iterator iVector = files1.begin();
+	bool ok = false;
+	while (iVector != files1.end())
+	{
+		dump_result << (*iVector) << "	";
+		name2 = (*iVector);
+		fout << (*iVector) << endl;
+		fuse_ID_output(*iVector);
+
+		string fuse = "", time_fuse = (*iVector);
+		int x = 0;
+
+		if (time_fuse[0] == '2'&&time_fuse[1] == '0'&&time_fuse[2] == '2') {
+			while (time_fuse[x] != ' '&&time_fuse[x] != '_'&&x < (*iVector).length()) {
+				x++;
+			}
+			x++;
+			while (time_fuse[x] != ' '&&time_fuse[x] != '_'&&x < (*iVector).length()) {
+				fuse += time_fuse[x++];
+			}
+		}
+		else {
+			while (time_fuse[x] != ' '&&time_fuse[x] != '_'&&x < (*iVector).length()) {
+				fuse += time_fuse[x++];
+			}
+		}
+		current_Hash.fuse_ID = fuse;
+		memset(DecData, 0, sizeof(DecData));
+		memset(useData, 0, sizeof(useData));
+		name = ".\\bin_data\\" + *iVector;
+		ifstream fin(name, std::ios::binary);
+
+		//获取文件大小方法一
+		struct _stat info;
+		_stat(name.c_str(), &info);
+		EEP_Size = info.st_size;
+
+		unsigned char szBuf[262128] = { 0 };
+		fin.read((char*)&szBuf, sizeof(char) * EEP_Size);
+
+		for (int i = 0; i < EEP_Size; i++) {
+			DecData[i] = (unsigned char)szBuf[i];
+			getHex(DecData[i]);
+			D[i][0] = chk[0];
+			D[i][1] = chk[1];
+		}
+		int MTK_LR_ratio_diff = 0, MTK_UD_ratio_diff = 0, MTK_LR_diff = 0, MTK_LR_reverse = -1024, MTK_UD_diff = 0, MTK_UD_reverse = -1024;
+		for (int k = 0; k < 10; k++)
+			if (Gmap_Item[k][1].length()>1) {
+				unsigned int e = marking_Hex2int(Gmap_Item[k][1], Gmap_Item[k][0], "", QC_GainMap);
+				int W = 17, H = 13, offset = 0;
+				if (Gmap_Item3[k] == 1 || Gmap_Item3[k] == 3) {
+					W = 16, H = 12, offset = atoi(Gmap_Item[k][2].c_str());
+				}
+
+				if (Gmap_Item3[k] == 2) {
+
+					W = 20, H = 4;
+					unsigned int eStart = e, e1 = e;
+					e = eStart + 16;
+					e1 = eStart + 176;
+
+					for (int i = 0; i < H; i++)
+						for (int j = 0; j < W; j++) {
+							useData[e] = useData[e + 1] = 1;
+							PDgainLeft[i][j] = DecData[e] + DecData[e + 1] * 256;
+							e += 2; 
+						}
+					for (int j = 0; j < W; j++)
+						for (int i = 0; i < H; i++){
+							useData[e1] = useData[e1 + 1] = 1;
+							PDgainRight[i][j] = DecData[e1] + DecData[e1 + 1] * 256;
+							e1 += 2;
+						}
+
+					for (int i = 0; i < H; i++)
+						for (int j = 0; j < W-1; j++) {
+							int lrd = abs(PDgainLeft[i][j] - PDgainLeft[i][j + 1]);
+							if (lrd > MTK_LR_ratio_diff) MTK_LR_ratio_diff = lrd;
+							int udd = abs(PDgainRight[i][j] - PDgainRight[i][j + 1]);
+							if (udd > MTK_UD_ratio_diff) MTK_UD_ratio_diff = udd;
+						}
+
+
+					e = eStart + 336;
+					e1 = eStart + 336 + 160;
+
+					for (int i = 0; i < H; i++)
+						for (int j = 0; j < W; j++) {
+							useData[e] = useData[e + 1] = 1;
+							useData[e1] = useData[e1 + 1] = 1;
+							PDgainLeft[i][j] = DecData[e] + DecData[e + 1] * 256;
+							PDgainRight[i][j] = DecData[e1] + DecData[e1 + 1] * 256;
+							e += 2; e1 += 2;
+						}
+
+					for (int i = 0; i < H; i++) {
+						for (int j = 0; j < W - 1; j++) {
+							int lrd = abs(PDgainLeft[i][j] - PDgainLeft[i][j + 1]);
+							if (lrd > MTK_LR_diff) MTK_LR_diff = lrd;
+							int udd = abs(PDgainRight[i][j] - PDgainRight[i][j + 1]);
+							if (udd > MTK_LR_diff) MTK_LR_diff = udd;
+						}
+
+						for (int j = 0; j < 9; j++) {
+							int d = PDgainLeft[i][j] - PDgainLeft[i][j + 1];
+							if (d > MTK_LR_reverse) MTK_LR_reverse = d;
+
+							d = PDgainRight[i][j] - PDgainRight[i][j + 1];
+							if (d > MTK_LR_reverse)  MTK_LR_reverse = d;
+						}
+						for (int j = 19; j > 10; j--) {
+							int d = PDgainLeft[i][j] - PDgainLeft[i][j - 1];
+							if (d > MTK_LR_reverse) MTK_LR_reverse = d;
+							d = PDgainRight[i][j] - PDgainRight[i][j - 1];
+							if (d > MTK_LR_reverse) MTK_LR_reverse = d;
+						}
+			
+					}
+					e = eStart + 336 + 320;
+					e1 = eStart + 336 + 480;
+					for (int j = 0; j < W; j++)
+						for (int i = 0; i < H; i++) {
+							useData[e] = useData[e + 1] = 1;
+							useData[e1] = useData[e1 + 1] = 1;
+							PDgainLeft[i][j] = DecData[e] + DecData[e + 1] * 256;
+							PDgainRight[i][j] = DecData[e1] + DecData[e1 + 1] * 256;
+							e += 2; e1 += 2;
+						}
+
+
+					for (int i = 0; i < H; i++) {
+						for (int j = 0; j < W - 1; j++) {
+							int lrd = abs(PDgainLeft[i][j] - PDgainLeft[i][j + 1]);
+							if (lrd > MTK_UD_diff) MTK_UD_diff = lrd;
+							int udd = abs(PDgainRight[i][j] - PDgainRight[i][j + 1]);
+							if (udd > MTK_UD_diff) MTK_UD_diff = udd;
+						}
+
+						for (int j = 0; j < 9; j++) {
+							int d = PDgainLeft[i][j] - PDgainLeft[i][j + 1];
+							if (d > MTK_UD_reverse) MTK_UD_reverse = d;
+
+							d = PDgainRight[i][j] - PDgainRight[i][j + 1];
+							if (d > MTK_UD_reverse)  MTK_UD_reverse = d;
+						}
+						for (int j = 19; j > 10; j--) {
+							int d = PDgainLeft[i][j] - PDgainLeft[i][j - 1];
+							if (d > MTK_UD_reverse) MTK_UD_reverse = d;
+							d = PDgainRight[i][j] - PDgainRight[i][j - 1];
+							if (d > MTK_UD_reverse) MTK_UD_reverse = d;
+						}
+
+					}
+				}
+
+			}
+		dump_result << MTK_LR_ratio_diff <<"	"<< MTK_UD_ratio_diff << "	" << MTK_LR_diff << "	" << 
+			MTK_LR_reverse << "	" << MTK_UD_diff << "	" << MTK_UD_reverse ;
+
+		dump_result << endl;
+
+		fin.close();
+		++iVector;
+		fuse_ID_output("\n");
+	}
+
+	value_duplicate_Check();
+	dump_Hash.clear();
+	FP_logFile_Close();
+	fout.close();
+	dump_result.close();
+	ui.log->insertPlainText("Dump Data Read finished\n");
+
+}
 
 void EEPROM_Data_Verifier::on_pushButton_dump_SFR_clicked()
 {
@@ -9261,8 +9466,6 @@ void EEPROM_Data_Verifier::on_pushButton_dump_SFR_clicked()
 	ui.log->insertPlainText("Dump Data Read finished\n");
 
 }
-
-
 
 void EEPROM_Data_Verifier::on_pushButton_folder_clicked() {
 
