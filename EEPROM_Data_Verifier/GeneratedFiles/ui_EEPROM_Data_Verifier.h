@@ -580,6 +580,7 @@ public:
     QLabel *label_171;
     QTextEdit *akm_cross3;
     QLabel *label_68;
+    QPushButton *pushButton_Dump_Drift;
     QWidget *tab_5;
     QGroupBox *groupBox_7;
     QTextEdit *AF_name1;
@@ -1305,24 +1306,24 @@ public:
     QCheckBox *full_log;
     QLabel *label_8;
     QPushButton *pushButton_folder;
-    QButtonGroup *buttonGroup_12;
-    QButtonGroup *buttonGroup;
     QButtonGroup *buttonGroup_18;
-    QButtonGroup *buttonGroup_13;
-    QButtonGroup *buttonGroup_4;
     QButtonGroup *buttonGroup_6;
     QButtonGroup *buttonGroup_16;
-    QButtonGroup *buttonGroup_2;
-    QButtonGroup *buttonGroup_7;
+    QButtonGroup *buttonGroup_4;
     QButtonGroup *buttonGroup_5;
+    QButtonGroup *buttonGroup_13;
+    QButtonGroup *buttonGroup_7;
+    QButtonGroup *buttonGroup_12;
     QButtonGroup *buttonGroup_15;
+    QButtonGroup *buttonGroup;
     QButtonGroup *buttonGroup_3;
+    QButtonGroup *buttonGroup_2;
 
     void setupUi(QWidget *EEPROM_Data_VerifierClass)
     {
         if (EEPROM_Data_VerifierClass->objectName().isEmpty())
             EEPROM_Data_VerifierClass->setObjectName(QStringLiteral("EEPROM_Data_VerifierClass"));
-        EEPROM_Data_VerifierClass->resize(865, 730);
+        EEPROM_Data_VerifierClass->resize(860, 725);
         input = new QTextEdit(EEPROM_Data_VerifierClass);
         input->setObjectName(QStringLiteral("input"));
         input->setGeometry(QRect(10, 20, 401, 511));
@@ -3444,7 +3445,7 @@ public:
         QSC4->setChecked(true);
         groupBox_26 = new QGroupBox(tab_4);
         groupBox_26->setObjectName(QStringLiteral("groupBox_26"));
-        groupBox_26->setGeometry(QRect(275, 220, 161, 65));
+        groupBox_26->setGeometry(QRect(275, 224, 161, 61));
         akm_cross1 = new QTextEdit(groupBox_26);
         akm_cross1->setObjectName(QStringLiteral("akm_cross1"));
         akm_cross1->setGeometry(QRect(10, 30, 50, 30));
@@ -3463,6 +3464,10 @@ public:
         label_68 = new QLabel(groupBox_26);
         label_68->setObjectName(QStringLiteral("label_68"));
         label_68->setGeometry(QRect(117, 14, 31, 16));
+        pushButton_Dump_Drift = new QPushButton(groupBox_26);
+        pushButton_Dump_Drift->setObjectName(QStringLiteral("pushButton_Dump_Drift"));
+        pushButton_Dump_Drift->setGeometry(QRect(108, -5, 50, 25));
+        pushButton_Dump_Drift->setCheckable(false);
         tabWidget->addTab(tab_4, QString());
         groupBox_24->raise();
         groupBox_3->raise();
@@ -5963,7 +5968,7 @@ public:
 
     void retranslateUi(QWidget *EEPROM_Data_VerifierClass)
     {
-        EEPROM_Data_VerifierClass->setWindowTitle(QApplication::translate("EEPROM_Data_VerifierClass", "EEPROM_Verifier_251023", Q_NULLPTR));
+        EEPROM_Data_VerifierClass->setWindowTitle(QApplication::translate("EEPROM_Data_VerifierClass", "EEPROM_Verifier_251129", Q_NULLPTR));
         label->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Input Memory Data", Q_NULLPTR));
         label_3->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Result & logs", Q_NULLPTR));
         pushButton_golden->setText(QApplication::translate("EEPROM_Data_VerifierClass", "AWB Golden", Q_NULLPTR));
@@ -6186,10 +6191,11 @@ public:
         label_169->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Start", Q_NULLPTR));
         QSC3->setText(QApplication::translate("EEPROM_Data_VerifierClass", "3byte", Q_NULLPTR));
         QSC4->setText(QApplication::translate("EEPROM_Data_VerifierClass", "4byte", Q_NULLPTR));
-        groupBox_26->setTitle(QApplication::translate("EEPROM_Data_VerifierClass", "AKM Crosstalk Position", Q_NULLPTR));
+        groupBox_26->setTitle(QApplication::translate("EEPROM_Data_VerifierClass", "1 Byte Shift", Q_NULLPTR));
         label_170->setText(QApplication::translate("EEPROM_Data_VerifierClass", "X_Start", Q_NULLPTR));
         label_171->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Y_Start", Q_NULLPTR));
         label_68->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Point", Q_NULLPTR));
+        pushButton_Dump_Drift->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Dump", Q_NULLPTR));
         tabWidget->setTabText(tabWidget->indexOf(tab_4), QApplication::translate("EEPROM_Data_VerifierClass", "LSC", Q_NULLPTR));
         groupBox_7->setTitle(QApplication::translate("EEPROM_Data_VerifierClass", "AF Code", Q_NULLPTR));
         AF_name1->setHtml(QApplication::translate("EEPROM_Data_VerifierClass", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"

@@ -3760,6 +3760,7 @@ EEPROM_Data_Verifier::EEPROM_Data_Verifier(QWidget *parent)
 
 	selectModel();
 	load_EEPROM_Address();
+	load_Spec(mode);
 
 }
 
@@ -4678,7 +4679,8 @@ int EEPROM_Data_Verifier::drift_Parse() {
 				}
 			}
 		}
-		ret = drift_FP_Check(shift_Data, point, step);
+		double fitData[2][21] = { 0 };
+		ret = drift_FP_Check(shift_Data, point, fitData);
 		if (ret > 0) {
 			ui.log->insertPlainText("drift cal data FP NG!\n");
 		}
@@ -5010,8 +5012,10 @@ int EEPROM_Data_Verifier::cross_Parse() {
 	}else {
 		e = unstringHex2int(akm_cross_Item[0]);
 		e1 = unstringHex2int(akm_cross_Item[1]);
+		int AK_cnt = atoi(akm_cross_Item[2].c_str());
+		if (AK_cnt == 0)AK_cnt = 21;
 		if (e > 0) {
-			for (int i = 0; i < 21; i++) {
+			for (int i = 0; i < AK_cnt; i++) {
 				Cross_DW_before[0][i] = char_Out(e);
 				fout << "Crosstalk_X" << i << "	" << Cross_DW_before[0][i] << endl;
 				if (i > 0) {
@@ -5022,7 +5026,7 @@ int EEPROM_Data_Verifier::cross_Parse() {
 			}
 		}
 		if (e1 > 0) {
-			for (int i = 0; i < 21; i++) {
+			for (int i = 0; i < AK_cnt; i++) {
 				Cross_DW_before[1][i] = char_Out(e1);
 				fout << "Crosstalk_Y" << i << "	" << Cross_DW_before[1][i] << endl;
 				if (i > 0) {
@@ -5511,6 +5515,7 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 					W = 8, H = 8;
 					e += 16;
 					int MTK_PD_Data[64][10] = { 0 };
+					float MTK_PD_Oft[4][4] = { 0 };
 					for (int i = 0; i <H; i++)
 						for (int j = 0; j < W; j++) {
 							useData[e] = useData[e + 1] = 1;
@@ -5531,6 +5536,15 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 							MTK_PD_Data[i][j] = DecData[e];				
 							e++; 
 						}
+					int slope_base = DecData[e + 12];
+					e += 30;
+					for (int i = 0; i <4; i++)
+						for (int j = 0; j < 4; j++) {
+							useData[e] = 1;
+							MTK_PD_Oft[i][j] = (64.0f - DecData[e])/32;
+							e++;
+						}
+
 					for (int a = 3; a < 5; a++)
 						for (int b = 3; b < 5; b++) {
 							PDAF_Data.MTK_center[k/2]+= DCC[a][b]/(pow(2, PDAF_Data.MTK_SLOPE))/4.0;
@@ -5548,6 +5562,14 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 						for (int i = 0; i < 64; i++) {
 							for (int j = 0; j < 10; j++) {
 								fout << MTK_PD_Data[i][j] << "	";
+							}
+							fout << endl;
+						}
+						fout << "~~~~~~~~~~~" << PD_Item[k][0] << " MTK Step2 Slope_Base:	" << slope_base<< endl;
+						fout << "~~~~~~~~~~~" << PD_Item[k][0] << " MTK LR PD_Offset:" << endl;
+						for (int i = 0; i < 4; i++) {
+							for (int j = 0; j < 4; j++) {
+								fout << MTK_PD_Oft[i][j] << "	";
 							}
 							fout << endl;
 						}
@@ -9460,6 +9482,114 @@ void EEPROM_Data_Verifier::on_pushButton_dump_SFR_clicked()
 				break;
 			}
 		}
+	}
+
+	fout.close();
+	ui.log->insertPlainText("Dump Data Read finished\n");
+
+}
+
+void EEPROM_Data_Verifier::on_pushButton_Dump_Drift_clicked()
+{
+	mode = 1;
+	selectModel();
+	load_EEPROM_Address();
+
+	dump_result.open(".\\dump_result.txt");
+	fout.open(".\\MemoryParseData.txt");
+
+	OK = 0; NG = 0;
+
+	if (ui.full_log->isChecked())
+		mode = 0;
+
+	load_Spec(mode);
+
+	vector<string> files1 = getFiles(".\\bin_data\\*");
+	vector<string> ::iterator iVector = files1.begin();
+	bool ok = false;
+	while (iVector != files1.end())
+	{
+		dump_result << (*iVector) << "	";
+		name2 = (*iVector);
+		fout << (*iVector) << endl;
+		fuse_ID_output(*iVector);
+
+		string fuse = "", time_fuse = (*iVector);
+		int x = 0;
+
+		if (time_fuse[0] == '2'&&time_fuse[1] == '0'&&time_fuse[2] == '2') {
+			while (time_fuse[x] != ' '&&time_fuse[x] != '_'&&x < (*iVector).length()) {
+				x++;
+			}
+			x++;
+			while (time_fuse[x] != ' '&&time_fuse[x] != '_'&&x < (*iVector).length()) {
+				fuse += time_fuse[x++];
+			}
+		}
+		else {
+			while (time_fuse[x] != ' '&&time_fuse[x] != '_'&&x < (*iVector).length()) {
+				fuse += time_fuse[x++];
+			}
+		}
+		current_Hash.fuse_ID = fuse;
+		memset(DecData, 0, sizeof(DecData));
+		memset(useData, 0, sizeof(useData));
+		name = ".\\bin_data\\" + *iVector;
+		ifstream fin(name, std::ios::binary);
+
+		//获取文件大小方法一
+		struct _stat info;
+		_stat(name.c_str(), &info);
+		EEP_Size = info.st_size;
+
+		unsigned char szBuf[262128] = { 0 };
+		fin.read((char*)&szBuf, sizeof(char) * EEP_Size);
+
+		for (int i = 0; i < EEP_Size; i++) {
+			DecData[i] = (unsigned char)szBuf[i];
+			getHex(DecData[i]);
+			D[i][0] = chk[0];
+			D[i][1] = chk[1];
+		}
+
+		int e = unstringHex2int(akm_cross_Item[0]);
+		int e1 = unstringHex2int(akm_cross_Item[1]);
+		int AK_cnt = atoi(akm_cross_Item[2].c_str());
+		if (AK_cnt == 0)AK_cnt = 21;
+		if (e > 0) {
+			for (int i = 0; i < AK_cnt; i++) {
+				Cross_DW_before[0][i] = char_Out(e);
+				dump_result <<  Cross_DW_before[0][i] << "	";
+				e++;
+			}
+		}
+		if (e1 > 0) {
+			for (int i = 0; i < AK_cnt; i++) {
+				Cross_DW_before[1][i] = char_Out(e1);
+				dump_result << Cross_DW_before[1][i] << "	";
+				e1++;
+			}
+		}
+
+		int ret = Xiaomi_Drift_Check( Cross_DW_before[0], Cross_DW_before[1]);
+
+		dump_result << ret << "	";
+		double fitData[2][21] = { 0 };
+		ret = drift_FP_Check(Cross_DW_before, AK_cnt, fitData);
+
+		dump_result << ret << "	";
+				for (int i = 0; i < AK_cnt; i++) {
+			dump_result << fitData[0][i] << "	";
+		}
+
+		for (int i = 0; i < AK_cnt; i++) {
+			dump_result << fitData[1][i] << "	";
+		}
+		dump_result << endl;
+
+		fin.close();
+		++iVector;
 	}
 
 	fout.close();

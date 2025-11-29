@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>865</width>
-    <height>730</height>
+    <width>860</width>
+    <height>725</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>EEPROM_Verifier_251023</string>
+   <string>EEPROM_Verifier_251129</string>
   </property>
   <widget class="QTextEdit" name="input">
    <property name="geometry">
@@ -6662,13 +6662,13 @@ p, li { white-space: pre-wrap; }
      <property name="geometry">
       <rect>
        <x>275</x>
-       <y>220</y>
+       <y>224</y>
        <width>161</width>
-       <height>65</height>
+       <height>61</height>
       </rect>
      </property>
      <property name="title">
-      <string>AKM Crosstalk Position</string>
+      <string>1 Byte Shift</string>
      </property>
      <widget class="QTextEdit" name="akm_cross1">
       <property name="geometry">
@@ -6737,6 +6737,22 @@ p, li { white-space: pre-wrap; }
       </property>
       <property name="text">
        <string>Point</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_Dump_Drift">
+      <property name="geometry">
+       <rect>
+        <x>108</x>
+        <y>-5</y>
+        <width>50</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Dump</string>
+      </property>
+      <property name="checkable">
+       <bool>false</bool>
       </property>
      </widget>
     </widget>
@@ -15680,17 +15696,17 @@ p, li { white-space: pre-wrap; }
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup_12"/>
-  <buttongroup name="buttonGroup"/>
   <buttongroup name="buttonGroup_18"/>
-  <buttongroup name="buttonGroup_13"/>
-  <buttongroup name="buttonGroup_4"/>
   <buttongroup name="buttonGroup_6"/>
   <buttongroup name="buttonGroup_16"/>
-  <buttongroup name="buttonGroup_2"/>
-  <buttongroup name="buttonGroup_7"/>
+  <buttongroup name="buttonGroup_4"/>
   <buttongroup name="buttonGroup_5"/>
+  <buttongroup name="buttonGroup_13"/>
+  <buttongroup name="buttonGroup_7"/>
+  <buttongroup name="buttonGroup_12"/>
   <buttongroup name="buttonGroup_15"/>
+  <buttongroup name="buttonGroup"/>
   <buttongroup name="buttonGroup_3"/>
+  <buttongroup name="buttonGroup_2"/>
  </buttongroups>
 </ui>
