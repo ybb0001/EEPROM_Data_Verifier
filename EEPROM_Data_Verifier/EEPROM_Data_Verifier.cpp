@@ -23,7 +23,7 @@ int GainMostBrightLeft[15][17], GainMostBrightRight[15][17];
 int DCC[15][17], DCC2[15][17], checkSum_addr[30][4],SR_Spec[2][2], Gmap_Item3[12], PD_Item3[18];
 int AF_Data[6][3],SFR_Data[50],LCC_CrossTalk[3],LSC_Item3[10],Gyro_offset_spec[2];
 char chk[2], Fuse_ID[30];  int fuse_ID_Length = 16;
-string global_STR, shift_Item[4], cross_Item[3], akm_cross_Item[3], AF_Item[6][5],AF_info_Item[10][4],SFR_Item[4][4],ZOOM_Item[3][3],Magnification[9];
+string global_STR, shift_Item[4], cross_Item[3], akm_cross_Item[3], AF_Item[6][5],AF_info_Item[10][4],SFR_Item[4][4],ZOOM_Item[3][3],Magnification[19];
 string PDAF_info_Item[18][3],Gmap_Item[12][3],PD_Item[18][3], OIS_info_Item[30][4],OIS_data_Item[8][3], AA_Item[18],sData_Item[20][6];
 string Fix_Data_Item[10][3];
 int HL = 0, checkDivisor = 0, customer_Data_END = 0, customer_end = 0, first_Pixel = 0, mode = 0, OK=0, NG=0;
@@ -33,6 +33,8 @@ extern void EEPMap_Out();
 extern void set_Map_inf(string info, string ref, int addr, data_Type t);
 int DataFormat = 0;
 int EEP_Size = 16384;
+float ZOOM_Magnify[33][2] = { 0 }, ZOOM_Range_Spec[2] = { 0 };
+int ZOOM_Code_addr[33][2] = { 0 }, ZOOM_CODE_P[2], ZOOM_Coef_addr[2], ZOOM_CODE_Diff[2];
 
 typedef struct {
 	string hex = "0";
@@ -345,12 +347,20 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 	else {
 		ui.info_fuse->setChecked(false);
 	}
+
 	if ((selection & 8) >0) {
 		ui.gyro_dec->setChecked(true);
+	}
+	else if ((selection & 64) >0) {
+		ui.gyro_int_2->setChecked(true);
+	}
+	else if ((selection & 256) >0) {
+		ui.gyro_int->setChecked(true);
 	}
 	else {
 		ui.gyro_float->setChecked(true);
 	}
+
 	if ((selection & 16) >0) {
 		ui.sr_hl->setChecked(true);
 	}
@@ -365,24 +375,13 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 		ui.shift_LH->setChecked(true);
 	}
 
-	//if ((selection & 64) >0) {
-	//	ui.SFR_HEX->setChecked(true);
-	//}
-	//else {
-	//	ui.SFR_DEC->setChecked(true);
-	//}
 	if ((selection & 128) >0) {
 		ui.checkBox_ZOOM->setChecked(true);
 	}
 	else {
 		ui.checkBox_ZOOM->setChecked(false);
 	}
-	if ((selection & 256) >0) {
-		ui.gyro_int->setChecked(true);
-	}
-	else {
-		
-	}
+
 	if ((selection & 512) >0) {
 		ui.QC->setChecked(true);
 	}
@@ -543,6 +542,11 @@ void EEPROM_Data_Verifier::parameterDisplay() {
 	ui.Magnification6->setText(Magnification[5].c_str());
 	ui.Magnification7->setText(Magnification[6].c_str());
 	ui.Magnification8->setText(Magnification[7].c_str());
+	ui.Magnification9->setText(Magnification[8].c_str());
+	ui.Magnification10->setText(Magnification[9].c_str());
+	ui.Magnification11->setText(Magnification[10].c_str());
+	ui.Magnification12->setText(Magnification[11].c_str());
+	ui.Magnification13->setText(Magnification[12].c_str());
 
 	////////////////////history_Date
 	ui.history11->setText(History_Data[0].item[0].c_str());
@@ -1937,7 +1941,7 @@ void EEPROM_Data_Verifier::load_EEPROM_Address() {
 			ZOOM_Item[i][k] = CT2A(lpTexts);
 		}
 
-	for (int k = 0; k < 8; k++) {
+	for (int k = 0; k < 13; k++) {
 		string item = "Magnification_info" + to_string(k + 1);
 		GetPrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), TEXT(""), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
 		Magnification[k] = CT2A(lpTexts);
@@ -2070,9 +2074,47 @@ void EEPROM_Data_Verifier::load_EEPROM_Address() {
 	PDAF_Data.MTK_SLOPE = GetPrivateProfileInt(_T("Spec_Set"), TEXT("MTK_PD_SLOPE_BASE"), 9, CA2CT(EEPROM_Map.c_str()));
 	PDAF_Data.QFORMAT = GetPrivateProfileInt(_T("Spec_Set"), TEXT("QC_QFORMAT"), 4, CA2CT(EEPROM_Map.c_str()));
 	PDAF_Data.center_diff = GetPrivateProfileInt(_T("Spec_Set"), TEXT("PLATFORM_DCC_DIFF"), 3, CA2CT(EEPROM_Map.c_str()));
-	PDAF_Data.PD_range_max = GetPrivateProfileInt(_T("Spec_Set"), TEXT("QC_PD_MAX"), 16, CA2CT(EEPROM_Map.c_str()));
+	
+	GetPrivateProfileString(TEXT("Spec_Set"), TEXT("QC_PD_MAX"), TEXT("100.0"), lpTexts, 8, CA2CT(EEPROM_Map.c_str()));
+	PDAF_Data.PD_range_max = atof(CT2A(lpTexts));
+	GetPrivateProfileString(TEXT("Spec_Set"), TEXT("QC_PD_MIN"), TEXT("0.5"), lpTexts, 8, CA2CT(EEPROM_Map.c_str()));
+	PDAF_Data.PD_range_min = atof(CT2A(lpTexts));
+
+	GetPrivateProfileString(TEXT("Spec_Set"), TEXT("QC_PD_OFFSET_MAX"), TEXT("1.0"), lpTexts, 8, CA2CT(EEPROM_Map.c_str()));
+	PDAF_Data.PD_offset_max = atof(CT2A(lpTexts));
+	GetPrivateProfileString(TEXT("Spec_Set"), TEXT("QC_PD_OFFSET_MIN"), TEXT("-1.0"), lpTexts, 8, CA2CT(EEPROM_Map.c_str()));
+	PDAF_Data.PD_offset_min = atof(CT2A(lpTexts));
+
 	PDAF_Data.DCC_min = GetPrivateProfileInt(_T("Spec_Set"), TEXT("DCC_TYPE_MIN"), 500, CA2CT(EEPROM_Map.c_str()));
 	PDAF_Data.DCC_max = GetPrivateProfileInt(_T("Spec_Set"), TEXT("DCC_TYPE_MAX"), 12000, CA2CT(EEPROM_Map.c_str()));
+
+	//////Zomm Data
+	ZOOM_CODE_P[0] = GetPrivateProfileInt(_T("ZOOM"), TEXT("MAC_CODE_POINT"), 13, CA2CT(EEPROM_Map.c_str()));
+	ZOOM_CODE_P[1] = GetPrivateProfileInt(_T("ZOOM"), TEXT("INF_CODE_POINT"), 13, CA2CT(EEPROM_Map.c_str()));
+	ZOOM_CODE_Diff[0] = GetPrivateProfileInt(_T("ZOOM"), TEXT("MAC_CODE_SPEC"), 100, CA2CT(EEPROM_Map.c_str()));
+	ZOOM_CODE_Diff[1] = GetPrivateProfileInt(_T("ZOOM"), TEXT("INF_CODE_SPEC"), 100, CA2CT(EEPROM_Map.c_str()));
+	ZOOM_Coef_addr[0] = GetPrivateProfileInt(_T("ZOOM"), TEXT("MAC_CODE_COEF"), 0, CA2CT(EEPROM_Map.c_str()));
+	ZOOM_Coef_addr[1] = GetPrivateProfileInt(_T("ZOOM"), TEXT("INF_CODE_COEF"), 0, CA2CT(EEPROM_Map.c_str()));
+	
+	GetPrivateProfileString(TEXT("ZOOM"), TEXT("MAC_RANGE_SPEC"), TEXT("0.05"), lpTexts, 8, CA2CT(EEPROM_Map.c_str()));
+	ZOOM_Range_Spec[0] = atof(CT2A(lpTexts));
+	GetPrivateProfileString(TEXT("ZOOM"), TEXT("INF_RANGE_SPEC"), TEXT("0.05"), lpTexts, 8, CA2CT(EEPROM_Map.c_str()));
+	ZOOM_Range_Spec[1] = atof(CT2A(lpTexts));
+
+	for (int k = 0; k < ZOOM_CODE_P[0]; k++) {
+		string item = "MAC_CODE_ZOOM_" + to_string(k + 1);
+		GetPrivateProfileString(TEXT("ZOOM"), CA2CT(item.c_str()), TEXT("0"), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
+		ZOOM_Magnify[k][0] = atof(CT2A(lpTexts));
+		item = "MAC_CODE_ADDR_" + to_string(k + 1);
+		ZOOM_Code_addr[k][0] = GetPrivateProfileInt(_T("ZOOM"), CA2CT(item.c_str()), 0, CA2CT(EEPROM_Map.c_str()));
+	}
+	for (int k = 0; k < ZOOM_CODE_P[1]; k++) {
+		string item = "INF_CODE_ZOOM_" + to_string(k + 1);
+		GetPrivateProfileString(TEXT("ZOOM"), CA2CT(item.c_str()), TEXT("0"), lpTexts, 64, CA2CT(EEPROM_Map.c_str()));
+		ZOOM_Magnify[k][1] = atof(CT2A(lpTexts));
+		item = "INF_CODE_ADDR_" + to_string(k + 1);
+		ZOOM_Code_addr[k][1] = GetPrivateProfileInt(_T("ZOOM"), CA2CT(item.c_str()), 0, CA2CT(EEPROM_Map.c_str()));
+	}
 
 	int save_OnOff = GetPrivateProfileInt(_T("EEPROM_Set"), TEXT("save_OnOff"), 1, CA2CT(EEPROM_Map.c_str()));
 	if (save_OnOff == 0) {
@@ -2125,24 +2167,28 @@ void EEPROM_Data_Verifier::load_Panel() {
 	else {
 		selection &= 0xFFFFFFFF - 32;;
 	}
-	//if (ui.SFR_HEX->isChecked()) {
-	//	selection |= 64;
-	//}
-	//else {
-	//	selection &= 0xFFFFFFFF - 64;
-	//}
+
 	if (ui.checkBox_ZOOM->isChecked()) {
 		selection |= 128;
 	}
 	else {
 		selection &= 0xFFFFFFFF - 128;
 	}
+
 	if (ui.gyro_int->isChecked()) {
 		selection |= 256;
 	}
 	else {
 		selection &= 0xFFFFFFFF - 256;
 	}
+
+	if (ui.gyro_int_2->isChecked()) {
+		selection |= 64;
+	}
+	else {
+		selection &= 0xFFFFFFFF - 64;
+	}
+
 	if (ui.QC->isChecked()) {
 		selection |= 512;
 	}
@@ -2309,6 +2355,11 @@ void EEPROM_Data_Verifier::load_Panel() {
 	Magnification[5] = string((const char *)ui.Magnification6->document()->toPlainText().toLocal8Bit());
 	Magnification[6] = string((const char *)ui.Magnification7->document()->toPlainText().toLocal8Bit());
 	Magnification[7] = string((const char *)ui.Magnification8->document()->toPlainText().toLocal8Bit());
+	Magnification[8] = string((const char *)ui.Magnification9->document()->toPlainText().toLocal8Bit());
+	Magnification[9] = string((const char *)ui.Magnification10->document()->toPlainText().toLocal8Bit());
+	Magnification[10] = string((const char *)ui.Magnification11->document()->toPlainText().toLocal8Bit());
+	Magnification[11] = string((const char *)ui.Magnification12->document()->toPlainText().toLocal8Bit());
+	Magnification[12] = string((const char *)ui.Magnification13->document()->toPlainText().toLocal8Bit());
 
 	///////////////////History_data
 	History_Data[0].item[0] = string((const char *)ui.history11->document()->toPlainText().toLocal8Bit());
@@ -3659,7 +3710,7 @@ void EEPROM_Data_Verifier::save_EEPROM_Address() {
 			string item = "ZOOM_data" + to_string(i + 1) + to_string(k + 1);
 			WritePrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), CA2CT(ZOOM_Item[i][k].c_str()), CA2CT(EEPROM_Map.c_str()));
 		}
-	for (int k = 0; k < 8; k++) {
+	for (int k = 0; k < 13; k++) {
 		string item = "Magnification_info" + to_string(k + 1);
 		WritePrivateProfileString(TEXT("EEPROM_Address"), CA2CT(item.c_str()), CA2CT(Magnification[k].c_str()), CA2CT(EEPROM_Map.c_str()));
 	}
@@ -4686,6 +4737,42 @@ int EEPROM_Data_Verifier::drift_Parse() {
 		}
 		fout << endl;
 	}
+	else {
+
+		e = unstringHex2int(akm_cross_Item[0]);
+		int e1 = unstringHex2int(akm_cross_Item[1]);
+		int AK_cnt = atoi(akm_cross_Item[2].c_str());
+		if (AK_cnt == 0)AK_cnt = 21;
+		if (e > 0) {
+			for (int i = 0; i < AK_cnt; i++) {
+				shift_Data[0][i] = char_Out(e);
+				fout << "Shift_X" << i << "	" << shift_Data[0][i] << endl;
+				e++;
+			}
+		}
+		if (e1 > 0) {
+			for (int i = 0; i < AK_cnt; i++) {
+				shift_Data[1][i] = char_Out(e1);
+				fout << "Shift_Y" << i << "	" << shift_Data[1][i] << endl;
+				e1++;
+			}
+		}
+
+		double fitData[2][21] = { 0 };
+		ret = drift_FP_Check(shift_Data, AK_cnt, fitData);
+		if (ret > 0) {
+			ui.log->insertPlainText("drift cal data FP NG!\n");
+		}
+		fout << endl;
+
+
+
+		if (ret > 0) {
+			ui.log->insertPlainText("Crosstalk Data FP NG!\n");
+		}
+
+	}
+
 	return ret;
 }
 
@@ -5009,38 +5096,39 @@ int EEPROM_Data_Verifier::cross_Parse() {
 				}
 			}
 		}
-	}else {
-		e = unstringHex2int(akm_cross_Item[0]);
-		e1 = unstringHex2int(akm_cross_Item[1]);
-		int AK_cnt = atoi(akm_cross_Item[2].c_str());
-		if (AK_cnt == 0)AK_cnt = 21;
-		if (e > 0) {
-			for (int i = 0; i < AK_cnt; i++) {
-				Cross_DW_before[0][i] = char_Out(e);
-				fout << "Crosstalk_X" << i << "	" << Cross_DW_before[0][i] << endl;
-				if (i > 0) {
-					if (abs(Cross_DW_before[0][i] - Cross_DW_before[0][i - 1])>LCC_CrossTalk[2])
-						ret |= 1;
-				}
-				e++;
-			}
-		}
-		if (e1 > 0) {
-			for (int i = 0; i < AK_cnt; i++) {
-				Cross_DW_before[1][i] = char_Out(e1);
-				fout << "Crosstalk_Y" << i << "	" << Cross_DW_before[1][i] << endl;
-				if (i > 0) {
-					if (abs(Cross_DW_before[1][i] - Cross_DW_before[1][i - 1]) > LCC_CrossTalk[2])
-						ret |= 1;
-				}
-				e1++;
-			}
-		}
-
-		if (ret > 0) {
-			ui.log->insertPlainText("Crosstalk Data FP NG!\n");
-		}
 	}
+	//else {
+	//	e = unstringHex2int(akm_cross_Item[0]);
+	//	e1 = unstringHex2int(akm_cross_Item[1]);
+	//	int AK_cnt = atoi(akm_cross_Item[2].c_str());
+	//	if (AK_cnt == 0)AK_cnt = 21;
+	//	if (e > 0) {
+	//		for (int i = 0; i < AK_cnt; i++) {
+	//			Cross_DW_before[0][i] = char_Out(e);
+	//			fout << "Crosstalk_X" << i << "	" << Cross_DW_before[0][i] << endl;
+	//			if (i > 0) {
+	//				if (abs(Cross_DW_before[0][i] - Cross_DW_before[0][i - 1])>LCC_CrossTalk[2])
+	//					ret |= 1;
+	//			}
+	//			e++;
+	//		}
+	//	}
+	//	if (e1 > 0) {
+	//		for (int i = 0; i < AK_cnt; i++) {
+	//			Cross_DW_before[1][i] = char_Out(e1);
+	//			fout << "Crosstalk_Y" << i << "	" << Cross_DW_before[1][i] << endl;
+	//			if (i > 0) {
+	//				if (abs(Cross_DW_before[1][i] - Cross_DW_before[1][i - 1]) > LCC_CrossTalk[2])
+	//					ret |= 1;
+	//			}
+	//			e1++;
+	//		}
+	//	}
+
+	//	if (ret > 0) {
+	//		ui.log->insertPlainText("Crosstalk Data FP NG!\n");
+	//	}
+	//}
 
 	return ret;
 }
@@ -5427,7 +5515,7 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 
 					if (PD_Item3[k] == 0) {			
 						float pd_range =1.0* (AF_Data[0][0] - AF_Data[1][0])* pow(2.0f,PDAF_Data.QFORMAT)/ DCC[2][3];
-						if (pd_range > PDAF_Data.PD_range_max) {
+						if (pd_range > PDAF_Data.PD_range_max|| pd_range < PDAF_Data.PD_range_min) {
 							ret |= 128;
 							string s = PD_Item[k][0] + " in 0x" + PD_Item[k][1] + " QC Qformat check, PD_range="+to_string(pd_range);
 							ui.log->insertPlainText(s.c_str());
@@ -5576,7 +5664,6 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 					}
 				}
 			}
-
 			/////// QC PD offset
 			else if (PD_Item3[k] == 4 || k>9) {
 				fout << "~~~~~~~~~~~" << PD_Item[k][0] << "(QC PD offset)_Data:" << endl;
@@ -5591,7 +5678,7 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 						if(ui.PD_offet_new->isChecked())
 							F_DCC[i][j] = flt_Out2301(e, ui.PD_Offset_HL->isChecked());
 
-						if (F_DCC[i][j]>5|| F_DCC[i][j] < -5) {
+						if (F_DCC[i][j]>PDAF_Data.PD_offset_max || F_DCC[i][j] < PDAF_Data.PD_offset_min) {
 							ret |= 32;
 						}
 						e += 4;
@@ -5759,49 +5846,128 @@ int EEPROM_Data_Verifier::af_Parse() {
 
 	///////////////////// ZOOM Type data check
 	int p = unstringHex2int(Magnification[0]);
-
+	int ZOOM_ret = 0, Fcode[10] = { 0 }, Esti_code[10] = { 0 };
+	float Fcoef[10] = { 0 }, Zoom_M[10] = { 0 };
 	if (p > 4) {
+		fout << "-------ZOOM Data------" << endl;
 
-		for (int i = 0; i < p; i++) {
-			int e = unstringHex2int(ZOOM_Item[0][2]);
-			char n = 'A' + i;
-			string s = ZOOM_Item[0][0] + " " + n;
-			fout << s << ":	";
-			fout << dbl_Out(e + 8 * i, HL&1) << endl;
+		int code_addr = unstringHex2int(Magnification[2]);
+		int coef_P = atoi(Magnification[1].c_str());
+		int code_P = atoi(Magnification[3].c_str());
+		int code_spec = atoi(Magnification[4].c_str());
 
-			for (int k = 0; k < 8; k++) {
-				s += "_[" + to_string(k) + "]";
-				map_Push(e + k, s, "", Formula_Code);
-			}
-
+		for (int i = 0; i < coef_P; i++) {
+			Fcoef[i] = *(float*)(&DecData[p+4*i]);
+			//UINT t = 0;
+			//for (int k = 0; k < 4; k++) {
+			//	t = t * 256 + DecData[p + 4 * i + k];
+			//}
+			//Fcoef[i] = *(float*)&t;
+			Fcode[i] = DecData[code_addr + 2 * i]*256 + DecData[code_addr + 2 * i+1];
+			fout << "ZOOM Code_" << i + 1 << " :	" << Fcode[i] << endl;
 		}
-		for (int m = 1; m < 3; m++){
+		fout << endl;
 
-			int e = unstringHex2int(ZOOM_Item[m][1]);
-			for (int k = 0; k < p; k++) {
-				string s = ZOOM_Item[m][0] + " position_" +    Magnification[k + 1];
-				fout << s << "x:	";
-				fout << DecData[e + k * 2 + 1] * 256 + DecData[e + k * 2] << endl;
-				map_Push(e + k * 2, s + "_L", "", AF_Code);
-				map_Push(e + k * 2 + 1, s + "_H", "", AF_Code);
-
+		for (int i = 0; i < code_P; i++) {
+			fout << "ZOOM Coef_ " << i + 1 << " :	" << Fcoef[i] << endl;
+			Zoom_M[i] = atof(Magnification[5+i].c_str());
+			for (int k = 0; k < coef_P; k++) {
+				Esti_code[i] += pow(Zoom_M[i], 4 - k)*Fcoef[k];
 			}
-
-			for (int i = 0; i < p; i++) {
-				e = unstringHex2int(ZOOM_Item[m][2]);
-				char n = 'A' + i;
-				string s = ZOOM_Item[m][0] + " " + n;
-				fout << s << ":	";
-				fout << dbl_Out(e + 8 * i, HL&1) << endl;
-
-				for (int k = 0; k < 8; k++) {
-					s += "_[" + to_string(k) + "]";
-					map_Push(e + k, s, "", Formula_Code);
-				}
+			if (abs(Esti_code[i] - Fcode[i])>code_spec) {
+				string str = to_string(Zoom_M[i]) +"x ZOOM Code: ";
+				str += to_string(Fcode[i])+ "Esti Code: ";
+				str += to_string(Esti_code[i]) + "\n";
+				ui.log->insertPlainText(str.c_str());
+				ZOOM_ret |= 4;
 			}
 		}
+
+		fout << endl;
 	}
 
+	if(ZOOM_Coef_addr[0]>0){
+		int Mac_Code[33] = { 0 }, Inf_Code[33] = { 0 };
+		float MacCoef[33] = { 0 }, InfCoef[33] = { 0 }, Esti_MAC[33] = { 0 }, Esti_INF[33] = { 0 };
+		for (int i = 0; i < 10; i++) {
+			MacCoef[i] = *(float*)(&DecData[ZOOM_Coef_addr[0] + 4 * i]);
+			InfCoef[i] = *(float*)(&DecData[ZOOM_Coef_addr[1] + 4 * i]);
+			fout << "ZOOM Mac Coef_" << i + 1 << " :	" << MacCoef[i] << endl;
+		}
+		fout << endl;
+		for (int i = 0; i < ZOOM_CODE_P[0]; i++) {
+			Mac_Code[i] = DecData[ZOOM_Code_addr[i][0]] * 256 + DecData[ZOOM_Code_addr[i][0] + 1];
+			Inf_Code[i] = DecData[ZOOM_Code_addr[i][1]] * 256 + DecData[ZOOM_Code_addr[i][1] + 1];
+			fout << "ZOOM Mac Code_" << i + 1 << " :	" << Mac_Code[i] << endl;
+		}
+		fout << endl;
+
+		for (int i = 0; i < 10; i++) {
+			fout << "ZOOM Inf Coef_" << i + 1 << " :	" << InfCoef[i] << endl;
+		}
+		fout << endl;
+		for (int i = 0; i < ZOOM_CODE_P[0]; i++) {
+			fout << "ZOOM Inf Code_" << i + 1 << " :	" << Inf_Code[i] << endl;
+		}
+		fout << endl;
+
+		for (int i = 0; i < 13; i++) {
+			for (int k = 0; k < 3; k++) {
+				Esti_MAC[i] += MacCoef[3 * k] * sin(MacCoef[3 * k + 1] * ZOOM_Magnify[i][0] + MacCoef[3 * k + 2]);
+				Esti_INF[i] += InfCoef[3 * k] * sin(InfCoef[3 * k + 1] * ZOOM_Magnify[i][1] + InfCoef[3 * k + 2]);
+			}
+			Esti_MAC[i] += MacCoef[9];
+			Esti_INF[i] += InfCoef[9];
+		}
+		float LOCUS_ERROR[2][33] = { 0 };
+		for (int i = 0; i < 13; i++) {
+			LOCUS_ERROR[0][i] = 1 - (Mac_Code[i] - Esti_MAC[i]) / (Esti_MAC[i] - Esti_INF[i]);
+			LOCUS_ERROR[1][i] = 1 - (Inf_Code[i] - Esti_INF[i]) / (Esti_MAC[i] - Esti_INF[i]);
+
+			if (abs(Esti_MAC[i] - Mac_Code[i])>ZOOM_CODE_Diff[0]) {
+				string str = to_string(ZOOM_Magnify[i][0]) + "x Mac Code: ";
+				str += to_string(Mac_Code[i]) + "Esti Code: ";
+				str += to_string(Esti_MAC[i]) + "\n";
+				ui.log->insertPlainText(str.c_str());
+				ZOOM_ret |= 8;
+			}
+
+			if (abs(Esti_INF[i] - Inf_Code[i])>ZOOM_CODE_Diff[1]) {
+				string str = to_string(ZOOM_Magnify[i][1]) + "x Inf Code: ";
+				str += to_string(Inf_Code[i]) + "Esti Code: ";
+				str += to_string(Esti_INF[i]) + "\n";
+				ui.log->insertPlainText(str.c_str());
+				ZOOM_ret |= 8;
+			}
+		}
+		float MaxV[2] = { 0 }, MinV[2] = { 0 };
+		MaxV[0] = *max_element(LOCUS_ERROR[0], LOCUS_ERROR[0] + 13);
+		MaxV[1] = *max_element(LOCUS_ERROR[1], LOCUS_ERROR[1] + 13);
+		MinV[0] = *min_element(LOCUS_ERROR[0], LOCUS_ERROR[0] + 13);
+		MinV[1] = *min_element(LOCUS_ERROR[1], LOCUS_ERROR[1] + 13);
+		float mac_LOCUS_ERROR = MaxV[0] - MinV[0], inf_LOCUS_ERROR = MaxV[1] - MinV[1];
+
+		if (mac_LOCUS_ERROR>ZOOM_Range_Spec[0]) {
+			string str = "Mac Range Error: ";
+			str += to_string(MaxV[0] - MinV[0]) + "Spec: ";
+			str += to_string(ZOOM_Range_Spec[0]) + "\n";
+			ui.log->insertPlainText(str.c_str());
+			ZOOM_ret |= 16;
+		}
+
+		if (inf_LOCUS_ERROR>ZOOM_Range_Spec[1]) {
+			string str = "Inf Range Error: ";
+			str += to_string(inf_LOCUS_ERROR) + "Spec: ";
+			str += to_string(ZOOM_Range_Spec[1]) + "\n";
+			ui.log->insertPlainText(str.c_str());
+			ZOOM_ret |= 16;
+		}
+
+	}
+
+	if (ZOOM_ret > 0)
+		ui.log->insertPlainText("ZOOM Data Check NG!\n");
+	ret |= ZOOM_ret;
 
 	int SFR_ret = 0;
 	///////////////////// SFR data check
@@ -6949,7 +7115,6 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 		}
 	}
 
-
 	float Gyro_Gain[2], SR[4];
 	short offset[2] = { 0 };
 
@@ -7013,6 +7178,9 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 						Gyro_Gain[i - 2] = Dcm_out2(e, OIS_HL);
 					}
 				}
+				else if ((selection & 64) > 0) {
+					Gyro_Gain[i - 2] = DecData[e+1] * 256 + DecData[e + 3];
+				}
 				else {
 					Gyro_Gain[i - 2] = flt_Out(e, OIS_HL);
 					if (int_Out(e, OIS_HL) == -1 || int_Out(e, OIS_HL) == 0) {
@@ -7021,7 +7189,6 @@ int EEPROM_Data_Verifier::OIS_Parse() {
 						ui.log->insertPlainText(s.c_str());
 					}
 				}				
-				
 
 				if (OIS_HL == 0) {
 					map_Push(e, OIS_data_Item[i][0] + "[0]_LL", "", OIS_Gyro);
@@ -9180,14 +9347,13 @@ void EEPROM_Data_Verifier::on_pushButton_dump_LSC_clicked()
 
 }
 
-void EEPROM_Data_Verifier::on_pushButton_dump_MTK_clicked()
+void EEPROM_Data_Verifier::on_pushButton_dump_GM_clicked()
 {
 	mode = 1;
 	selectModel();
 	load_EEPROM_Address();
 
 	dump_result.open(".\\dump_result.txt");
-	fout.open(".\\MemoryParseData.txt");
 
 	OK = 0; NG = 0;
 
@@ -9201,10 +9367,288 @@ void EEPROM_Data_Verifier::on_pushButton_dump_MTK_clicked()
 	bool ok = false;
 	while (iVector != files1.end())
 	{
-		dump_result << (*iVector) << "	";
-		name2 = (*iVector);
-		fout << (*iVector) << endl;
-		fuse_ID_output(*iVector);
+		int vlen = (*iVector).find('_');
+		dump_result << (*iVector).substr(0, vlen) << "	";
+		string fuse = "", time_fuse = (*iVector);
+		int x = 0;
+
+		if (time_fuse[0] == '2'&&time_fuse[1] == '0'&&time_fuse[2] == '2') {
+			while (time_fuse[x] != ' '&&time_fuse[x] != '_'&&x < (*iVector).length()) {
+				x++;
+			}
+			x++;
+			while (time_fuse[x] != ' '&&time_fuse[x] != '_'&&x < (*iVector).length()) {
+				fuse += time_fuse[x++];
+			}
+		}
+		else {
+			while (time_fuse[x] != ' '&&time_fuse[x] != '_'&&x < (*iVector).length()) {
+				fuse += time_fuse[x++];
+			}
+		}
+		current_Hash.fuse_ID = fuse;
+		memset(DecData, 0, sizeof(DecData));
+		memset(useData, 0, sizeof(useData));
+		name = ".\\bin_data\\" + *iVector;
+		ifstream fin(name, std::ios::binary);
+
+		//获取文件大小方法一
+		struct _stat info;
+		_stat(name.c_str(), &info);
+		EEP_Size = info.st_size;
+
+		unsigned char szBuf[262128] = { 0 };
+		fin.read((char*)&szBuf, sizeof(char) * EEP_Size);
+
+		for (int i = 0; i < EEP_Size; i++) {
+			DecData[i] = (unsigned char)szBuf[i];
+			getHex(DecData[i]);
+			D[i][0] = chk[0];
+			D[i][1] = chk[1];
+		}
+		for (int k = 0; k < 10; k++)
+			if (Gmap_Item[k][1].length()>1) {
+				unsigned int e = marking_Hex2int(Gmap_Item[k][1], Gmap_Item[k][0], "", QC_GainMap);
+				int W = 17, H = 13, offset = 0;
+				if (Gmap_Item3[k] == 1 || Gmap_Item3[k] == 3) {
+					W = 16, H = 12, offset = atoi(Gmap_Item[k][2].c_str());
+				}
+
+				if (Gmap_Item3[k] != 2 && Gmap_Item3[k] != 4) {
+					for (int i = 0; i < H; i++)
+						for (int j = 0; j < W; j++) {
+								if (Gmap_Item3[k] != 3) {
+								if (HL & 1 == 1)
+									PDgainLeft[i][j] = DecData[e] * 256 + DecData[e + 1];
+								else
+									PDgainLeft[i][j] = DecData[e] + DecData[e + 1] * 256;
+								e += 2;
+							}
+							else {
+								PDgainLeft[i][j] = DecData[e];
+								e++;
+							}
+						}
+
+					e += offset;
+					for (int i = 0; i < H; i++)
+						for (int j = 0; j < W; j++) {
+							if (Gmap_Item3[k] != 3) {
+
+								if (HL & 1)
+									PDgainRight[i][j] = DecData[e] * 256 + DecData[e + 1];
+								else
+									PDgainRight[i][j] = DecData[e] + DecData[e + 1] * 256;
+								e += 2;
+							}
+							else {
+								PDgainRight[i][j] = DecData[e];
+								e++;
+							}
+						}
+				
+						for (int i = 0; i < H; i++) {
+							for (int j = 0; j < W; j++) {
+								dump_result << PDgainLeft[i][j] << "	";
+							}
+						}
+
+						for (int i = 0; i < H; i++) {
+							for (int j = 0; j < W; j++) {
+								dump_result << PDgainRight[i][j] << "	";
+							}
+						}
+						dump_result << endl;
+				
+				}
+				else if (Gmap_Item3[k] == 2) {
+					W = 20, H = 4;
+					unsigned int eStart = e, e1 = e;
+					e = eStart + 16;
+					e1 = eStart + 176;
+
+					for (int i = 0; i < H; i++)
+						for (int j = 0; j < W; j++) {
+							useData[e] = useData[e + 1] = 1;
+							PDgainLeft[i][j] = DecData[e] + DecData[e + 1] * 256;
+							e += 2;
+						}
+
+					for (int j = 0; j < W; j++)
+						for (int i = 0; i < H; i++) {
+							useData[e1] = useData[e1 + 1] = 1;
+							PDgainRight[i][j] = DecData[e1] + DecData[e1 + 1] * 256;
+							e1 += 2;
+						}
+
+					if (mode == 0) {
+						for (int i = 0; i < H; i++) {
+							for (int j = 0; j < W; j++) {
+								int xx = PDgainLeft[i][j];
+								dump_result << xx << "	";
+							}
+							dump_result << endl;
+						}
+
+						for (int i = 0; i < H; i++) {
+							for (int j = 0; j < W; j++) {
+								int xx = PDgainRight[i][j];
+								dump_result << xx << "	";
+							}
+							dump_result << endl;
+						}
+						dump_result << endl;
+					}
+
+					e = eStart + 336;
+					e1 = eStart + 336 + 160;
+
+					for (int i = 0; i < H; i++)
+						for (int j = 0; j < W; j++) {
+							useData[e] = useData[e + 1] = 1;
+							useData[e1] = useData[e1 + 1] = 1;
+							PDgainLeft[i][j] = DecData[e] + DecData[e + 1] * 256;
+							PDgainRight[i][j] = DecData[e1] + DecData[e1 + 1] * 256;
+							e += 2; e1 += 2;
+						}
+					if (mode == 0) {
+						for (int i = 0; i < H; i++) {
+							for (int j = 0; j < W; j++) {
+								dump_result << PDgainLeft[i][j] << "	";
+							}
+							dump_result << endl;
+						}
+
+						for (int i = 0; i < H; i++) {
+							for (int j = 0; j < W; j++) {
+								dump_result << PDgainRight[i][j] << "	";
+							}
+							dump_result << endl;
+						}
+						dump_result << endl;
+					}
+
+					e = eStart + 336 + 320;
+					e1 = eStart + 336 + 480;
+					for (int j = 0; j < W; j++)
+						for (int i = 0; i < H; i++) {
+							useData[e] = useData[e + 1] = 1;
+							useData[e1] = useData[e1 + 1] = 1;
+							PDgainLeft[i][j] = DecData[e] + DecData[e + 1] * 256;
+							PDgainRight[i][j] = DecData[e1] + DecData[e1 + 1] * 256;
+							e += 2; e1 += 2;
+						}
+					if (mode == 0) {
+						for (int i = 0; i < H; i++) {
+							for (int j = 0; j < W; j++) {
+								dump_result << PDgainLeft[i][j] << "	";
+							}
+							dump_result << endl;
+						}
+
+						for (int i = 0; i < H; i++) {
+							for (int j = 0; j < W; j++) {
+								dump_result << PDgainRight[i][j] << "	";
+							}
+							dump_result << endl;
+						}
+						dump_result << endl;
+					}
+
+				}
+				else if (Gmap_Item3[k] == 4) {
+					W = 20, H = 4;
+					unsigned int eStart = e;
+					e = eStart + 16;
+
+					for (int i = 0; i < H; i++)
+						for (int j = 0; j < W; j++) {
+							useData[e] = 1;
+							useData[e + 1] = 1;
+							PDgainLeft[i][j] = DecData[e] + DecData[e + 1] * 256;
+
+							if (PDgainLeft[i][j]>2000) {
+								int xxxx = 0;
+							}
+
+							e += 2;
+						}
+					if (mode == 0) {
+						for (int i = 0; i < H; i++) {
+							for (int j = 0; j < W; j++) {
+								float xx = PDgainLeft[i][j] / 1024.0;
+								dump_result << xx << "	";
+							}
+							dump_result << endl;
+						}
+						dump_result << endl;
+					}
+					int e1 = e + 160;
+					for (int i = 0; i < H; i++)
+						for (int j = 0; j < W; j++) {
+							useData[e] = useData[e + 1] = 1;
+							useData[e1] = useData[e1 + 1] = 1;
+							PDgainLeft[i][j] = DecData[e] + DecData[e + 1] * 256;
+							PDgainRight[i][j] = DecData[e1] + DecData[e1 + 1] * 256;
+							e += 2; e1 += 2;
+						}
+
+					if (mode == 0) {
+						for (int i = 0; i < H; i++) {
+							for (int j = 0; j < W; j++) {
+								dump_result << PDgainLeft[i][j] << "	";
+							}
+							dump_result << endl;
+						}
+
+						for (int i = 0; i < H; i++) {
+							for (int j = 0; j < W; j++) {
+								dump_result << PDgainRight[i][j] << "	";
+							}
+							dump_result << endl;
+						}
+						dump_result << endl;
+					}
+				}
+			}
+
+
+		fin.close();
+		++iVector;
+		fuse_ID_output("\n");
+	}
+
+	value_duplicate_Check();
+	dump_Hash.clear();
+	FP_logFile_Close();
+	dump_result.close();
+	ui.log->insertPlainText("Dump Data Read finished\n");
+
+}
+
+
+void EEPROM_Data_Verifier::on_pushButton_dump_MTK_clicked()
+{
+	mode = 1;
+	selectModel();
+	load_EEPROM_Address();
+
+	dump_result.open(".\\dump_result.txt");
+
+	OK = 0; NG = 0;
+
+	if (ui.full_log->isChecked())
+		mode = 0;
+
+	load_Spec(mode);
+
+	vector<string> files1 = getFiles(".\\bin_data\\*");
+	vector<string> ::iterator iVector = files1.begin();
+	bool ok = false;
+	while (iVector != files1.end())
+	{
+		int vlen = (*iVector).find('_');
+		dump_result << (*iVector).substr(0, vlen) << "	";
 
 		string fuse = "", time_fuse = (*iVector);
 		int x = 0;
@@ -9245,14 +9689,39 @@ void EEPROM_Data_Verifier::on_pushButton_dump_MTK_clicked()
 		}
 		int MTK_LR_ratio_diff = 0, MTK_UD_ratio_diff = 0, MTK_LR_diff = 0, MTK_LR_reverse = -1024, MTK_UD_diff = 0, MTK_UD_reverse = -1024;
 		for (int k = 0; k < 10; k++)
-			if (Gmap_Item[k][1].length()>1) {
-				unsigned int e = marking_Hex2int(Gmap_Item[k][1], Gmap_Item[k][0], "", QC_GainMap);
-				int W = 17, H = 13, offset = 0;
-				if (Gmap_Item3[k] == 1 || Gmap_Item3[k] == 3) {
-					W = 16, H = 12, offset = atoi(Gmap_Item[k][2].c_str());
+			if (PD_Item[k][1].length()>1) {
+				unsigned int e = marking_Hex2int(PD_Item[k][1], PD_Item[k][0], "", QC_DCC);
+				int W = 8, H = 6, offset = 0;
+				if (PD_Item3[k] == 1) {
+					W = 16, H = 12;
+				}
+				if (PD_Item3[k] == 5) {
+					W = 17, H = 13;
 				}
 
-				if (Gmap_Item3[k] == 2) {
+				if (PD_Item3[k] < 2 || PD_Item3[k] >= 4) {
+					e += offset;
+					for (int i = 0; i < H; i++)
+						for (int j = 0; j < W; j++) {
+							useData[e] = 1;
+							useData[e + 1] = 1;
+							if (HL & 1)
+								DCC[i][j] = 256 * DecData[e] + DecData[e + 1];
+							else
+								DCC[i][j] = 256 * DecData[e + 1] + DecData[e];
+
+							e += 2;
+						}
+
+					for (int i = 0; i < H; i++) {
+						for (int j = 0; j < W; j++) {
+							dump_result << DCC[i][j] << "	";
+						}
+					}
+					dump_result << endl;
+				}
+		
+				else if (Gmap_Item3[k] == 2) {
 
 					W = 20, H = 4;
 					unsigned int eStart = e, e1 = e;
@@ -9351,13 +9820,14 @@ void EEPROM_Data_Verifier::on_pushButton_dump_MTK_clicked()
 						}
 
 					}
+					dump_result << MTK_LR_ratio_diff << "	" << MTK_UD_ratio_diff << "	" << MTK_LR_diff << "	" <<
+						MTK_LR_reverse << "	" << MTK_UD_diff << "	" << MTK_UD_reverse;
+
+					dump_result << endl;
 				}
 
 			}
-		dump_result << MTK_LR_ratio_diff <<"	"<< MTK_UD_ratio_diff << "	" << MTK_LR_diff << "	" << 
-			MTK_LR_reverse << "	" << MTK_UD_diff << "	" << MTK_UD_reverse ;
 
-		dump_result << endl;
 
 		fin.close();
 		++iVector;
@@ -9369,6 +9839,216 @@ void EEPROM_Data_Verifier::on_pushButton_dump_MTK_clicked()
 	FP_logFile_Close();
 	fout.close();
 	dump_result.close();
+	ui.log->insertPlainText("Dump Data Read finished\n");
+
+}
+
+void EEPROM_Data_Verifier::on_pushButton_dump_offset_clicked()
+{
+	mode = 1;
+	selectModel();
+	load_EEPROM_Address();
+	OK = 0; NG = 0;
+	dump_result.open(".\\dump_result.txt");
+
+	if (ui.full_log->isChecked())
+		mode = 0;
+
+	load_Spec(mode);
+
+	vector<string> files1 = getFiles(".\\bin_data\\*");
+	vector<string> ::iterator iVector = files1.begin();
+	bool ok = false;
+	while (iVector != files1.end())
+	{
+		int vlen = (*iVector).find('_');
+		dump_result << (*iVector).substr(0, vlen) << "	";
+		string fuse = "", time_fuse = (*iVector);
+		int x = 0;
+
+		if (time_fuse[0] == '2'&&time_fuse[1] == '0'&&time_fuse[2] == '2') {
+			while (time_fuse[x] != ' '&&time_fuse[x] != '_'&&x < (*iVector).length()) {
+				x++;
+			}
+			x++;
+			while (time_fuse[x] != ' '&&time_fuse[x] != '_'&&x < (*iVector).length()) {
+				fuse += time_fuse[x++];
+			}
+		}
+		else {
+			while (time_fuse[x] != ' '&&time_fuse[x] != '_'&&x < (*iVector).length()) {
+				fuse += time_fuse[x++];
+			}
+		}
+		current_Hash.fuse_ID = fuse;
+		memset(DecData, 0, sizeof(DecData));
+		memset(useData, 0, sizeof(useData));
+		name = ".\\bin_data\\" + *iVector;
+		ifstream fin(name, std::ios::binary);
+
+		//获取文件大小方法一
+		struct _stat info;
+		_stat(name.c_str(), &info);
+		EEP_Size = info.st_size;
+
+		unsigned char szBuf[262128] = { 0 };
+		fin.read((char*)&szBuf, sizeof(char) * EEP_Size);
+
+		for (int i = 0; i < EEP_Size; i++) {
+			DecData[i] = (unsigned char)szBuf[i];
+		}
+		int ret = 0;
+
+		for (int k = 10; k < 16; k++)
+			if (PD_Item[k][1].length()>1) {
+				int ret = 0;
+				unsigned int e = marking_Hex2int(PD_Item[k][1], PD_Item[k][0], "", QC_DCC);
+				int W = 8, H = 6, offset = 0;
+				if (PD_Item3[k] == 1) {
+					W = 16, H = 12;
+				}
+				if (PD_Item3[k] == 5) {
+					W = 17, H = 13;
+				}
+				float F_DCC[6][8] = { 0 };
+				for (int i = 0; i < H; i++)
+					for (int j = 0; j < W; j++) {
+
+						for (int a = 0; a < 4; a++)
+							useData[e + a] = 1;
+
+						F_DCC[i][j] = flt_Out(e, ui.PD_Offset_HL->isChecked());
+						if (F_DCC[i][j]>1 || F_DCC[i][j] < -1) {
+							ret =1;
+						}
+						e += 4;
+					}
+				
+					for (int i = 0; i < 6; i++) {
+						for (int j = 0; j < 8; j++) {
+							dump_result << F_DCC[i][j] << "	";
+						}					
+					}
+					dump_result << ret << endl;
+			}
+
+		++iVector;
+	}
+	dump_result.close();
+
+	ui.log->insertPlainText("Dump Data Read finished\n");
+
+}
+
+void EEPROM_Data_Verifier::on_pushButton_dump_Zoom_clicked()
+{
+	mode = 1;
+	selectModel();
+	load_EEPROM_Address();
+	OK = 0; NG = 0;
+	dump_result.open(".\\dump_result.txt");
+
+	if (ui.full_log->isChecked())
+		mode = 0;
+
+	load_Spec(mode);
+
+	vector<string> files1 = getFiles(".\\bin_data\\*");
+	vector<string> ::iterator iVector = files1.begin();
+	bool ok = false;
+	while (iVector != files1.end())
+	{
+		int vlen = (*iVector).find('_');
+		dump_result << (*iVector).substr(0, vlen) << "	";
+		string fuse = "", time_fuse = (*iVector);
+		int x = 0;
+
+		if (time_fuse[0] == '2'&&time_fuse[1] == '0'&&time_fuse[2] == '2') {
+			while (time_fuse[x] != ' '&&time_fuse[x] != '_'&&x < (*iVector).length()) {
+				x++;
+			}
+			x++;
+			while (time_fuse[x] != ' '&&time_fuse[x] != '_'&&x < (*iVector).length()) {
+				fuse += time_fuse[x++];
+			}
+		}
+		else {
+			while (time_fuse[x] != ' '&&time_fuse[x] != '_'&&x < (*iVector).length()) {
+				fuse += time_fuse[x++];
+			}
+		}
+		current_Hash.fuse_ID = fuse;
+		memset(DecData, 0, sizeof(DecData));
+		memset(useData, 0, sizeof(useData));
+		name = ".\\bin_data\\" + *iVector;
+		ifstream fin(name, std::ios::binary);
+
+		//获取文件大小方法一
+		struct _stat info;
+		_stat(name.c_str(), &info);
+		EEP_Size = info.st_size;
+
+		unsigned char szBuf[262128] = { 0 };
+		fin.read((char*)&szBuf, sizeof(char) * EEP_Size);
+
+		for (int i = 0; i < EEP_Size; i++) {
+			DecData[i] = (unsigned char)szBuf[i];
+		}
+		int ret = 0;
+
+
+		///////////dump data
+		int Mac_Code[33] = { 0 }, Inf_Code[33] = { 0 };
+		float MacCoef[33] = { 0 }, InfCoef[33] = { 0 }, Esti_MAC[33] = { 0 }, Esti_INF[33] = { 0 };
+		for (int i = 0; i < 10; i++) {
+			MacCoef[i] = *(float*)(&DecData[ZOOM_Coef_addr[0] + 4 * i]);
+			InfCoef[i] = *(float*)(&DecData[ZOOM_Coef_addr[1] + 4 * i]);
+		}
+		fout << endl;
+		for (int i = 0; i < ZOOM_CODE_P[0]; i++) {
+			Mac_Code[i] = DecData[ZOOM_Code_addr[i][0]] * 256 + DecData[ZOOM_Code_addr[i][0] + 1];
+			Inf_Code[i] = DecData[ZOOM_Code_addr[i][1]] * 256 + DecData[ZOOM_Code_addr[i][1] + 1];
+		}
+		for (int i = 0; i < 13; i++) {
+			for (int k = 0; k < 3; k++) {
+				Esti_MAC[i] += MacCoef[3 * k] * sin(MacCoef[3 * k + 1] * ZOOM_Magnify[i][0] + MacCoef[3 * k + 2]);
+				Esti_INF[i] += InfCoef[3 * k] * sin(InfCoef[3 * k + 1] * ZOOM_Magnify[i][1] + InfCoef[3 * k + 2]);
+			}
+			Esti_MAC[i] += MacCoef[9];
+			Esti_INF[i] += InfCoef[9];
+		}
+		float LOCUS_ERROR[2][33] = { 0 };
+		for (int i = 0; i < 13; i++) {
+			LOCUS_ERROR[0][i] = 1 - (Mac_Code[i] - Esti_MAC[i]) / (Esti_MAC[i] - Esti_INF[i]);
+			LOCUS_ERROR[1][i] = 1 - (Inf_Code[i] - Esti_INF[i]) / (Esti_MAC[i] - Esti_INF[i]);
+		}
+		float MaxV[2] = { 0 }, MinV[2] = { 0 };
+		MaxV[0] = *max_element(LOCUS_ERROR[0], LOCUS_ERROR[0] + 13);
+		MaxV[1] = *max_element(LOCUS_ERROR[1], LOCUS_ERROR[1] + 13);
+		MinV[0] = *min_element(LOCUS_ERROR[0], LOCUS_ERROR[0] + 13);
+		MinV[1] = *min_element(LOCUS_ERROR[1], LOCUS_ERROR[1] + 13);
+		float mac_LOCUS_ERROR = MaxV[0] - MinV[0], inf_LOCUS_ERROR = MaxV[1] - MinV[1];
+
+		for (int i = 0; i < ZOOM_CODE_P[0]; i++) {
+			dump_result << Inf_Code[i] << "	";
+		}
+		for (int i = 0; i < ZOOM_CODE_P[0]; i++) {
+			dump_result << Mac_Code[i] << "	";
+		}
+
+		dump_result << inf_LOCUS_ERROR << "	" << mac_LOCUS_ERROR << "	";
+		for (int i = 0; i < 10; i++) {
+			dump_result << InfCoef[i] << "	";
+		}
+		for (int i = 0; i < 10; i++) {
+			dump_result << MacCoef[i] << "	";
+		}
+
+		dump_result << endl;
+		++iVector;
+	}
+	dump_result.close();
+
 	ui.log->insertPlainText("Dump Data Read finished\n");
 
 }

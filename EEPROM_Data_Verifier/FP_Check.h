@@ -5,7 +5,11 @@
 typedef struct {
 	int MTK_SLOPE = 9;
 	int QFORMAT = 4;
-	int PD_range_max = 10;
+	float PD_range_max = 100;
+	float PD_range_min = 0.1;
+	float PD_offset_min = -0.1;
+	float PD_offset_max = 0.1;
+
 	int DCC_min = 500;
 	int DCC_max = 12000;
 	int center_diff = 3;

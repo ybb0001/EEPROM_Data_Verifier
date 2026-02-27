@@ -111,8 +111,12 @@ private:
 	void on_pushButton_dump_SFR_clicked();
 	void on_pushButton_dump_LSC_clicked();
 	void on_pushButton_dump_MTK_clicked();
+	void on_pushButton_dump_GM_clicked();
+
+		
+	void on_pushButton_dump_offset_clicked();
 	void on_pushButton_Dump_Drift_clicked();
-	
+	void on_pushButton_dump_Zoom_clicked();
 
 
 	void selectModel();

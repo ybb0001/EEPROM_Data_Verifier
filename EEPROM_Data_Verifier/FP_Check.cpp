@@ -1607,9 +1607,18 @@ int drift_FP_Check(int shift_Data[2][21], int cnt, double fit_Data[2][21]) {
 		double diff_X = fit_Data[0][i] - shift_Data[0][i];
 		double diff_Y = fit_Data[1][i] - shift_Data[1][i];
 
-		if (i > 2&&i<19)
-		if(diff_X>Drift_Spec_X || diff_Y>Drift_Spec_Y)
-			ret = ret | 4;
+		if (i > 2 && i < 19) {
+			if (abs(diff_X) > Drift_Spec_X ) {
+				ret = ret | 4;
+				FP_log << "X Shift Cal Data:" << shift_Data[0][i] << "Poly Fit:" << fit_Data[0][i]
+					<< "diff Spec:" << Drift_Spec_X << endl;
+			}
+			if (abs(diff_Y) > Drift_Spec_Y) {
+				ret = ret | 4;
+				FP_log << "Y Shift Cal Data:" << shift_Data[1][i] << "Poly Fit:" << fit_Data[1][i]
+					<< "diff Spec:" << Drift_Spec_Y << endl;
+			}
+		}
 	}
 
 	if (ret) {
