@@ -5517,7 +5517,7 @@ int EEPROM_Data_Verifier::PDAF_Parse() {
 						float pd_range =1.0* (AF_Data[0][0] - AF_Data[1][0])* pow(2.0f,PDAF_Data.QFORMAT)/ DCC[2][3];
 						if (pd_range > PDAF_Data.PD_range_max|| pd_range < PDAF_Data.PD_range_min) {
 							ret |= 128;
-							string s = PD_Item[k][0] + " in 0x" + PD_Item[k][1] + " QC Qformat check, PD_range="+to_string(pd_range);
+							string s = PD_Item[k][0] + " in 0x" + PD_Item[k][1] + " QC Qformat check, PD_range="+to_string(pd_range)+"\n";
 							ui.log->insertPlainText(s.c_str());
 						}
 					}
