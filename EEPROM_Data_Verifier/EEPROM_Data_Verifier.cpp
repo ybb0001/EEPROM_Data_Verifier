@@ -8383,18 +8383,20 @@ void EEPROM_Data_Verifier::on_pushButton_parser_clicked()
 	memset(checkSum, 0, sizeof(checkSum));
 
 	fout.open(".\\MemoryParseData.txt");
-
 	selectModel();
 	load_EEPROM_Address();
 	load_Spec(mode);
 	src = ui.input->document()->toPlainText().toLocal8Bit();
-
-	if (src.size() > 192000)
+	if (src.size() < 32) {
+		ui.log->insertPlainText("Data Size too Small");
+		return;
+	}
+	if (src.size() > 196608)
 		EEP_Size = 0x10000;
-	else if (src.size() > 162000)
-		EEP_Size = 0xD800;
+	else if (src.size() > 12288)
+		EEP_Size = 0xC000;
 	else if (src.size() > 96000)
-		EEP_Size = 32768;
+		EEP_Size = 0x8000;
 	else if (src.size() > 60000)
 		EEP_Size = 24576;
 	else if (src.size() > 48000)
@@ -8404,7 +8406,12 @@ void EEPROM_Data_Verifier::on_pushButton_parser_clicked()
 	else if (src.size() > 24000)
 		EEP_Size = 8192;
 
-	int now = 0, e = 0, len = src.length() - 1, TCSum = 0;
+	if (src[0]=='0'&&src[1] == '0'&&src[2] == '0'&&src[3] == '0'&&src[4] == ':') {
+		int m_Size = int(src.size() / 55.0f + 0.499999)*16;
+		if (EEP_Size < m_Size)EEP_Size = m_Size;
+	}
+
+	int now = 0, e = 0, len = src.length(), TCSum = 0;
 	unsigned int tmp = 0;
 	float* fp = (float*)&tmp;
 	ui.output->clear();
@@ -8416,11 +8423,13 @@ void EEPROM_Data_Verifier::on_pushButton_parser_clicked()
 				|| (src[now + 2] == '\n'&&src[now + 5] == '\n'&&src[now + 8] == '\n'))) {
 
 			for (int i = 0; i < 16; i++) {
-				D[e][0] = src[now++];
-				D[e][1] = src[now++];
-				DecData[e] = hex2Dec(e);
-				e++;
-				now++;
+				if (now < len) {
+					D[e][0] = src[now++];
+					D[e][1] = src[now++];
+					DecData[e] = hex2Dec(e);
+					e++;
+					now++;
+				}
 			}
 		}
 		else now++;
@@ -10277,6 +10286,29 @@ void EEPROM_Data_Verifier::on_pushButton_Dump_Drift_clicked()
 
 }
 
+int checkPath(const std::string strPath)
+{
+	struct stat infos;
+
+	if (stat(strPath.c_str(), &infos) != 0)
+	{
+		return -1;    //无效
+	}
+	else if (infos.st_mode & S_IFDIR)
+	{
+		return 0;    //目录
+	}
+	else if (infos.st_mode & S_IFREG)
+	{
+		//这里多写一个if 是为了记录一下判断条件
+		return 1;    //文件
+	}
+	else
+	{
+		return -1;
+	}
+}
+
 void EEPROM_Data_Verifier::on_pushButton_folder_clicked() {
 
 	mode = 1;
@@ -10298,6 +10330,11 @@ void EEPROM_Data_Verifier::on_pushButton_folder_clicked() {
 	bool ok = false;
 	while (iVector != files1.end())
 	{
+		int tRet = checkPath(".\\bin_data\\"+ (*iVector));
+		if (tRet != 1) { 
+			++iVector;
+			continue; 
+		}
 		dump_result << (*iVector) << "	";
 		name2 = (*iVector);
 		fout << (*iVector) << endl;
