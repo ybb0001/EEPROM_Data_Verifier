@@ -7601,7 +7601,7 @@ p, li { white-space: pre-wrap; }
        </rect>
       </property>
       <property name="text">
-       <string>Dump_TXT</string>
+       <string>Dump_SFR</string>
       </property>
       <property name="checkable">
        <bool>false</bool>
@@ -15241,7 +15241,7 @@ p, li { white-space: pre-wrap; }
        </rect>
       </property>
       <property name="text">
-       <string>Dump_TXT</string>
+       <string>Dump_Bin</string>
       </property>
       <property name="checkable">
        <bool>false</bool>
@@ -15878,17 +15878,17 @@ p, li { white-space: pre-wrap; }
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup_12"/>
-  <buttongroup name="buttonGroup_16"/>
-  <buttongroup name="buttonGroup_2"/>
-  <buttongroup name="buttonGroup_5"/>
-  <buttongroup name="buttonGroup"/>
-  <buttongroup name="buttonGroup_6"/>
   <buttongroup name="buttonGroup_18"/>
-  <buttongroup name="buttonGroup_4"/>
-  <buttongroup name="buttonGroup_7"/>
   <buttongroup name="buttonGroup_13"/>
-  <buttongroup name="buttonGroup_3"/>
   <buttongroup name="buttonGroup_15"/>
+  <buttongroup name="buttonGroup_4"/>
+  <buttongroup name="buttonGroup_16"/>
+  <buttongroup name="buttonGroup_5"/>
+  <buttongroup name="buttonGroup_2"/>
+  <buttongroup name="buttonGroup_3"/>
+  <buttongroup name="buttonGroup_6"/>
+  <buttongroup name="buttonGroup_7"/>
+  <buttongroup name="buttonGroup_12"/>
+  <buttongroup name="buttonGroup"/>
  </buttongroups>
 </ui>

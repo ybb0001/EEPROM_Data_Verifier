@@ -298,6 +298,29 @@ unsigned long Get_SEC_CRC16(unsigned char* ucBuffer, unsigned long ulSizeInBytes
 	return crc_accum;
 }
 
+int checkPath(const std::string strPath)
+{
+	struct stat infos;
+
+	if (stat(strPath.c_str(), &infos) != 0)
+	{
+		return -1;    //无效
+	}
+	else if (infos.st_mode & S_IFDIR)
+	{
+		return 0;    //目录
+	}
+	else if (infos.st_mode & S_IFREG)
+	{
+		//这里多写一个if 是为了记录一下判断条件
+		return 1;    //文件
+	}
+	else
+	{
+		return -1;
+	}
+}
+
 void save_EEPROM_Setting() {
 	WritePrivateProfileString(TEXT("Default_Setting"), TEXT("Model_Select"), lptstr2int(modelSelect), TEXT(".\\Setting\\EEPROM_Tool_Setting.ini"));
 }
@@ -8393,7 +8416,7 @@ void EEPROM_Data_Verifier::on_pushButton_parser_clicked()
 	}
 	if (src.size() > 196608)
 		EEP_Size = 0x10000;
-	else if (src.size() > 12288)
+	else if (src.size() > 122880)
 		EEP_Size = 0xC000;
 	else if (src.size() > 96000)
 		EEP_Size = 0x8000;
@@ -9051,6 +9074,136 @@ void EEPROM_Data_Verifier::on_pushButton_dump_value_clicked()
 	selectModel();
 	load_EEPROM_Address();
 
+#if 1
+
+	mode = 1;
+	dump_result.open(".\\dump_result.txt");
+
+	vector<string> files1 = getFiles(".\\bin_data\\*");
+	vector<string> ::iterator iVector = files1.begin();
+	bool ok = false;
+	while (iVector != files1.end())
+	{
+		int vlen = (*iVector).find('_');
+		dump_result << (*iVector).substr(0, vlen) << "	";
+		//dump_result << *iVector << "	";
+		string fuse = "", time_fuse = (*iVector);
+		int x = 0;
+
+		if (time_fuse[0] == '2'&&time_fuse[1] == '0'&&time_fuse[2] == '2') {
+			while (time_fuse[x] != ' '&&time_fuse[x] != '_'&&x < (*iVector).length()) {
+				x++;
+			}
+			x++;
+			while (time_fuse[x] != ' '&&time_fuse[x] != '_'&&x < (*iVector).length()) {
+				fuse += time_fuse[x++];
+			}
+		}
+		else {
+			while (time_fuse[x] != ' '&&time_fuse[x] != '_'&&x < (*iVector).length()) {
+				fuse += time_fuse[x++];
+			}
+		}
+		current_Hash.fuse_ID = fuse;
+		memset(DecData, 0, sizeof(DecData));
+		memset(useData, 0, sizeof(useData));
+		name = ".\\bin_data\\" + *iVector;
+		ifstream fin(name, std::ios::binary);
+
+		//获取文件大小方法一
+		struct _stat info;
+		_stat(name.c_str(), &info);
+		EEP_Size = info.st_size;
+
+		unsigned char szBuf[262128] = { 0 };
+		fin.read((char*)&szBuf, sizeof(char) * EEP_Size);
+
+		for (int i = 0; i < EEP_Size; i++) {
+			DecData[i] = (unsigned char)szBuf[i];
+			getHex(DecData[i]);
+			D[i][0] = chk[0];
+			D[i][1] = chk[1];
+		}
+
+		//////////////////////////
+
+		for (int i = 0; i < 18; i++)
+			if (sData_Item[i][1].length()>1 && sData_Item[i][2].length()>2) {
+				unsigned int addr = unstringHex2int(sData_Item[i][1]);
+
+				int d_type = get_Data_Type(i);
+				long long d = 0;
+				double dd = 0;
+
+				if (d_type == 0 || addr == 0)
+					continue;
+
+				switch (d_type) {
+				case 1:
+					d = DecData[addr];
+					if (d > 0x7F)
+						d = d - 0x100;
+					break;
+				case 2:
+					d = DecData[addr];
+					break;
+				case 3:
+					d = short_Out(addr, HL & 1);
+					break;
+				case 4:
+					d = short_Out(addr, HL & 1);
+					if (d < 0)
+						d += 65536;
+					break;
+				case 5:
+					d = int_Out(addr, HL & 1);
+					break;
+				case 6:
+					d = int_Out(addr, HL & 1);
+					if (d < 0)
+						d += 0x100000000;
+					break;
+				case 7:
+					dd = short_Out(addr, HL & 1);
+					if (dd < 0)
+						dd += 0x10000;
+					dd /= 0x8000;
+					break;
+				case 8:
+					dd = int_Out(addr, HL & 1);
+					if (dd < 0)
+						dd += 0x100000000;
+					dd /= 0x80000000;
+					break;
+				case 9:
+					dd = flt_Out(addr, HL & 1);
+					break;
+				case 10:
+					dd = dbl_Out(addr, HL & 1);
+					break;
+
+				default:
+					break;
+				}
+
+				if (d_type < 6) {
+					dump_result << d << "	";
+				}
+				else {
+					dump_result << dd << "	";
+				}
+
+			}
+		dump_result << endl;
+
+		fin.close();
+		++iVector;
+	}
+
+	dump_result.close();
+
+#else
+
 	QString filename = QFileDialog::getOpenFileName(this, tr("Open TXT"), "", tr("EEPROM File(*.txt)"));
 	QTextCodec *code = QTextCodec::codecForName("gb18030");
 	std::string name = code->fromUnicode(filename).data();
@@ -9208,6 +9361,8 @@ void EEPROM_Data_Verifier::on_pushButton_dump_value_clicked()
 	}
 
 	fout.close();
+
+#endif
 	ui.log->insertPlainText("Dump Data Read finished\n");
 
 }
@@ -9233,6 +9388,11 @@ void EEPROM_Data_Verifier::on_pushButton_dump_LSC_clicked()
 	bool ok = false;
 	while (iVector != files1.end())
 	{
+		int tRet = checkPath(".\\bin_data\\" + (*iVector));
+		if (tRet != 1) {
+			++iVector;
+			continue;
+		}
 		dump_result << (*iVector) << "	";
 		name2 = (*iVector);
 		fout << (*iVector) << endl;
@@ -9376,6 +9536,11 @@ void EEPROM_Data_Verifier::on_pushButton_dump_GM_clicked()
 	bool ok = false;
 	while (iVector != files1.end())
 	{
+		int tRet = checkPath(".\\bin_data\\" + (*iVector));
+		if (tRet != 1) {
+			++iVector;
+			continue;
+		}
 		int vlen = (*iVector).find('_');
 		dump_result << (*iVector).substr(0, vlen) << "	";
 		string fuse = "", time_fuse = (*iVector);
@@ -9635,7 +9800,6 @@ void EEPROM_Data_Verifier::on_pushButton_dump_GM_clicked()
 
 }
 
-
 void EEPROM_Data_Verifier::on_pushButton_dump_MTK_clicked()
 {
 	mode = 1;
@@ -9656,6 +9820,11 @@ void EEPROM_Data_Verifier::on_pushButton_dump_MTK_clicked()
 	bool ok = false;
 	while (iVector != files1.end())
 	{
+		int tRet = checkPath(".\\bin_data\\" + (*iVector));
+		if (tRet != 1) {
+			++iVector;
+			continue;
+		}
 		int vlen = (*iVector).find('_');
 		dump_result << (*iVector).substr(0, vlen) << "	";
 
@@ -9870,6 +10039,11 @@ void EEPROM_Data_Verifier::on_pushButton_dump_offset_clicked()
 	bool ok = false;
 	while (iVector != files1.end())
 	{
+		int tRet = checkPath(".\\bin_data\\" + (*iVector));
+		if (tRet != 1) {
+			++iVector;
+			continue;
+		}
 		int vlen = (*iVector).find('_');
 		dump_result << (*iVector).substr(0, vlen) << "	";
 		string fuse = "", time_fuse = (*iVector);
@@ -9967,6 +10141,11 @@ void EEPROM_Data_Verifier::on_pushButton_dump_Zoom_clicked()
 	bool ok = false;
 	while (iVector != files1.end())
 	{
+		int tRet = checkPath(".\\bin_data\\" + (*iVector));
+		if (tRet != 1) {
+			++iVector;
+			continue;
+		}
 		int vlen = (*iVector).find('_');
 		dump_result << (*iVector).substr(0, vlen) << "	";
 		string fuse = "", time_fuse = (*iVector);
@@ -10066,7 +10245,113 @@ void EEPROM_Data_Verifier::on_pushButton_dump_SFR_clicked()
 {
 	selectModel();
 	load_EEPROM_Address();
+#if 1
+	mode = 1;
+	selectModel();
+	load_EEPROM_Address();
 
+	dump_result.open(".\\dump_result.txt");
+
+	OK = 0; NG = 0;
+	load_Spec(mode);
+
+	vector<string> files1 = getFiles(".\\bin_data\\*");
+	vector<string> ::iterator iVector = files1.begin();
+	bool ok = false;
+	while (iVector != files1.end())
+	{
+		int tRet = checkPath(".\\bin_data\\" + (*iVector));
+		if (tRet != 1) {
+			++iVector;
+			continue;
+		}
+		int vlen = (*iVector).find('_');
+		dump_result << (*iVector).substr(0, vlen) << "	";
+		//dump_result << *iVector << "	";
+		string fuse = "", time_fuse = (*iVector);
+		int x = 0;
+
+		if (time_fuse[0] == '2'&&time_fuse[1] == '0'&&time_fuse[2] == '2') {
+			while (time_fuse[x] != ' '&&time_fuse[x] != '_'&&x < (*iVector).length()) {
+				x++;
+			}
+			x++;
+			while (time_fuse[x] != ' '&&time_fuse[x] != '_'&&x < (*iVector).length()) {
+				fuse += time_fuse[x++];
+			}
+		}
+		else {
+			while (time_fuse[x] != ' '&&time_fuse[x] != '_'&&x < (*iVector).length()) {
+				fuse += time_fuse[x++];
+			}
+		}
+		current_Hash.fuse_ID = fuse;
+		memset(DecData, 0, sizeof(DecData));
+		memset(useData, 0, sizeof(useData));
+		name = ".\\bin_data\\" + *iVector;
+		ifstream fin(name, std::ios::binary);
+
+		//获取文件大小方法一
+		struct _stat info;
+		_stat(name.c_str(), &info);
+		EEP_Size = info.st_size;
+
+		unsigned char szBuf[262128] = { 0 };
+		fin.read((char*)&szBuf, sizeof(char) * EEP_Size);
+
+		for (int i = 0; i < EEP_Size; i++) {
+			DecData[i] = (unsigned char)szBuf[i];
+			getHex(DecData[i]);
+			D[i][0] = chk[0];
+			D[i][1] = chk[1];
+		}
+
+//////////////////////////
+		int mac = unstringHex2int(AF_Item[0][1]);
+		int inf = unstringHex2int(AF_Item[1][1]);
+
+		for (int i = 0; i < 4; i++) {
+			if (SFR_Item[i][2].length()>1) {
+				int d = unstringHex2int(SFR_Item[i][2]);
+				int cnt = atoi(SFR_Item[i][3].c_str());
+
+				for (int k = 0; k < cnt; k++) {
+					if (SFR_Format == 0) {
+						SFR_Data[k] = (int)(D[d + k][0] - '0') * 10 + (D[d + k][1] - '0');
+						dump_result << "0." << D[d + k][0] << D[d + k][1] << "	";
+					}
+					else if (SFR_Format == 1) {
+						SFR_Data[k] = DecData[d + k];
+						dump_result << (float)SFR_Data[k] / 100.0 << "	";
+					}
+					else if (SFR_Format == 2) {
+						SFR_Data[k] = DecData[d + 2 * k] * 256 + DecData[d + 2 * k + 1];
+						dump_result << (float)SFR_Data[k] / 10000.0 << "	";
+					}
+					else if (SFR_Format == 3) {
+						SFR_Data[k] = DecData[d + 2 * k] * 256 + DecData[d + 2 * k + 1];
+						dump_result << SFR_Data[k] << "	";
+					}
+					else if (SFR_Format == 4) {
+						if ((HL & 1) == 0)
+							SFR_Data[k] = DecData[d + 2 * k] + DecData[d + 2 * k + 1] * 256;
+						else SFR_Data[k] = DecData[d + 2 * k] * 256 + DecData[d + 2 * k + 1] * 256;
+						dump_result << SFR_Data[k] << "	";
+					}
+				}
+			}
+		}
+		dump_result << DecData[inf] * 256 + DecData[inf + 1] << "	" << DecData[mac] * 256 + DecData[mac + 1] << "	";
+		dump_result << endl;
+
+
+		fin.close();
+		++iVector;
+	}
+
+	dump_result.close();
+
+#else
 	QString filename = QFileDialog::getOpenFileName(this, tr("Open TXT"), "", tr("EEPROM File(*.txt)"));
 	QTextCodec *code = QTextCodec::codecForName("gb18030");
 	std::string name = code->fromUnicode(filename).data();
@@ -10174,6 +10459,8 @@ void EEPROM_Data_Verifier::on_pushButton_dump_SFR_clicked()
 	}
 
 	fout.close();
+
+#endif
 	ui.log->insertPlainText("Dump Data Read finished\n");
 
 }
@@ -10199,6 +10486,11 @@ void EEPROM_Data_Verifier::on_pushButton_Dump_Drift_clicked()
 	bool ok = false;
 	while (iVector != files1.end())
 	{
+		int tRet = checkPath(".\\bin_data\\" + (*iVector));
+		if (tRet != 1) {
+			++iVector;
+			continue;
+		}
 		dump_result << (*iVector) << "	";
 		name2 = (*iVector);
 		fout << (*iVector) << endl;
@@ -10286,28 +10578,6 @@ void EEPROM_Data_Verifier::on_pushButton_Dump_Drift_clicked()
 
 }
 
-int checkPath(const std::string strPath)
-{
-	struct stat infos;
-
-	if (stat(strPath.c_str(), &infos) != 0)
-	{
-		return -1;    //无效
-	}
-	else if (infos.st_mode & S_IFDIR)
-	{
-		return 0;    //目录
-	}
-	else if (infos.st_mode & S_IFREG)
-	{
-		//这里多写一个if 是为了记录一下判断条件
-		return 1;    //文件
-	}
-	else
-	{
-		return -1;
-	}
-}
 
 void EEPROM_Data_Verifier::on_pushButton_folder_clicked() {
 

@@ -1320,18 +1320,18 @@ public:
     QCheckBox *full_log;
     QLabel *label_8;
     QPushButton *pushButton_folder;
-    QButtonGroup *buttonGroup_12;
-    QButtonGroup *buttonGroup_16;
-    QButtonGroup *buttonGroup_2;
-    QButtonGroup *buttonGroup_5;
-    QButtonGroup *buttonGroup;
-    QButtonGroup *buttonGroup_6;
     QButtonGroup *buttonGroup_18;
-    QButtonGroup *buttonGroup_4;
-    QButtonGroup *buttonGroup_7;
     QButtonGroup *buttonGroup_13;
-    QButtonGroup *buttonGroup_3;
     QButtonGroup *buttonGroup_15;
+    QButtonGroup *buttonGroup_4;
+    QButtonGroup *buttonGroup_16;
+    QButtonGroup *buttonGroup_5;
+    QButtonGroup *buttonGroup_2;
+    QButtonGroup *buttonGroup_3;
+    QButtonGroup *buttonGroup_6;
+    QButtonGroup *buttonGroup_7;
+    QButtonGroup *buttonGroup_12;
+    QButtonGroup *buttonGroup;
 
     void setupUi(QWidget *EEPROM_Data_VerifierClass)
     {
@@ -6333,7 +6333,7 @@ public:
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>", Q_NULLPTR));
         label_110->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Count", Q_NULLPTR));
         label_127->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Format", Q_NULLPTR));
-        pushButton_dump_SFR->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Dump_TXT", Q_NULLPTR));
+        pushButton_dump_SFR->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Dump_SFR", Q_NULLPTR));
         SFR_Format->clear();
         SFR_Format->insertItems(0, QStringList()
          << QApplication::translate("EEPROM_Data_VerifierClass", "Hex 1b", Q_NULLPTR)
@@ -6793,7 +6793,7 @@ public:
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:'SimSun'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>", Q_NULLPTR));
-        pushButton_dump_value->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Dump_TXT", Q_NULLPTR));
+        pushButton_dump_value->setText(QApplication::translate("EEPROM_Data_VerifierClass", "Dump_Bin", Q_NULLPTR));
         label_197->setText(QApplication::translate("EEPROM_Data_VerifierClass", "HL", Q_NULLPTR));
         sData_item46->setHtml(QApplication::translate("EEPROM_Data_VerifierClass", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
